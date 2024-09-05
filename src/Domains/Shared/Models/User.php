@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Domains\Shared\Models;
 
+use Database\Factories\UserFactory;
 use Domains\Shared\Enums\ModelStatuses;
-use Domains\Shared\Enums\UserRoles;
+use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Enums\WorkStatuses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -17,6 +20,7 @@ final class User extends Authenticatable
     use HasApiTokens;
     use HasFactory;
     use Notifiable;
+    use SoftDeletes;
 
     /** @var array<int, string> */
     protected $fillable = [
@@ -26,7 +30,8 @@ final class User extends Authenticatable
         'phone',
         'employee_id',
         'national_id',
-        'role',
+        'type',
+        'is_admin',
         'department_id',
         'region_id',
         'image_url',
@@ -43,6 +48,30 @@ final class User extends Authenticatable
         'remember_token',
     ];
 
+    /** @return BelongsTo<Department> */
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: Department::class,
+            foreignKey: 'department_id',
+        );
+    }
+
+    /** @return BelongsTo<Region> */
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: Region::class,
+            foreignKey:'region_id',
+        );
+    }
+
+    /** @return UserFactory */
+    protected static function newFactory(): UserFactory
+    {
+        return new UserFactory();
+    }
+
     /** @return array<string, string> */
     protected function casts(): array
     {
@@ -51,7 +80,8 @@ final class User extends Authenticatable
             'password' => 'hashed',
             'status' => ModelStatuses::class,
             'work_status' => WorkStatuses::class,
-            'role' => UserRoles::class,
+            'type' => UserTypes::class,
+            'is_admin' => 'boolean',
         ];
     }
 }

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use Domains\Shared\Enums\ModelStatuses;
+use Domains\Shared\Enums\UserTypes;
+use Domains\Shared\Enums\WorkStatuses;
+use Domains\Shared\Models\Department;
 use Domains\Shared\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,8 +23,16 @@ final class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
+            'first_name' => $this->faker->firstName(),
+            'last_name' => $this->faker->lastName(),
             'email' => $this->faker->unique()->safeEmail(),
+            'phone' => $this->faker->e164PhoneNumber(),
+            'employee_id' => $this->faker->phoneNumber(),
+            'national_id' => '34996980',
+            'type'  => $this->faker->randomElement(UserTypes::class),
+            'department_id' => Department::factory()->create(),
+            'status' => $this->faker->randomElement(ModelStatuses::class),
+            'work_status' => $this->faker->randomElement(WorkStatuses::class),
             'password' => Hash::make(
                 value: 'password',
             ),

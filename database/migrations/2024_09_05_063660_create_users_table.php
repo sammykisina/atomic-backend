@@ -20,7 +20,8 @@ return new class () extends Migration {
             $table->string(column: 'phone')->unique();
             $table->string(column:'employee_id')->unique();
             $table->string(column:'national_id')->unique();
-            $table->string(column:'role');
+            $table->string(column:'type');
+            $table->boolean(column:'is_admin')->default(value: false);
 
             $table->foreignId(column: 'department_id')
                 ->index()
@@ -43,27 +44,27 @@ return new class () extends Migration {
 
             $table->rememberToken();
 
-            $table->foreignId('creator_id')
+            $table->foreignId(column: 'creator_id')
                 ->nullable()
                 ->references('id')
                 ->on('users')
                 ->index()
                 ->constrained()
                 ->nullOnDelete()
-                ->name('fk_users_creator');
+                ->name('fk_user_creator');
 
-            $table->foreignId('updater_id')
+            $table->foreignId(column: 'updater_id')
                 ->nullable()
                 ->references('id')
                 ->on('users')
                 ->index()
                 ->constrained()
                 ->nullOnDelete()
-                ->name('fk_users_updater');
+                ->name('fk_user_updater');
 
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();
-
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table): void {
