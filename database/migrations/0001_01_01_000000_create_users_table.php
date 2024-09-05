@@ -2,24 +2,68 @@
 
 declare(strict_types=1);
 
+use Domains\Shared\Enums\ModelStatuses;
+use Domains\Shared\Enums\WorkStatuses;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table): void {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+
+            $table->string(column: 'first_name');
+            $table->string(column: 'last_name');
+            $table->string(column: 'email')->unique();
+            $table->string(column: 'phone')->unique();
+            $table->string(column:'employee_id')->unique();
+            $table->string(column:'national_id')->unique();
+            $table->string(column:'role');
+
+            $table->foreignId(column: 'department_id')
+                ->index()
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
+            $table->foreignId(column: 'region_id')
+                ->index()
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
+            $table->timestamp(column: 'email_verified_at')->nullable();
+            $table->string(column: 'image_url')->nullable();
+            $table->string(column: 'password');
+
+            $table->string(column: 'status')->default(value: ModelStatuses::ACTIVE);
+            $table->string(column: 'work_status')->default(value: WorkStatuses::ON_THE_JOB);
+
             $table->rememberToken();
-            $table->timestamps();
+
+            $table->foreignId('creator_id')
+                ->nullable()
+                ->references('id')
+                ->on('users')
+                ->index()
+                ->constrained()
+                ->nullOnDelete()
+                ->name('fk_users_creator');
+
+            $table->foreignId('updater_id')
+                ->nullable()
+                ->references('id')
+                ->on('users')
+                ->index()
+                ->constrained()
+                ->nullOnDelete()
+                ->name('fk_users_updater');
+
+            $table->timestamp(column: 'created_at')->useCurrent();
+            $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();
+
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table): void {
@@ -38,9 +82,6 @@ return new class () extends Migration {
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');
