@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Shared\Auth;
 
-use Domains\Shared\Enums\UserRoles;
-use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Requests\LoginRequest;
 use Domains\Shared\Resources\UserResource;
 use Domains\Shared\Services\AuthService;
@@ -29,7 +27,7 @@ final class LoginController
         );
 
         if ($user) {
-            $abilities = $user->is_admin  ? ['*'] : [];
+            $abilities = $user->is_admin ? ['*'] : [];
 
             $token = $user->createToken(
                 name: 'auth',
