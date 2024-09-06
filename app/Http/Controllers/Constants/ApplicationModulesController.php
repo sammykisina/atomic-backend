@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Constants;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use JustSteveKing\StatusCode\Http;
 
 final class ApplicationModulesController
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request):Response
     {
-        return [
+        $application_modules =  [
             'staff' => [
                 'read_staff',
                 'write_staff',
@@ -26,5 +28,14 @@ final class ApplicationModulesController
                 'revoke_role',
             ],
         ];
+
+
+            return response(
+                content: [
+                    'application_modules' => $application_modules,
+                    'message' => 'Application Modules',
+                ],
+                status: Http::OK(),
+            );
     }
 }
