@@ -23,7 +23,7 @@ final class DatabaseSeeder extends Seeder
         ]);
 
         /**
-         * SEED IT DEPARTMENT USER
+         * SEED  SYSTEM ADMIN
          */
         User::factory()->create([
             'first_name' => 'Brian',
