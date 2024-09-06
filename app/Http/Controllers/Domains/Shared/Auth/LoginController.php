@@ -48,8 +48,7 @@ final class LoginController
             content: [
                 'message' => 'Login Failed.Check your credentials',
             ],
-            status: Http::UNAUTHORIZED(),
+            status: Http::UNPROCESSABLE_ENTITY(),
         );
-
     }
 }
