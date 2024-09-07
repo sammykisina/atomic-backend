@@ -8,6 +8,7 @@ use Database\Factories\UserFactory;
 use Domains\Shared\Enums\ModelStatuses;
 use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Enums\WorkStatuses;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -64,6 +65,16 @@ final class User extends Authenticatable
             related: Region::class,
             foreignKey:'region_id',
         );
+    }
+
+    /**
+     * @param Builder $query
+     * @param string $type
+     * @return Builder
+     */
+    public function scopeType(Builder $query, string $type): Builder
+    {
+        return $query->where('type', '!=', $type);
     }
 
     /** @return UserFactory */

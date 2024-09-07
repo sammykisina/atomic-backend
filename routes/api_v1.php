@@ -13,3 +13,8 @@ Route::prefix('/auth')->as('auth:')->group(
 Route::prefix('/constants')->as('constants:')->group(
     base_path('routes/api_v1/constants.php'),
 );
+
+// STAFF
+Route::prefix('/staff')->as('staff:')->group(
+    base_path('routes/api_v1/shared/staff.php'),
+);

@@ -10,7 +10,7 @@ use JustSteveKing\StatusCode\Http;
 
 final class ApplicationModulesController
 {
-    public function __invoke(Request $request):Response
+    public function __invoke(Request $request): Response
     {
         $application_modules =  [
             'staff' => [
@@ -30,12 +30,12 @@ final class ApplicationModulesController
         ];
 
 
-            return response(
-                content: [
-                    'application_modules' => $application_modules,
-                    'message' => 'Application Modules',
-                ],
-                status: Http::OK(),
-            );
+        return response(
+            content: [
+                'application_modules' => $application_modules,
+                'message' => 'Application Modules',
+            ],
+            status: Http::OK(),
+        );
     }
 }
