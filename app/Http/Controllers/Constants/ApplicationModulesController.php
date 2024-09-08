@@ -14,21 +14,29 @@ final class ApplicationModulesController
     {
         $application_modules =  [
             'staff' => [
-                'read_staff',
-                'write_staff',
-                'update_staff',
-                'delete_staff',
+                'read-staff',
+                'write-staff',
+                'edit-staff',
+                'delete-staff',
             ],
             'roles' => [
-                'read_role',
-                'create_role',
-                'update_role',
-                'delete_role',
-                'assign_role',
-                'revoke_role',
+                'read-roles',
+                'create-roles',
+                'edit-roles',
+                'delete-roles',
+                'assign-roles',
+                'revoke-roles',
+            ],
+            'departments' => [
+                'read-departments',
+                'create-departments',
+                'edit-departments',
+                'delete-departments',
+            ],
+            'regions' => [
+                'read-regions',
             ],
         ];
-
 
         return response(
             content: [

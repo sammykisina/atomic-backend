@@ -39,6 +39,7 @@ final class LoginController
                 content: [
                     'user' => new UserResource($user),
                     'token' => $token,
+                    'message' => 'Login Successful',
                 ],
                 status: Http::OK(),
             );

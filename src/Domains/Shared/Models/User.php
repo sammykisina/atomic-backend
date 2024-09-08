@@ -41,6 +41,7 @@ final class User extends Authenticatable
         'creator_id',
         'updater_id',
         'password',
+        'role_id',
     ];
 
     /** @var array<int, string> */
@@ -64,6 +65,15 @@ final class User extends Authenticatable
         return $this->belongsTo(
             related: Region::class,
             foreignKey:'region_id',
+        );
+    }
+
+    /** @return BelongsTo<Role> */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: Role::class,
+            foreignKey:'role_id',
         );
     }
 

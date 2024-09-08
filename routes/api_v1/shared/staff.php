@@ -13,3 +13,13 @@ Route::prefix('/employees')->as('employees:')->group(
 Route::prefix('/regions')->as('regions:')->group(
     base_path('routes/api_v1/shared/staff/regions.php'),
 );
+
+// DEPARTMENTS
+Route::prefix('/departments')->as('departments:')->group(
+    base_path('routes/api_v1/shared/staff/departments.php'),
+);
+
+// ROLES
+Route::prefix('/roles')->as('roles:')->group(
+    base_path('routes/api_v1/shared/staff/roles.php'),
+);

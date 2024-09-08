@@ -25,6 +25,9 @@ final class UserResource extends JsonResource
             'is_admin' => $this->resource->is_admin,
             'status' => $this->resource->status,
             'work_status' => $this->resource->work_status,
+            'employee_id' => $this->resource->employee_id,
+            'national_id' => $this->resource->national_id,
+            'role_id' => $this->resource->role_id,
             'department' => new DepartmentResource(
                 resource: $this->whenLoaded(
                     relationship: 'department',
@@ -33,6 +36,11 @@ final class UserResource extends JsonResource
             'region' => new RegionResource(
                 resource: $this->whenLoaded(
                     relationship: 'region',
+                ),
+            ),
+            'role' => $this->resource->is_admin ? '*' : new RoleResource(
+                resource: $this->whenLoaded(
+                    relationship:'role',
                 ),
             ),
         ];

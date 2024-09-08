@@ -33,10 +33,10 @@ final class UserSeeder extends Seeder
             'employee_id' => '711637755',
             'national_id' => '711637755',
             'type' => UserTypes::SYSTEM_ADMIN->value,
-            'department_id' => $it_department->id,
             'image_url' => 'https://vasmobile.africa/images/home/vasmobile%20logo-01.png',
             'status' => ModelStatuses::ACTIVE->value,
             'work_status' => WorkStatuses::ON_THE_JOB->value,
+            'department_id' => $it_department->id,
             'password' => Hash::make(
                 value: 'vasmobile',
             ),
@@ -54,9 +54,9 @@ final class UserSeeder extends Seeder
             'employee_id' => '700000000',
             'national_id' => '700000000',
             'type' => UserTypes::SUPER_ADMIN->value,
-            'department_id' => $it_department->id,
             'status' => ModelStatuses::ACTIVE->value,
             'work_status' => WorkStatuses::ON_THE_JOB->value,
+            'department_id' => $it_department->id,
             'password' => Hash::make(
                 value: 'superadmin',
             ),

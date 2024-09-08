@@ -23,6 +23,7 @@ final class RegionSeeder extends Seeder
         Region::factory()->create([
             'name' => 'Western 1 Region',
         ]);
+
         Region::factory()->create([
             'name' => 'Western 2 Region',
         ]);

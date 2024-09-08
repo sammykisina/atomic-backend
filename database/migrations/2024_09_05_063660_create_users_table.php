@@ -35,6 +35,12 @@ return new class () extends Migration {
                 ->constrained()
                 ->nullOnDelete();
 
+            $table->foreignId(column: 'role_id')
+                ->index()
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
             $table->timestamp(column: 'email_verified_at')->nullable();
             $table->string(column: 'image_url')->nullable();
             $table->string(column: 'password');

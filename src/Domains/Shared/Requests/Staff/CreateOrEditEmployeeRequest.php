@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Domains\Shared\Requests\Staff;
 
-use Domains\Shared\Enums\ModelStatuses;
+use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Enums\WorkStatuses;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-final class EmployeeCreateOrEditRequest extends FormRequest
+final class CreateOrEditEmployeeRequest extends FormRequest
 {
     /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
@@ -27,23 +27,26 @@ final class EmployeeCreateOrEditRequest extends FormRequest
             'email' => [
                 'required',
                 'email',
-                Rule::unique('users', 'email')->ignore($this->user ? $this->user->id : ''),
+                Rule::unique('users', 'email')->ignore($this->employee ? $this->employee->id : ''),
             ],
             'phone' => [
                 'required',
-                Rule::unique('users', 'phone')->ignore($this->user ? $this->user->id : ''),
+                Rule::unique('users', 'phone')->ignore($this->employee ? $this->employee->id : ''),
             ],
             'employee_id' => [
                 'required',
-                Rule::unique('users', 'employee_id')->ignore($this->user ? $this->user->id : ''),
+                'numeric',
+                Rule::unique('users', 'employee_id')->ignore($this->employee ? $this->employee->id : ''),
             ],
             'national_id' => [
                 'required',
-                Rule::unique('users', 'national_id')->ignore($this->user ? $this->user->id : ''),
+                // 'integer',
+                'size:8',
+                Rule::unique('users', 'national_id')->ignore($this->employee ? $this->employee->id : ''),
             ],
             'type' => [
                 'required',
-                Rule::enum(ModelStatuses::class),
+                Rule::enum(UserTypes::class),
             ],
             'department_id' => [
                 'required',
@@ -51,7 +54,7 @@ final class EmployeeCreateOrEditRequest extends FormRequest
             ],
             'region_id' => [
                 'required',
-                'exists:region,id',
+                'exists:regions,id',
             ],
             'work_status' => [
                 'required',
@@ -59,4 +62,13 @@ final class EmployeeCreateOrEditRequest extends FormRequest
             ],
         ];
     }
+
+    /**   @return array<string, string> */
+    public function messages(): array
+    {
+        return [
+            'national_id.size' => 'National ID number must be 8 numbers.',
+        ];
+    }
+
 }
