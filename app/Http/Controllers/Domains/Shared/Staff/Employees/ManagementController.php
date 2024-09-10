@@ -61,7 +61,7 @@ final class ManagementController
         )) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
-                message: 'Employee creation failed.',
+                message: 'Employee update failed.',
             );
         }
 

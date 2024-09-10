@@ -1,0 +1,58 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Domains\SuperAdmin\Models;
+
+use Domains\SuperAdmin\Enums\StationPositions;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+final class Station extends Model
+{
+    use HasFactory;
+
+    /** @var array<int, string> */
+    protected $fillable = [
+        "name",
+        "start_kilometer",
+        "end_kilometer",
+        "start_latitude",
+        "start_longitude",
+        "end_latitude",
+        "end_longitude",
+        "line_id",
+        'is_yard',
+        'position_from_line',
+    ];
+
+    /** @return BelongsTo<Line>  */
+    public function line(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: Line::class,
+            foreignKey: 'line_id',
+        );
+    }
+
+    /** @return HasMany<Loop>  */
+    public function loops(): HasMany
+    {
+        return $this->hasMany(
+            related: Loop::class,
+            foreignKey: 'station_id',
+        );
+    }
+
+    /** @return array<string, string> */
+    protected function casts(): array
+    {
+        return [
+            'position_from_line' => StationPositions::class,
+            'is_yard' => 'boolean',
+        ];
+    }
+
+}
