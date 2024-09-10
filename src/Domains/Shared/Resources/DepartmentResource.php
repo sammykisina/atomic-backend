@@ -19,6 +19,9 @@ final class DepartmentResource extends JsonResource
             'id' => $this->resource->id,
             'name' => $this->resource->name,
             'description' => $this->resource->description,
+            'dates' => new DateResource(
+                resource: $this->resource->created_at,
+            ),
         ];
     }
 }

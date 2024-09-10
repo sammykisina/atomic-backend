@@ -6,7 +6,9 @@ declare(strict_types=1);
 
 // can create staff
 it('can create staff', function (): void {
-    // login()->
+    $response = $this->get('/');
+
+    $response->assertStatus(200);
 });
 
 // can update staff
