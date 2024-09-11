@@ -1,13 +1,13 @@
-name: Main Workflow
+name: Main workflow
 
 on: [push]
 
 jobs:
   linting:
-    name: Run Static Code Analysis
+    name: run static code analysis
     uses: ./.github/workflows/ci-lint.yml
 
   tests:
-    name: Run Tests
+    name: run tests
     needs: linting
     uses: ./.github/workflows/ci-test.yml
