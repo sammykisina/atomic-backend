@@ -11,6 +11,6 @@ Route::middleware(['auth:sanctum', 'abilities:get-staff,create-staff,edit-staff,
 
     Route::controller(ManagementController::class)->group(function (): void {
         Route::post('/', 'create')->name(name: 'create');
-        Route::patch('/{employee}/edit', 'edit')->name(name: 'create');
+        Route::patch('/{employee}/edit', 'edit')->name(name: 'edit');
     });
 });
