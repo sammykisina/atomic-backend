@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 final class Station extends Model
 {
@@ -46,6 +47,17 @@ final class Station extends Model
         );
     }
 
+    /** @return HasOne<Section> */
+    public function section(): HasOne
+    {
+        return $this->hasOne(
+            related:
+            Section::class,
+            foreignKey: 'station_id',
+            localKey: 'id',
+        );
+    }
+
     /** @return array<string, string> */
     protected function casts(): array
     {
@@ -54,5 +66,4 @@ final class Station extends Model
             'is_yard' => 'boolean',
         ];
     }
-
 }

@@ -16,6 +16,11 @@ final class LoopResource extends JsonResource
             'id' => $this->resource->id,
             'distance' => $this->resource->distance,
             'position' => $this->resource->position,
+            'station' => StationResource::make(
+                resource: $this->whenLoaded(
+                    relationship: 'station',
+                ),
+            ),
         ];
     }
 }

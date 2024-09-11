@@ -39,5 +39,8 @@ Route::prefix('/super-admin')->as('super-admin:')->group(
 
         // LOOPS
         base_path('routes/api_v1/super_admin/loops.php'),
+
+        // SECTIONS
+        base_path('routes/api_v1/super_admin/sections.php'),
     ],
 );

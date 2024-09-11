@@ -16,7 +16,7 @@ final class IndexController
     public function __invoke(Request $request): Response
     {
         $stations  = QueryBuilder::for(Station::class)
-            ->allowedIncludes('line')
+            ->allowedIncludes('line', 'section')
             ->get();
 
         return response(

@@ -33,6 +33,11 @@ final class LineResource extends JsonResource
                     relationship:'stations',
                 ),
             ),
+            'loops' => LoopResource::collection(
+                resource: $this->whenLoaded(
+                    relationship:'loops',
+                ),
+            ),
         ];
     }
 }
