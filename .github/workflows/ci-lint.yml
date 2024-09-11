@@ -11,9 +11,6 @@ jobs:
       matrix:
         php: [8.3]
 
-    permissions: # Add permissions section
-      contents: write # Give write access to commit the changes
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
