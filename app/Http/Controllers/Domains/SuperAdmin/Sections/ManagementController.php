@@ -55,7 +55,7 @@ final class ManagementController
      */
     public function edit(CreateOrEditSectionRequest $request, Section $section): Response | HttpException
     {
-        if( ! $this->sectionService->editSection(
+        if ( ! $this->sectionService->editSection(
             section: $section,
             updatedSectionData: $request->validated(),
         )) {

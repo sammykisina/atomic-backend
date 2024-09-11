@@ -10,7 +10,7 @@ Route::middleware(['auth:sanctum', 'abilities:get-staff,create-staff,edit-staff,
     Route::get('/', IndexController::class)->name(name: "index");
 
     Route::controller(ManagementController::class)->group(function (): void {
-        Route::post('/', 'create')->name(name:'create');
-        Route::patch('/{employee}/edit', 'edit')->name(name:'create');
+        Route::post('/', 'create')->name(name: 'create');
+        Route::patch('/{employee}/edit', 'edit')->name(name: 'create');
     });
 });

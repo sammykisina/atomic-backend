@@ -26,7 +26,7 @@ final class CreateOrEditLoopRequest extends FormRequest
                     table: 'loops',
                     column: 'position',
                 )->where(
-                    column:'line_id',
+                    column: 'line_id',
                     value: $this->line->id,
                 )->where(
                     column: 'station_id',

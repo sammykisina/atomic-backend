@@ -38,12 +38,12 @@ final class StationResource extends JsonResource
             'position_from_line' => $this->resource->position_from_line,
             'loops' =>  LoopResource::collection(
                 $this->whenLoaded(
-                    relationship:'loops',
+                    relationship: 'loops',
                 ),
             ),
             'starting_section' => new SectionResource(
                 resource: $this->whenLoaded(
-                    relationship:'section',
+                    relationship: 'section',
                 ),
             ),
         ];

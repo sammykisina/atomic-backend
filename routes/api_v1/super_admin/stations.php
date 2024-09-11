@@ -10,7 +10,7 @@ Route::middleware(['auth:sanctum', 'abilities:read-stations,create-stations,upda
     Route::get('/', IndexController::class)->name(name: "index");
 
     Route::controller(ManagementController::class)->group(function (): void {
-        Route::post('/', 'create')->name(name:'create');
-        Route::patch('/{station}/edit', 'edit')->name(name:'edit');
+        Route::post('/', 'create')->name(name: 'create');
+        Route::patch('/{station}/edit', 'edit')->name(name: 'edit');
     });
 });

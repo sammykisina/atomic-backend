@@ -26,7 +26,7 @@ final class Line extends Model
     public function Region(): BelongsTo
     {
         return $this->belongsTo(
-            related:Region::class,
+            related: Region::class,
             foreignKey: 'region_id',
         );
     }
@@ -56,7 +56,7 @@ final class Line extends Model
     {
         return $this->hasMany(
             related: Station::class,
-            foreignKey:"line_id",
+            foreignKey: "line_id",
         );
     }
 

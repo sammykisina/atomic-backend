@@ -38,8 +38,8 @@ final class ManagementController
             );
 
             $this->lineService->createLineCounties(
-                counties: $request->validated(key :'counties'),
-                line:$line,
+                counties: $request->validated(key : 'counties'),
+                line: $line,
             );
 
             return $line;
@@ -77,8 +77,8 @@ final class ManagementController
             );
 
             $this->lineService->createLineCounties(
-                counties: $request->validated(key :'counties'),
-                line:$line,
+                counties: $request->validated(key : 'counties'),
+                line: $line,
             );
 
             return $edited;

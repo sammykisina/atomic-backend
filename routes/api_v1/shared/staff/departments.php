@@ -11,7 +11,7 @@ Route::middleware(['auth:sanctum', 'abilities:get-departments, create-department
 
 
     Route::controller(ManagementController::class)->group(function (): void {
-        Route::post('/', 'create')->name(name:'create');
-        Route::patch('/{department}/edit', 'edit')->name(name:'edit');
+        Route::post('/', 'create')->name(name: 'create');
+        Route::patch('/{department}/edit', 'edit')->name(name: 'edit');
     });
 });

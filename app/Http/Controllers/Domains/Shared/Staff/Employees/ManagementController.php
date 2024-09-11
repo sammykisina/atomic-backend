@@ -55,7 +55,7 @@ final class ManagementController
      */
     public function edit(CreateOrEditEmployeeRequest $request, User $employee): Response | HttpException
     {
-        if( ! $this->employeeService->editEmployee(
+        if ( ! $this->employeeService->editEmployee(
             employee: $employee,
             updatedEmployeeData: $request->validated(),
         )) {

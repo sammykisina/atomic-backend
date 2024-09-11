@@ -18,10 +18,10 @@ return new class () extends Migration {
             $table->string(column: 'last_name');
             $table->string(column: 'email')->unique();
             $table->string(column: 'phone')->unique();
-            $table->string(column:'employee_id')->unique();
-            $table->string(column:'national_id')->unique();
-            $table->string(column:'type');
-            $table->boolean(column:'is_admin')->default(value: false);
+            $table->string(column: 'employee_id')->unique();
+            $table->string(column: 'national_id')->unique();
+            $table->string(column: 'type');
+            $table->boolean(column: 'is_admin')->default(value: false);
 
             $table->foreignId(column: 'department_id')
                 ->index()

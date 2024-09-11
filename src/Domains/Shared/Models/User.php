@@ -64,7 +64,7 @@ final class User extends Authenticatable
     {
         return $this->belongsTo(
             related: Region::class,
-            foreignKey:'region_id',
+            foreignKey: 'region_id',
         );
     }
 
@@ -73,7 +73,7 @@ final class User extends Authenticatable
     {
         return $this->belongsTo(
             related: Role::class,
-            foreignKey:'role_id',
+            foreignKey: 'role_id',
         );
     }
 

@@ -10,7 +10,7 @@ Route::middleware(['auth:sanctum', 'abilities:read-sections,create-sections,upda
     Route::get('/', IndexController::class)->name(name: "index");
 
     Route::controller(ManagementController::class)->group(function (): void {
-        Route::post('/', 'create')->name(name:'create');
-        Route::patch('/{section}/edit', 'edit')->name(name:'edit');
+        Route::post('/', 'create')->name(name: 'create');
+        Route::patch('/{section}/edit', 'edit')->name(name: 'edit');
     });
 });

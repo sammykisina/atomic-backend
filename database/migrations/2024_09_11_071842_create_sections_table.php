@@ -18,13 +18,13 @@ return new class () extends Migration {
             $table->float(column: 'start_kilometer');
             $table->float(column: 'end_kilometer');
 
-            $table->float(column:'start_latitude');
-            $table->float(column:'start_longitude');
+            $table->float(column: 'start_latitude');
+            $table->float(column: 'start_longitude');
 
             $table->float(column: 'end_latitude');
-            $table->float(column:'end_longitude');
+            $table->float(column: 'end_longitude');
 
-            $table->float(column:'number_of_kilometers_to_divide_section_to_subsection');
+            $table->float(column: 'number_of_kilometers_to_divide_section_to_subsection');
 
             $table->foreignId(column: 'line_id')
                 ->index()

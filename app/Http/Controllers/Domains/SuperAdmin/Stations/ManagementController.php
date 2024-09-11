@@ -55,7 +55,7 @@ final class ManagementController
      */
     public function edit(CreateOrEditStationRequest $request, Station $station): Response | HttpException
     {
-        if( ! $this->stationService->editStation(
+        if ( ! $this->stationService->editStation(
             station: $station,
             updatedStationData: $request->validated(),
         )) {

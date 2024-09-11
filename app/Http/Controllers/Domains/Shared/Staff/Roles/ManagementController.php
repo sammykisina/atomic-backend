@@ -34,7 +34,7 @@ final class ManagementController
             roleData: $request->validated(),
         );
 
-        if( ! $role) {
+        if ( ! $role) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: 'Role creation failed.',
@@ -60,7 +60,7 @@ final class ManagementController
      */
     public function edit(CreateOrEditRoleRequest $request, Role $role): Response | HttpException
     {
-        if( ! $this->roleService->editRole(
+        if ( ! $this->roleService->editRole(
             role: $role,
             updatedRoleData: $request->validated(),
         )) {
@@ -91,7 +91,7 @@ final class ManagementController
             abilities: $request->validated(),
         );
 
-        if(0 === $permissions->count()) {
+        if (0 === $permissions->count()) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: 'Permissions creation failed.',
@@ -113,7 +113,7 @@ final class ManagementController
      */
     public function revokePermission(Permission $permission): Response | HttpException
     {
-        if( ! $this->roleService->deletePermission(
+        if ( ! $this->roleService->deletePermission(
             permission: $permission,
         )) {
             abort(
@@ -138,7 +138,7 @@ final class ManagementController
      */
     public function revokeAbility(RevokeAbilityRequest $request, Permission $permission): Response | HttpException
     {
-        if( ! $this->roleService->deleteAbility(
+        if ( ! $this->roleService->deleteAbility(
             permission: $permission,
             ability: $request->validated()['ability'],
         )) {
@@ -164,14 +164,14 @@ final class ManagementController
      */
     public function assignUserRole(Role $role, User $user): Response | HttpException
     {
-        if( ! $user->is_admin && null !== $user->role_id) {
+        if ( ! $user->is_admin && null !== $user->role_id) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: 'This user has already an assign role. Please revoke the current role to assign a new one',
             );
         }
 
-        if( ! $user->update([
+        if ( ! $user->update([
             'role_id' => $role->id,
         ])) {
             abort(

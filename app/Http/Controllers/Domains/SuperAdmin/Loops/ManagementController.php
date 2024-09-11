@@ -59,7 +59,7 @@ final class ManagementController
      */
     public function edit(CreateOrEditLoopRequest $request, Station $station, Loop $loop): Response | HttpException
     {
-        if( ! $this->loopService->editLoop(
+        if ( ! $this->loopService->editLoop(
             loop: $loop,
             updatedLoopData: $request->validated(),
             station: $station,

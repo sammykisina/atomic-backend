@@ -51,8 +51,7 @@ final class Station extends Model
     public function section(): HasOne
     {
         return $this->hasOne(
-            related:
-            Section::class,
+            related: Section::class,
             foreignKey: 'station_id',
             localKey: 'id',
         );

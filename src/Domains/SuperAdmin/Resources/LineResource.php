@@ -30,12 +30,12 @@ final class LineResource extends JsonResource
             ),
             'stations' => StationResource::collection(
                 resource: $this->whenLoaded(
-                    relationship:'stations',
+                    relationship: 'stations',
                 ),
             ),
             'loops' => LoopResource::collection(
                 resource: $this->whenLoaded(
-                    relationship:'loops',
+                    relationship: 'loops',
                 ),
             ),
         ];

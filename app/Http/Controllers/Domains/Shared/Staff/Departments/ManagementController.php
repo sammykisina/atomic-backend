@@ -30,7 +30,7 @@ final class ManagementController
             departmentData: $request->validated(),
         );
 
-        if( ! $department) {
+        if ( ! $department) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: 'Department creation failed.',
@@ -56,7 +56,7 @@ final class ManagementController
      */
     public function edit(CreateOrEditDepartmentRequest $request, Department $department): Response | HttpException
     {
-        if( ! $this->departmentService->editDepartment(
+        if ( ! $this->departmentService->editDepartment(
             updatedDepartmentData: $request->validated(),
             department: $department,
         )) {

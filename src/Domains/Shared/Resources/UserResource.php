@@ -40,7 +40,7 @@ final class UserResource extends JsonResource
             ),
             'role' => $this->resource->is_admin ? '*' : new RoleResource(
                 resource: $this->whenLoaded(
-                    relationship:'role',
+                    relationship: 'role',
                 ),
             ),
         ];

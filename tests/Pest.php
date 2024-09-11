@@ -21,7 +21,7 @@ expect()->extend('toBePhoneNumber', function (): void {
         );
     }
 
-    if( ! is_numeric(Str::of($this->value)->after('+')->remove([' ', '-'])->toString())) {
+    if ( ! is_numeric(Str::of($this->value)->after('+')->remove([' ', '-'])->toString())) {
         throw new ExpectationFailedException(
             message: "Phone numbers must be numeric",
         );
