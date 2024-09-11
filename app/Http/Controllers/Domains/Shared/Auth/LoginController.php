@@ -27,7 +27,12 @@ final class LoginController
         );
 
         if ($user) {
-            $abilities = $user->is_admin ? ['*'] : [];
+            $abilities = $user->is_admin ? ['*'] :
+                $user->role->permissions->pluck('abilities')
+                    ->flatMap(function ($ability) {
+                        return json_decode($ability, true);
+                    })
+                    ->toArray();
 
             $token = $user->createToken(
                 name: 'auth',
