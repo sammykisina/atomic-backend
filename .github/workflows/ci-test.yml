@@ -1,6 +1,7 @@
 name: Run Tests
 
-on: [push]
+on:
+  workflow_call:
 
 jobs:
   test:
@@ -8,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -26,4 +27,3 @@ jobs:
 
       - name: Run Tests
         run: vendor/bin/pest
- 
