@@ -4,10 +4,12 @@ on: [push]
 
 jobs:
   linting:
-    name: run static code analysis
+    name: Run static code analysis
     uses: ./.github/workflows/ci-lint.yml
+    permissions: # Add permissions for contents: write
+      contents: write # This gives the reusable workflow write access to the repository
 
   tests:
-    name: run tests
+    name: Run tests
     needs: linting
     uses: ./.github/workflows/ci-test.yml
