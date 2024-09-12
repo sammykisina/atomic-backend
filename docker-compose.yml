@@ -60,6 +60,19 @@ services:
         networks:
             - atomic-backend-network
 
+    queue:
+        image: 34996980/atomic-backend-image:v1.0.0
+        container_name: atomic-queue-container
+        restart: always
+        working_dir: /var/www/
+        command: php artisan queue:work
+        depends_on:
+            - atomic-backend-app
+        volumes:
+            - ./:/var/www
+        networks:
+            - atomic-backend-network
+
 networks:
     atomic-backend-network:
         driver: bridge
