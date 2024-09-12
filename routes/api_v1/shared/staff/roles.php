@@ -7,7 +7,7 @@ use App\Http\Controllers\Domains\Shared\Staff\Roles\IndexController;
 use App\Http\Controllers\Domains\Shared\Staff\Roles\ManagementController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:sanctum', 'abilities:get-roles,create-roles,edit-roles,delete-roles'])->group(function (): void {
+Route::middleware(['auth:sanctum', 'abilities:read-roles,create-roles,edit-roles,delete-roles,assign-roles, revoke-roles, create-permissions, revoke-permissions,revoke-ability'])->group(function (): void {
     Route::get('/', IndexController::class)->name(name: "index");
 
     Route::controller(ManagementController::class)->group(function (): void {

@@ -26,6 +26,9 @@ final class ApplicationModulesController
                 'delete-roles',
                 'assign-roles',
                 'revoke-roles',
+                'create-permissions',
+                'revoke-permissions',
+                'revoke-ability',
             ],
             'departments' => [
                 'read-departments',
@@ -35,6 +38,33 @@ final class ApplicationModulesController
             ],
             'regions' => [
                 'read-regions',
+            ],
+            'lines' => [
+                'read-lines',
+                'create-lines',
+                'edit-lines',
+                'delete-lines',
+            ],
+            'loops' => [
+                'read-loops',
+                'create-loops',
+                'edit-loops',
+                'delete-loops',
+            ],
+            'sections' => [
+                'read-sections',
+                'create-sections',
+                'edit-sections',
+                'delete-sections',
+            ],
+            'stations' => [
+                'read-stations',
+                'create-stations',
+                'edit-stations',
+                'delete-stations',
+            ],
+            'counties' => [
+                'read-counties',
             ],
         ];
 
