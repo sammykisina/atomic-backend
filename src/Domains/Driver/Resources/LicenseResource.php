@@ -44,24 +44,24 @@ final class LicenseResource extends JsonResource
             ),
             'to_station_loop' => new LoopResource(
                 resource: $this->whenLoaded(
-                    relationship:'loop',
+                    relationship: 'loop',
                 ),
             ),
             'driver' => new UserResource(
                 resource: $this->whenLoaded(
-                    relationship:'loop',
+                    relationship: 'loop',
                 ),
             ),
             'status' => $this->resource->status,
             'direction' => $this->resource->direction,
             'issuer' => new UserResource(
                 resource: $this->whenLoaded(
-                    relationship:'issuer',
+                    relationship: 'issuer',
                 ),
             ),
             'rejector' => new UserResource(
                 resource: $this->whenLoaded(
-                    relationship:'rejector',
+                    relationship: 'rejector',
                 ),
             ),
             'issued_at' => new DateResource(

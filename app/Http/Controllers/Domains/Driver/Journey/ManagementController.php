@@ -27,8 +27,8 @@ final class ManagementController
      */
     public function create(CreateOrEditJourneyRequest $request): Response | HttpException
     {
-        if($this->journeyService->activeJourney()){
-             abort(
+        if ($this->journeyService->activeJourney()) {
+            abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: 'You already have an active journey. Request license on it instead or contact operator for further inquires',
             );
@@ -90,7 +90,7 @@ final class ManagementController
      */
     public function createLocation(LocationRequest $request, Journey $journey): Response | HttpException
     {
-        if( ! $this->journeyService->createTrainLocation(
+        if ( ! $this->journeyService->createTrainLocation(
             journey: $journey,
             updatedJourneyData: $request->validated(),
         )) {

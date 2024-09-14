@@ -28,7 +28,7 @@ final class LoginController
         );
 
         if ($user) {
-            if( ! $user->role && ! $user->is_admin) {
+            if ( ! $user->role && ! $user->is_admin) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
                     message: 'Your role is not set yet to access the system.Please contact your system administrator for assistance.',

@@ -111,9 +111,9 @@ final class JourneyService
     public function activeJourney(): ?Journey
     {
         return Journey::query()
-                    ->where('status', true)
-                    ->where('driver_id', Auth::id())
-                    ->first();
+            ->where('status', true)
+            ->where('driver_id', Auth::id())
+            ->first();
     }
 
     /**

@@ -20,7 +20,7 @@ final class CreateOrEditJourneyRequest extends FormRequest
             ],
             'service_order' => [
                 'required',
-                  Rule::unique(table: 'journeys', column: 'service_order')->ignore(id: $this->journey ? $this->journey->id : ''),
+                Rule::unique(table: 'journeys', column: 'service_order')->ignore(id: $this->journey ? $this->journey->id : ''),
             ],
             'number_of_coaches' => [
                 'required',
