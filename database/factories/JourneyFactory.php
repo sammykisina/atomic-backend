@@ -6,9 +6,9 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-final class LoopFactory extends Factory
+final class JourneyFactory extends Factory
 {
-    /**  @return array<string, mixed> */
+    /** @return array<string, mixed> */
     public function definition(): array
     {
         return [

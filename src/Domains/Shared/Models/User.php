@@ -93,7 +93,7 @@ final class User extends Authenticatable
         return new UserFactory();
     }
 
-    /** @return array<string, string> */
+    /** @return array<string, mixed> */
     protected function casts(): array
     {
         return [

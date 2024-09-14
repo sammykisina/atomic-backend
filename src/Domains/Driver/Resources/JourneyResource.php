@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Domains\Driver\Resources;
+
+use Domains\Driver\Models\Journey;
+use Domains\SuperAdmin\Resources\StationResource;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/** @property-read  Journey $resource */
+final class JourneyResource extends JsonResource
+{
+    /**  @return array<string, mixed> */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->resource->id,
+            'train_information' => [
+                'train_number' => $this->resource->train,
+                'service_order' => $this->resource->service_order,
+                'number_of_coaches' => $this->resource->number_of_coaches,
+            ],
+            'origin' => new StationResource(
+                resource: $this->whenLoaded(
+                    relationship: 'origin',
+                ),
+            ),
+            'destination' => new StationResource(
+                resource: $this->whenLoaded(
+                    relationship: 'destination',
+                ),
+            ),
+            'status' => $this->resource->status,
+        ];
+    }
+}

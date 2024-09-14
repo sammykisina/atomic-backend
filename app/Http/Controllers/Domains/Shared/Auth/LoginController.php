@@ -8,6 +8,7 @@ use Domains\Shared\Requests\LoginRequest;
 use Domains\Shared\Resources\UserResource;
 use Domains\Shared\Services\AuthService;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use JustSteveKing\StatusCode\Http;
 
 final class LoginController
@@ -27,10 +28,19 @@ final class LoginController
         );
 
         if ($user) {
+            if( ! $user->role && ! $user->is_admin) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'Your role is not set yet to access the system.Please contact your system administrator for assistance.',
+                );
+            }
+
             $abilities = $user->is_admin ? ['*'] :
                 $user->role->permissions->pluck('abilities')
                     ->flatMap(fn($ability) => json_decode($ability, true))
                     ->toArray();
+
+            Log::info('login', ['abilities' => $abilities]);
 
             $token = $user->createToken(
                 name: 'auth',

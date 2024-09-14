@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /** @property-read User $resource */
-
 final class UserResource extends JsonResource
 {
     /** @return array<string, mixed> */
@@ -38,7 +37,7 @@ final class UserResource extends JsonResource
                     relationship: 'region',
                 ),
             ),
-            'role' => $this->resource->is_admin ? '*' : new RoleResource(
+            'role' => new RoleResource(
                 resource: $this->whenLoaded(
                     relationship: 'role',
                 ),

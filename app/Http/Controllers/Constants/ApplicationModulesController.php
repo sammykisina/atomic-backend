@@ -66,6 +66,22 @@ final class ApplicationModulesController
             'counties' => [
                 'read-counties',
             ],
+            'licenses' => [
+                'read-licenses',
+                'request-licenses',
+                'edit-licenses',
+                'delete-licenses',
+                'confirm-licenses',
+                'reject-licenses',
+            ],
+            'journeys' => [
+                'read-journeys',
+                'request-journeys',
+                'edit-journeys',
+                'delete-journeys',
+                'reject-journeys',
+                'accept-journeys',
+            ],
         ];
 
         return response(

@@ -16,7 +16,7 @@ final class IndexController
     public function __invoke(Request $request): Response
     {
         $lines  = QueryBuilder::for(Line::class)
-            ->allowedIncludes('regions', 'counties', 'stations.section', 'loops.station', )
+            ->allowedIncludes('regions', 'counties', 'stations.section', 'stations.loops', )
             ->get();
 
         return response(

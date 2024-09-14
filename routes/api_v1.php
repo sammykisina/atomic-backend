@@ -44,3 +44,13 @@ Route::prefix('/super-admin')->as('super-admin:')->group(
         base_path('routes/api_v1/super_admin/sections.php'),
     ],
 );
+
+/**
+ * DRIVER ROUTES
+ */
+Route::prefix('/driver')->as('driver:')->group(
+    [
+        // JOURNEYS
+        base_path('routes/api_v1/driver/journeys.php'),
+    ],
+);

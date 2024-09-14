@@ -17,6 +17,7 @@ final class StationResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'name' => $this->resource->name,
+            'line_id' => $this->resource->line_id,
             'kilometer' => [
                 'start' => $this->resource->start_kilometer,
                 'end' => $this->resource->end_kilometer,

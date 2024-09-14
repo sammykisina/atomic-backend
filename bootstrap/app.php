@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'abilities' => CheckAbilities::class,
+            // 'abilities' => CheckAbilities::class,
             'ability' => CheckForAnyAbility::class,
         ]);
     })

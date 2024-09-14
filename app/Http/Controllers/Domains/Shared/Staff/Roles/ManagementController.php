@@ -164,6 +164,13 @@ final class ManagementController
      */
     public function assignUserRole(Role $role, User $user): Response | HttpException
     {
+        if (0 === $role->permissions->count()) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Add role permissions / abilities before assigning it to the user',
+            );
+        }
+
         if ( ! $user->is_admin && null !== $user->role_id) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
