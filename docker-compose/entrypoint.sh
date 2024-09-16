@@ -8,7 +8,7 @@ php artisan route:clear
 # composer install or update for new added package
 # composer install -n --prefer-dist
 # Run Laravel migrations
-php artisan migrate:fresh
+php artisan migrate:refresh
 
 # php artisan db:seed 
 
