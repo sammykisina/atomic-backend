@@ -52,7 +52,7 @@ final class ManagementController
         $operator = User::query()->where('type', UserTypes::OPERATOR_CONTROLLER->value)->first();
 
         $operator->notify(new JourneyNotification(
-            journey: $journey
+            journey: $journey,
         ));
 
         // broadcast(
