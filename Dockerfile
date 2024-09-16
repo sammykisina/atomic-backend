@@ -42,7 +42,7 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
 # Set ownership for the entire working directory
 RUN chown -R $user:www-data /var/www
 
-# Copy the entrypoint script and the wrapper script
+# Copy the entrypoint and wrapper scripts
 COPY docker-compose/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY docker-compose/entrypoint-wrapper.sh /usr/local/bin/entrypoint-wrapper.sh
 
