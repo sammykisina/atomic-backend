@@ -19,5 +19,8 @@ final class Location extends Model
         'loop_id',
         'section_id',
         'status',
+
+        'latitude',
+        'longitude',
     ];
 }

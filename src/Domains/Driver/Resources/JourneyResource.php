@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Driver\Resources;
 
 use Domains\Driver\Models\Journey;
+use Domains\Shared\Resources\UserResource;
 use Domains\SuperAdmin\Resources\StationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -33,6 +34,11 @@ final class JourneyResource extends JsonResource
                 ),
             ),
             'status' => $this->resource->status,
+            'driver' => new UserResource(
+                resource: $this->whenLoaded(
+                    relationship: 'driver',
+                ),
+            ),
         ];
     }
 }

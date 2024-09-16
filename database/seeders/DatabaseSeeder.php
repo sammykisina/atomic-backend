@@ -15,6 +15,7 @@ final class DatabaseSeeder extends Seeder
             RegionSeeder::class,
             UserSeeder::class,
             CountySeed::class,
+            DeskSeeder::class,
         ]);
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Laravel\Sanctum\Http\Middleware\CheckAbilities;
 use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -16,9 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        Illuminate\Http\Middleware\HandleCors::class;
         $middleware->alias([
-            // 'abilities' => CheckAbilities::class,
             'ability' => CheckForAnyAbility::class,
         ]);
     })
+    ->withBroadcasting(
+        __DIR__ . '/../routes/channels.php',
+        ['prefix' => 'api', 'middleware' => ['api', 'auth:sanctum']],
+    )
     ->withExceptions(function (Exceptions $exceptions): void {})->create();

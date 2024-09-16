@@ -16,6 +16,7 @@ final class UserResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
+            'first_name' => $this->resource->first_name,
             'last_name' => $this->resource->last_name,
             'email' => $this->resource->email,
             'phone' => $this->resource->phone,
@@ -40,6 +41,11 @@ final class UserResource extends JsonResource
             'role' => new RoleResource(
                 resource: $this->whenLoaded(
                     relationship: 'role',
+                ),
+            ),
+            'active_desk' => new DeskResource(
+                resource: $this->whenLoaded(
+                    relationship: 'activeDesk',
                 ),
             ),
         ];

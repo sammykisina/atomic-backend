@@ -41,6 +41,15 @@ return new class () extends Migration {
                 ->constrained()
                 ->nullOnDelete();
 
+            $table->foreignId(column: 'active_desk_id')
+                ->nullable()
+                ->references(column: 'id')
+                ->on(table: 'desks')
+                ->index()
+                ->constrained()
+                ->nullOnDelete()
+                ->name('fk_active_desk');
+
             $table->timestamp(column: 'email_verified_at')->nullable();
             $table->string(column: 'image_url')->nullable();
             $table->string(column: 'password');

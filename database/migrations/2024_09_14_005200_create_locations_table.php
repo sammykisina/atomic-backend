@@ -17,6 +17,9 @@ return new class () extends Migration {
                 ->constrained()
                 ->cascadeOnDelete();
 
+            $table->float(column: "latitude");
+            $table->float(column: "longitude");
+
             $table->foreignId(column: 'station_id')
                 ->index()
                 ->nullable()

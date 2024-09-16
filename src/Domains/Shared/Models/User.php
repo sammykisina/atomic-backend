@@ -11,6 +11,7 @@ use Domains\Shared\Enums\WorkStatuses;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -42,6 +43,7 @@ final class User extends Authenticatable
         'updater_id',
         'password',
         'role_id',
+        'active_desk_id',
     ];
 
     /** @var array<int, string> */
@@ -77,6 +79,8 @@ final class User extends Authenticatable
         );
     }
 
+
+
     /**
      * @param Builder $query
      * @param string $type
@@ -85,6 +89,26 @@ final class User extends Authenticatable
     public function scopeType(Builder $query, string $type): Builder
     {
         return $query->where('type', '!=', $type);
+    }
+
+    /** @return BelongsTo<User> */
+    public function activeDesk(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: Desk::class,
+            foreignKey: 'active_desk_id',
+        );
+    }
+
+    /** @return BelongsToMany<User> */
+    public function desks(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            related: Desk::class,
+            table: 'desks_users',
+            foreignPivotKey: 'user_id',
+            relatedPivotKey: 'desk_id',
+        );
     }
 
     /** @return UserFactory */

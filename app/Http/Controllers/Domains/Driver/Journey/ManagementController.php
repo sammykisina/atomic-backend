@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\Driver\Journey;
 
 use Domains\Driver\Models\Journey;
+use Domains\Driver\Notifications\JourneyNotification;
 use Domains\Driver\Requests\CreateOrEditJourneyRequest;
 use Domains\Driver\Requests\LocationRequest;
 use Domains\Driver\Resources\JourneyResource;
 use Domains\Driver\Services\JourneyService;
+use Domains\Shared\Enums\UserTypes;
+use Domains\Shared\Events\NotificationSent;
+use Domains\Shared\Models\User;
 use JustSteveKing\StatusCode\Http;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -44,6 +48,20 @@ final class ManagementController
                 message: 'Journey creation failed.',
             );
         }
+
+        $operator = User::query()->where('type', UserTypes::OPERATOR_CONTROLLER->value)->first();
+
+        $operator->notify(new JourneyNotification(
+            journey: $journey
+        ));
+
+        // broadcast(
+        //     event: new NotificationSent(
+        //         receiver: $operator,
+        //         sender: $journey->driver,
+        //         message: "A new journey ".$journey->origin->name . " to " . $journey->destination->name  ." has been created. Please check it out.",
+        //     ),
+        // );
 
         return response(
             content: [

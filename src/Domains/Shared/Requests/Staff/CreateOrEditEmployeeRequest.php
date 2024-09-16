@@ -60,6 +60,10 @@ final class CreateOrEditEmployeeRequest extends FormRequest
                 'required',
                 Rule::enum(WorkStatuses::class),
             ],
+            'desk_id' => [
+                'exists:desks,id',
+                Rule::requiredIf(fn(): bool => $this->type === UserTypes::OPERATOR_CONTROLLER->value),
+            ],
         ];
     }
 
@@ -68,6 +72,8 @@ final class CreateOrEditEmployeeRequest extends FormRequest
     {
         return [
             'national_id.size' => 'National ID number must be 8 numbers.',
+            'desk_id.required' => 'Employee current operating desk is required.',
+            'department_id.required' => 'Employee current department is required.',
         ];
     }
 

@@ -23,9 +23,7 @@ Route::prefix('/staff')->as('staff:')->group(
     base_path('routes/api_v1/shared/staff.php'),
 );
 
-/**
- * SUPER ADMIN ROUTES
- */
+// SUPER ADMIN ROUTES
 Route::prefix('/super-admin')->as('super-admin:')->group(
     [
         // COUNTY ROUTES
@@ -45,12 +43,23 @@ Route::prefix('/super-admin')->as('super-admin:')->group(
     ],
 );
 
-/**
- * DRIVER ROUTES
- */
+// DRIVER ROUTES
 Route::prefix('/driver')->as('driver:')->group(
     [
         // JOURNEYS
         base_path('routes/api_v1/driver/journeys.php'),
     ],
+);
+
+// OPERATOR ROUTES
+Route::prefix('/operator')->as('operator:')->group(
+    [
+        // JOURNEYS
+        base_path('routes/api_v1/operator/journeys_management.php'),
+    ],
+);
+
+// NOTIFICATIONS
+Route::prefix('/notifications')->as('notifications:')->group(
+    base_path('routes/api_v1/shared/notifications.php'),
 );

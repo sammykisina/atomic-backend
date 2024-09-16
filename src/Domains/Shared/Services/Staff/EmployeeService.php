@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Domains\Shared\Services\Staff;
 
+use Domains\Shared\Models\Desk;
 use Domains\Shared\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 final class EmployeeService
@@ -27,7 +30,7 @@ final class EmployeeService
             'department_id' => $employeeData['department_id'],
             'region_id' => $employeeData['region_id'],
             'work_status' => $employeeData['work_status'],
-            'creator_id' => auth()->id(),
+            'creator_id' => Auth::id(),
             'password' => Hash::make(
                 value: $employeeData['email'],
             ),
@@ -54,7 +57,45 @@ final class EmployeeService
             'department_id' => $updatedEmployeeData['department_id'],
             'region_id' => $updatedEmployeeData['region_id'],
             'work_status' => $updatedEmployeeData['work_status'],
-            'updater_id' => auth()->id(),
+            'updater_id' => Auth::id(),
         ]);
+    }
+
+    /**
+     * UPDATE EMPLOYEE CURRENT DESK
+     * @param User $employee
+     * @param int $desk_id
+     * @return bool
+     */
+    public function updateEmployeeDesk(User $employee, int $desk_id): bool
+    {
+        $employee->desks()->attach($desk_id, ['status' => true]);
+
+        return $employee->update([
+            'active_desk_id' => $desk_id,
+        ]);
+    }
+
+    /**
+     * MOVE EMPLOYEE TO NEW DESK
+     * @param User $employee
+     * @param Desk $desk
+     * @return bool
+     */
+    public function moveEmployeeToNewDesk(User $employee, Desk $desk): bool
+    {
+        $result = DB::transaction(function () use ($employee, $desk) {
+            $employee->desks()->updateExistingPivot($desk->id, [
+                'status' => false,
+            ]);
+
+            $employee->desks()->attach($desk->id, ['status' => true]);
+
+            return $employee->update([
+                'active_desk_id' => $desk->id,
+            ]);
+        });
+
+        return $result;
     }
 }

@@ -20,7 +20,7 @@ final class IndexController
             ->allowedFilters([
                 AllowedFilter::scope('type'),
             ])
-            ->allowedIncludes('department', 'region', 'role.permissions')
+            ->allowedIncludes('department', 'region', 'role.permissions', 'activeDesk')
             ->get();
 
         return response(

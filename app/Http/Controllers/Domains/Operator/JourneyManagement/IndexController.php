@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\Driver\Journey;
+namespace App\Http\Controllers\Domains\Operator\JourneyManagement;
 
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Resources\JourneyResource;
@@ -16,11 +16,11 @@ final class IndexController
 {
     public function __invoke(Request $request): Response
     {
-        $journeys  = QueryBuilder::for(Journey::class)
-            ->allowedFilters([
-                AllowedFilter::exact('driver_id'),
+        $journeys  = QueryBuilder::for(subject: Journey::class)
+            ->allowedFilters(filters: [
+                AllowedFilter::exact(name: 'status', ),
             ])
-            ->allowedIncludes('origin', 'destination')
+            ->allowedIncludes('origin', 'destination', 'driver')
             ->get();
 
         return response(

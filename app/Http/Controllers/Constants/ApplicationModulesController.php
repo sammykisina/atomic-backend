@@ -79,6 +79,11 @@ final class ApplicationModulesController
                 'request-journeys',
                 'edit-journeys',
                 'delete-journeys',
+            ],
+            'journeys management' => [
+                'read-journeys',
+                'edit-journeys',
+                'delete-journeys',
                 'reject-journeys',
                 'accept-journeys',
             ],

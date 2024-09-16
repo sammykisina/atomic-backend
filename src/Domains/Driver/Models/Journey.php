@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Domains\Driver\Models;
 
+use Domains\Shared\Models\User;
 use Domains\SuperAdmin\Models\Station;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Auth;
 
 final class Journey extends Model
 {
@@ -27,6 +26,7 @@ final class Journey extends Model
         "origin_station_id",
         "destination_station_id",
         'status',
+
     ];
 
 
@@ -57,14 +57,15 @@ final class Journey extends Model
         );
     }
 
-    /**
-     * @param Builder $query
-     * @return Builder
-     */
-    public function scopeDriver(Builder $query): Builder
+    /** @return BelongsTo<User> */
+    public function driver(): BelongsTo
     {
-        return $query->where(column: 'driver_id', operator: '===', value: Auth::id());
+        return $this->belongsTo(
+            related: User::class,
+            foreignKey: 'driver_id',
+        );
     }
+
 
     /** @return array<string, mixed> */
     public function casts(): array
