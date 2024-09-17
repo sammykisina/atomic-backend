@@ -13,23 +13,33 @@ return new class () extends Migration {
         Schema::create(table: 'licenses', callback: function (Blueprint $table): void {
             $table->id();
 
+
+            $table->integer(column: 'license_number')->unique();
+
             $table->foreignId(column: 'journey_id')
                 ->index()
                 ->constrained();
 
-            $table->foreignId(column: 'line_id')
-                ->index()
+
+            $table->foreignId(column: 'origin_station_id')
                 ->nullable()
+                ->references(column: 'id')
+                ->on(table: 'stations')
+                ->index()
                 ->constrained()
-                ->nullOnDelete();
+                ->nullOnDelete()
+                ->name('fk_license_origin_station');
+
+            $table->foreignId(column: 'destination_station_id')
+                ->nullable()
+                ->references(column: 'id')
+                ->on(table: 'stations')
+                ->index()
+                ->constrained()
+                ->nullOnDelete()
+                ->name('fk_license_destination_station');
 
             $table->foreignId(column: 'section_id')
-                ->index()
-                ->nullable()
-                ->constrained()
-                ->nullOnDelete();
-
-            $table->foreignId(column: 'station_id')
                 ->index()
                 ->nullable()
                 ->constrained()
@@ -42,16 +52,7 @@ return new class () extends Migration {
                 ->index()
                 ->constrained()
                 ->nullOnDelete()
-                ->name('fk_main_line_section_in_station');
-
-            $table->foreignId(column: 'owner_id')
-                ->nullable()
-                ->references(column: 'id')
-                ->on(table: 'users')
-                ->index()
-                ->constrained()
-                ->nullOnDelete()
-                ->name('fk_license_owner');
+                ->name('fk_license_main_line');
 
             $table->foreignId(column: 'loop_id')
                 ->index()
@@ -62,7 +63,6 @@ return new class () extends Migration {
             $table->string(column: 'status')->default(value: LicenseStatuses::PENDING);
 
             $table->string(column: 'direction');
-
 
             $table->foreignId(column: 'issuer_id')
                 ->nullable()

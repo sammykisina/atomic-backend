@@ -20,7 +20,7 @@ final class IndexController
             ->allowedFilters([
                 AllowedFilter::exact('driver_id'),
             ])
-            ->allowedIncludes('origin', 'destination')
+            ->allowedIncludes('origin', 'destination', 'licenses.section', 'licenses.originStation', 'licenses.destinationStation', 'licenses.main', 'licenses.loop')
             ->get();
 
         return response(

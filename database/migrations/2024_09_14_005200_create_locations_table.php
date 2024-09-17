@@ -26,15 +26,6 @@ return new class () extends Migration {
                 ->constrained()
                 ->nullOnDelete();
 
-            $table->foreignId(column: 'main_id')
-                ->nullable()
-                ->references('id')
-                ->on('stations')
-                ->index()
-                ->constrained()
-                ->nullOnDelete()
-                ->name('fk_main_line_section_in_station');
-
             $table->foreignId(column: 'loop_id')
                 ->index()
                 ->nullable()

@@ -7,7 +7,6 @@ namespace Domains\Driver\Models;
 use Domains\Driver\Enums\LicenseDirections;
 use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Shared\Models\User;
-use Domains\SuperAdmin\Models\Line;
 use Domains\SuperAdmin\Models\Loop;
 use Domains\SuperAdmin\Models\Section;
 use Domains\SuperAdmin\Models\Station;
@@ -23,11 +22,12 @@ final class License extends Model
 
     /** @var array<int, string> */
     protected $fillable = [
+        'license_number',
         'journey_id',
-        'line_id',
+        'origin_station_id',
+        'destination_station_id',
+        'main_id',
         'section_id',
-        'station_id',
-        'driver_id',
         'loop_id',
         'status',
         'direction',
@@ -44,33 +44,37 @@ final class License extends Model
         return [
             'status' => LicenseStatuses::class,
             'direction' => LicenseDirections::class,
+            'issued_at' => 'datetime',
+            'rejected_at' => 'datetime',
+            'confirmed_at' => 'datetime',
         ];
     }
 
-    /** @return BelongsTo<Line>*/
-    public function line(): BelongsTo
-    {
-        return $this->belongsTo(
-            related: Line::class,
-            foreignKey: 'line_id',
-        );
-    }
 
     /** @return BelongsTo<Section>*/
     public function section(): BelongsTo
     {
         return $this->belongsTo(
             related: Section::class,
-            foreignKey: 'line_id',
+            foreignKey: 'section_id',
         );
     }
 
     /** @return BelongsTo<Station>*/
-    public function station(): BelongsTo
+    public function originStation(): BelongsTo
     {
         return $this->belongsTo(
             related: Station::class,
-            foreignKey: 'station_id',
+            foreignKey: 'origin_station_id',
+        );
+    }
+
+    /** @return BelongsTo<Station>*/
+    public function destinationStation(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: Station::class,
+            foreignKey: 'destination_station_id',
         );
     }
 
@@ -118,6 +122,4 @@ final class License extends Model
             foreignKey: 'loop_id',
         );
     }
-
-
 }

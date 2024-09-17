@@ -15,6 +15,26 @@ use Illuminate\Support\Facades\DB;
 final class JourneyService
 {
     /**
+     * GET JOURNEY DIRECTION TO DETERMINE LICENSE DIRECTION
+     * @param int $origin
+     * @param int $destination
+     * @return LicenseDirections|null
+     */
+    public static function getJourneyDirection(float $origin, float $destination): LicenseDirections | null
+    {
+        $station_difference = $origin - $destination;
+
+        if ($station_difference > 0) {
+            return LicenseDirections::DOWN_TRAIN;
+        }
+
+        if ($station_difference < 0) {
+            return LicenseDirections::UP_TRAIN;
+        }
+
+        return null;
+    }
+    /**
      * CREATE JOURNEY
      * @param array $journeyData
      * @return Journey
@@ -49,27 +69,6 @@ final class JourneyService
         ]);
     }
 
-    /**
-     * GET JOURNEY DIRECTION TO DETERMINE LICENSE DIRECTION
-     * @param int $origin
-     * @param int $destination
-     * @return LicenseDirections|null
-     */
-    public function getJourneyDirection(int $origin, int $destination): LicenseDirections | null
-    {
-        $station_difference = $origin - $destination;
-
-        if ($station_difference > 0) {
-            return LicenseDirections::DOWN_TRAIN;
-        }
-
-        if ($station_difference < 0) {
-            return LicenseDirections::UP_TRAIN;
-        }
-
-        return null;
-    }
-
 
     public function createLicense(Journey $journey): License
     {
@@ -84,17 +83,19 @@ final class JourneyService
      * @param array $updatedJourneyData
      * @return Location
      */
-    public function createTrainLocation(Journey $journey, array $updatedJourneyData): Location
+    public function createTrainLocation(Journey $journey, array $locationData): Location
     {
         $last_location = Location::query()->latest()->first();
 
         $location = Location::query()->create([
             'journey_id' => $journey->id,
-            'station_id' => $updatedJourneyData['station_id'],
-            'main_id' => $updatedJourneyData['main_id'],
-            'loop_id' => $updatedJourneyData['loop_id'],
-            'section_id' => $updatedJourneyData['section_id'],
+            'station_id' => $locationData['station_id'] ?? null,
+            'loop_id' => $locationData['loop_id'] ?? null,
+            'section_id' => $locationData['section_id'] ?? null,
             'status' => true,
+
+            'latitude' => $locationData['latitude'],
+            'longitude' => $locationData['longitude'],
         ]);
 
         if ($last_location && $location) {

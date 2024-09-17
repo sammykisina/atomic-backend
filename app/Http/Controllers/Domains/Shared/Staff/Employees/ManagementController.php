@@ -42,12 +42,12 @@ final class ManagementController
                 );
             }
 
-            if ($request->validated(key : 'type') === UserTypes::OPERATOR_CONTROLLER->value) {
-                $this->employeeService->updateEmployeeDesk(
-                    employee: $employee,
-                    desk_id: $request->validated(key : 'desk_id'),
-                );
-            }
+            // if ($request->validated(key : 'type') === UserTypes::OPERATOR_CONTROLLER->value) {
+            //     $this->employeeService->updateEmployeeDesk(
+            //         employee: $employee,
+            //         desk_id: $request->validated(key : 'desk_id'),
+            //     );
+            // }
 
             return $employee;
         });
@@ -98,7 +98,6 @@ final class ManagementController
      */
     public function moveEmployeeToDesk(User $employee, Desk $desk): Response | HttpException
     {
-        // dd($employee->type);
         if (UserTypes::OPERATOR_CONTROLLER !== $employee->type) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
@@ -106,10 +105,20 @@ final class ManagementController
             );
         }
 
-        if ($employee->active_desk_id === $desk->id) {
+        $users = $desk->users()->wherePivot('status', true)->get();
+
+        if ($users->count() > 0) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'This desk has an active operator already.Please deactivate the current active operator to assign a new one.',
+            );
+        }
+
+
+        if ($employee->active_desk_id) {
             return response(
                 content: [
-                    'message' => 'Employee already assigned to this desk.',
+                    'message' => 'Employee already assigned to this or another desk.',
                 ],
                 status: Http::FOUND(),
             );
@@ -128,6 +137,56 @@ final class ManagementController
                 'message' => 'Employee assigned to desk successfully.',
             ],
             status: Http::ACCEPTED(),
+        );
+    }
+
+    /* REMOVE EMPLOYEE FROM DESk
+     * @param User $employee
+     * @param Desk $desk
+     * @return Response|HttpException
+     */
+    public function removeEmployeeFromDesk(User $employee, Desk $desk): Response | HttpException
+    {
+        if (UserTypes::OPERATOR_CONTROLLER !== $employee->type) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Employee  is not operator controller.',
+            );
+        }
+
+
+        if ( ! $this->employeeService->removeEmployeeFromDesk(employee: $employee, desk: $desk)) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Employee removed from desk. Please try again.',
+            );
+
+        }
+
+        return response(
+            content: [
+                'message' => 'Employee removed to desk successfully.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
+
+
+    /**
+     * EMPLOYEE SHOW
+     * @param User $employee
+     * @return Response
+     */
+    public function show(User $employee): Response
+    {
+        return response(
+            content: [
+                'message' => 'Employee fetched successfully.',
+                'employee' => new UserResource(
+                    resource: $employee,
+                ),
+            ],
+            status: Http::OK(),
         );
     }
 }

@@ -18,6 +18,15 @@ final class Loop extends Model
         'position',
         'station_id',
         'line_id',
+
+        'start_latitude_top',
+        'start_longitude_top',
+        'start_latitude_bottom',
+        'start_longitude_bottom',
+        'end_latitude_top',
+        'end_longitude_top',
+        'end_latitude_bottom',
+        'end_longitude_bottom'
     ];
 
     /** @return BelongsTo<Station> */

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Driver\Resources;
 
 use Domains\Driver\Models\Journey;
+use Domains\Operator\Resources\LicenseResource;
 use Domains\Shared\Resources\UserResource;
 use Domains\SuperAdmin\Resources\StationResource;
 use Illuminate\Http\Request;
@@ -37,6 +38,11 @@ final class JourneyResource extends JsonResource
             'driver' => new UserResource(
                 resource: $this->whenLoaded(
                     relationship: 'driver',
+                ),
+            ),
+            'licenses' => LicenseResource::collection(
+                resource: $this->whenLoaded(
+                    relationship: 'licenses',
                 ),
             ),
         ];

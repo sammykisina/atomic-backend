@@ -73,4 +73,22 @@ final class ManagementController
             status: Http::ACCEPTED(),
         );
     }
+
+    /**
+     * DEPARTMENT SHOW
+     * @param Department $department
+     * @return Response
+     */
+    public function show(Department $department): Response
+    {
+        return response(
+            content: [
+                'message' => 'Department fetched successfully.',
+                'department' => new DepartmentResource(
+                    resource: $department,
+                ),
+            ],
+            status: Http::OK(),
+        );
+    }
 }

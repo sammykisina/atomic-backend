@@ -12,5 +12,6 @@ Route::middleware(['auth:sanctum', 'ability:read-sections,create-sections,update
     Route::controller(ManagementController::class)->group(function (): void {
         Route::post('/', 'create')->name(name: 'create');
         Route::patch('/{section}/edit', 'edit')->name(name: 'edit');
+        Route::get('/{section}/show', 'show')->name(name: 'show');
     });
 });

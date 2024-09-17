@@ -12,6 +12,7 @@ Route::middleware(['auth:sanctum', 'ability:read-departments, create-departments
 
     Route::controller(ManagementController::class)->group(function (): void {
         Route::post('/', 'create')->name(name: 'create');
+        Route::get('{department}/show', 'show')->name(name: 'show');
         Route::patch('/{department}/edit', 'edit')->name(name: 'edit');
     });
 });

@@ -9,6 +9,18 @@ use Domains\SuperAdmin\Models\Station;
 final class StationService
 {
     /**
+     * GET STATION WITH ID
+     * @param int $id
+     * @return Station
+     */
+    public static function getStation(int $id): Station
+    {
+        return Station::query()->where(
+            'id',
+            $id,
+        )->first();
+    }
+    /**
      * CREATE STATION
      * @param array $stationData
      * @return Station
@@ -19,10 +31,17 @@ final class StationService
             'name' => $stationData['name'],
             'start_kilometer' => $stationData['start_kilometer'],
             'end_kilometer' => $stationData['end_kilometer'],
-            'start_latitude' => $stationData['start_latitude'],
-            'start_longitude' => $stationData['start_longitude'],
-            'end_latitude' => $stationData['end_latitude'],
-            'end_longitude' => $stationData['end_longitude'],
+
+            'start_latitude_top' => $stationData['start_latitude_top'],
+            'start_longitude_top' => $stationData['start_longitude_top'],
+            'start_latitude_bottom' => $stationData['start_latitude_bottom'],
+            'start_longitude_bottom' => $stationData['start_longitude_bottom'],
+
+            'end_latitude_top' => $stationData['end_latitude_top'],
+            'end_longitude_top' => $stationData['end_longitude_top'],
+            'end_latitude_bottom' => $stationData['end_latitude_bottom'],
+            'end_longitude_bottom' => $stationData['end_longitude_bottom'],
+
             'line_id' => $stationData['line_id'],
             'is_yard' => $stationData['is_yard'],
             'position_from_line' => $stationData['position_from_line'],
@@ -41,10 +60,17 @@ final class StationService
             'name' => $updatedStationData['name'],
             'start_kilometer' => $updatedStationData['start_kilometer'],
             'end_kilometer' => $updatedStationData['end_kilometer'],
-            'start_latitude' => $updatedStationData['start_latitude'],
-            'start_longitude' => $updatedStationData['start_longitude'],
-            'end_latitude' => $updatedStationData['end_latitude'],
-            'end_longitude' => $updatedStationData['end_longitude'],
+            
+             'start_latitude_top' => $updatedStationData['start_latitude_top'],
+            'start_longitude_top' => $updatedStationData['start_longitude_top'],
+            'start_latitude_bottom' => $updatedStationData['start_latitude_bottom'],
+            'start_longitude_bottom' => $updatedStationData['start_longitude_bottom'],
+
+            'end_latitude_top' => $updatedStationData['end_latitude_top'],
+            'end_longitude_top' => $updatedStationData['end_longitude_top'],
+            'end_latitude_bottom' => $updatedStationData['end_latitude_bottom'],
+            'end_longitude_bottom' => $updatedStationData['end_longitude_bottom'],
+
             'line_id' => $updatedStationData['line_id'],
             'is_yard' => $updatedStationData['is_yard'],
             'position_from_line' => $updatedStationData['position_from_line'],

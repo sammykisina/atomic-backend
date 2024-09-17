@@ -9,4 +9,8 @@ enum LicenseStatuses: string
     case PENDING = 'PENDING';
     case REJECTED = 'REJECTED';
     case CANCELLED = 'CANCELLED';
+
+    case USED = 'USED';
+
+    case CONFIRMED = 'CONFIRMED';
 }

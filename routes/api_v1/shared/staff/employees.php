@@ -11,7 +11,9 @@ Route::middleware(['auth:sanctum', 'ability:read-staff,create-staff,edit-staff,d
 
     Route::controller(ManagementController::class)->group(function (): void {
         Route::post('/', 'create')->name(name: 'create');
+        Route::get('{employee}/show', 'show')->name(name: 'show');
         Route::patch('/{employee}/edit', 'edit')->name(name: 'edit');
         Route::patch('/{employee}/desks/{desk}', 'moveEmployeeToDesk')->name(name: 'move-employee-to-desk');
+        Route::patch('/{employee}/desks/{desk}/remove', 'removeEmployeeFromDesk')->name(name: 'remove-employee-from-desk');
     });
 });

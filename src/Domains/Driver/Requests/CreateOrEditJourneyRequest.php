@@ -34,6 +34,14 @@ final class CreateOrEditJourneyRequest extends FormRequest
                 'required',
                 'exists:stations,id',
             ],
+            'current_location_latitude' => [
+                'required',
+                'numeric',
+            ],
+            'current_location_longitude' => [
+                'required',
+                'numeric',
+            ],
         ];
     }
 }

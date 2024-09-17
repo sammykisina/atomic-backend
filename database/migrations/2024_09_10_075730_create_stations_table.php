@@ -16,11 +16,17 @@ return new class () extends Migration {
             $table->float(column: 'start_kilometer');
             $table->float(column: 'end_kilometer');
 
-            $table->float(column: 'start_latitude');
-            $table->float(column: 'start_longitude');
+            $table->float(column: 'start_latitude_top');
+            $table->float(column: 'start_longitude_top');
 
-            $table->float(column: 'end_latitude');
-            $table->float(column: 'end_longitude');
+            $table->float(column: 'start_latitude_bottom');
+            $table->float(column: 'start_longitude_bottom');
+
+             $table->float(column: 'end_latitude_top');
+            $table->float(column: 'end_longitude_top');
+
+            $table->float(column: 'end_latitude_bottom');
+            $table->float(column: 'end_longitude_bottom');
 
             $table->boolean(column: 'is_yard')->default(
                 value: false,

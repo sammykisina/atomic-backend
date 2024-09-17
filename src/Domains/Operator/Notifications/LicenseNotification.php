@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Domains\Operator\Notifications;
 
+use Domains\Driver\Models\License;
 use Domains\Shared\Enums\NotificationTypes;
-use Domains\Shared\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-final class DriverCurrentLocationNotification extends Notification
+final class LicenseNotification extends Notification
 {
     use Queueable;
 
     public function __construct(
-        public User $operator,
+        public License $license,
+        public NotificationTypes $type,
     ) {}
 
     /** @return array<int, string> */
@@ -27,8 +28,8 @@ final class DriverCurrentLocationNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'operator' => $this->operator,
-            'type' => NotificationTypes::CURRENT_DRIVER_LOCATION,
+            'license' => $this->license,
+            'type' => $this->type,
         ];
     }
 }

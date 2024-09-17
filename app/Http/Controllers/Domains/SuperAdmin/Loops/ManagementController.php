@@ -77,4 +77,22 @@ final class ManagementController
             status: Http::ACCEPTED(),
         );
     }
+
+    /**
+     * GET LOOP
+     * @param Loop $loop
+     * @return Response
+     */
+    public function show(Loop $loop): Response
+    {
+        return response(
+            content: [
+                'message' => 'Loop fetched successfully.',
+                'loop' => new LoopResource(
+                    resource: $loop,
+                ),
+            ],
+            status: Http::OK(),
+        );
+    }
 }

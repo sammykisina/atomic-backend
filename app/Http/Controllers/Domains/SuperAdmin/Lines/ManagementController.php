@@ -98,4 +98,22 @@ final class ManagementController
             status: Http::ACCEPTED(),
         );
     }
+
+    /**
+     * SHOW LINE
+     * @param Line $line
+     * @return Response
+     */
+    public function show(Line $line): Response | HttpException
+    {
+        return response(
+            content: [
+                'message' => 'Line fetched successfully.',
+                'line' => new LineResource(
+                    resource: $line,
+                ),
+            ],
+            status: Http::OK(),
+        );
+    }
 }

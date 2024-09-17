@@ -79,8 +79,6 @@ final class User extends Authenticatable
         );
     }
 
-
-
     /**
      * @param Builder $query
      * @param string $type
@@ -99,6 +97,7 @@ final class User extends Authenticatable
             foreignKey: 'active_desk_id',
         );
     }
+
 
     /** @return BelongsToMany<User> */
     public function desks(): BelongsToMany

@@ -12,5 +12,6 @@ Route::middleware(['auth:sanctum', 'ability:read-stations,create-stations,update
     Route::controller(ManagementController::class)->group(function (): void {
         Route::post('/', 'create')->name(name: 'create');
         Route::patch('/{station}/edit', 'edit')->name(name: 'edit');
+        Route::get('/{station}/show', 'show')->name(name: 'show');
     });
 });

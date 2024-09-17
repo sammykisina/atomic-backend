@@ -12,5 +12,6 @@ Route::middleware(['auth:sanctum', 'ability:read-lines,create-lines,update-lines
     Route::controller(ManagementController::class)->group(function (): void {
         Route::post('/', 'create')->name(name: 'create');
         Route::patch('/{line}/edit', 'edit')->name(name: 'edit');
+        Route::get('/{line}/show', 'show')->name(name: 'show');
     });
 });

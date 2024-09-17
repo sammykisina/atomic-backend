@@ -28,22 +28,39 @@ final class CreateOrEditStationRequest extends FormRequest
                 'required',
             ] ,
 
-            'start_latitude' => [
+            'start_latitude_top' => [
                 'numeric',
                 'required',
             ] ,
-            'start_longitude' => [
+            'start_longitude_top' => [
                 'numeric',
                 'required',
             ],
-            'end_latitude' => [
+             'start_latitude_bottom' => [
                 'numeric',
                 'required',
             ] ,
-            'end_longitude' => [
+            'start_longitude_bottom' => [
                 'numeric',
                 'required',
             ],
+            'end_latitude_top' => [
+                'numeric',
+                'required',
+            ] ,
+            'end_longitude_top' => [
+                'numeric',
+                'required',
+            ],
+            'end_latitude_bottom' => [
+                'numeric',
+                'required',
+            ] ,
+            'end_longitude_bottom' => [
+                'numeric',
+                'required',
+            ],
+        
             'line_id' => [
                 'required',
                 'exists:lines,id',

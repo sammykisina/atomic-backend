@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Domains\Shared\Services\Staff;
 
+use Domains\Driver\Enums\LicenseDirections;
+use Domains\Driver\Models\Journey;
+use Domains\Driver\Services\JourneyService;
+use Domains\Shared\Enums\DeskNames;
 use Domains\Shared\Models\Desk;
 use Domains\Shared\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -12,6 +16,29 @@ use Illuminate\Support\Facades\Hash;
 
 final class EmployeeService
 {
+    public static function currentDeskOperator(Journey $journey): ?User
+    {
+        $operator = null;
+
+        $desk_1 = Desk::query()->where('name', DeskNames::DESK_ONE->value)->first();
+
+        $desk_2 = Desk::query()->where('name', DeskNames::DESK_TWO->value)->first();
+
+        $journeyDirection = JourneyService::getJourneyDirection(
+            origin: $journey->origin->start_kilometer,
+            destination: $journey->destination->start_kilometer,
+        );
+
+        if (LicenseDirections::UP_TRAIN === $journeyDirection) {
+            $operator = User::query()->where('active_desk_id', $desk_1->id)->first();
+        }
+
+        if (LicenseDirections::DOWN_TRAIN === $journeyDirection) {
+            $operator = User::query()->where('active_desk_id', $desk_2->id)->first();
+        }
+
+        return $operator;
+    }
     /**
      * CREATE EMPLOYEE
      * @param array $employeeData
@@ -93,6 +120,28 @@ final class EmployeeService
 
             return $employee->update([
                 'active_desk_id' => $desk->id,
+            ]);
+        });
+
+        return $result;
+    }
+
+
+    /**
+     * REMOVE EMPLOYEE FROM DESK
+     * @param User $employee
+     * @param Desk $desk
+     * @return bool
+     */
+    public function removeEmployeeFromDesk(User $employee, Desk $desk): bool
+    {
+        $result = DB::transaction(function () use ($employee, $desk) {
+            $employee->desks()->updateExistingPivot($desk->id, [
+                'status' => false,
+            ]);
+
+            return $employee->update([
+                'active_desk_id' => null,
             ]);
         });
 

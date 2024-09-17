@@ -60,10 +60,10 @@ final class CreateOrEditEmployeeRequest extends FormRequest
                 'required',
                 Rule::enum(WorkStatuses::class),
             ],
-            'desk_id' => [
-                'exists:desks,id',
-                Rule::requiredIf(fn(): bool => $this->type === UserTypes::OPERATOR_CONTROLLER->value),
-            ],
+            // 'desk_id' => [
+            //     'exists:desks,id',
+            //     Rule::requiredIf(fn(): bool => $this->type === UserTypes::OPERATOR_CONTROLLER->value),
+            // ],
         ];
     }
 

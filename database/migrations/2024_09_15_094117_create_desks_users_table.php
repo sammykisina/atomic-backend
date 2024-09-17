@@ -20,7 +20,7 @@ return new class () extends Migration {
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->boolean(column: 'status');
+            $table->boolean(column: 'status')->default(value: false);
 
             $table->timestamp(column: 'created_at')->useCurrent();
 
