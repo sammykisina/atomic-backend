@@ -20,7 +20,7 @@ final class CreateOrEditLoopRequest extends FormRequest
                 'numeric',
             ],
 
-             'start_latitude_top' => [
+            'start_latitude_top' => [
                 'numeric',
                 'required',
             ] ,
@@ -28,7 +28,7 @@ final class CreateOrEditLoopRequest extends FormRequest
                 'numeric',
                 'required',
             ],
-             'start_latitude_bottom' => [
+            'start_latitude_bottom' => [
                 'numeric',
                 'required',
             ] ,
@@ -52,7 +52,7 @@ final class CreateOrEditLoopRequest extends FormRequest
                 'numeric',
                 'required',
             ],
-            
+
             'position' => [
                 'required',
                 Rule::enum(LoopPositions::class),

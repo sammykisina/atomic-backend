@@ -20,8 +20,8 @@ final class Station extends Model
         "name",
         "start_kilometer",
         "end_kilometer",
-        
-         'start_latitude_top',
+
+        'start_latitude_top',
         'start_longitude_top',
         'start_latitude_bottom',
         'start_longitude_bottom',

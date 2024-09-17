@@ -26,7 +26,7 @@ final class Loop extends Model
         'end_latitude_top',
         'end_longitude_top',
         'end_latitude_bottom',
-        'end_longitude_bottom'
+        'end_longitude_bottom',
     ];
 
     /** @return BelongsTo<Station> */

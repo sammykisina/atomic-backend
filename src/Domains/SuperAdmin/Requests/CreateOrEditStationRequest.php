@@ -36,7 +36,7 @@ final class CreateOrEditStationRequest extends FormRequest
                 'numeric',
                 'required',
             ],
-             'start_latitude_bottom' => [
+            'start_latitude_bottom' => [
                 'numeric',
                 'required',
             ] ,
@@ -60,7 +60,7 @@ final class CreateOrEditStationRequest extends FormRequest
                 'numeric',
                 'required',
             ],
-        
+
             'line_id' => [
                 'required',
                 'exists:lines,id',

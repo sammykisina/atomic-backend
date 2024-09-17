@@ -25,13 +25,13 @@ return new class () extends Migration {
                 ->constrained()
                 ->cascadeOnDelete();
 
-                $table->float(column: 'start_latitude_top');
+            $table->float(column: 'start_latitude_top');
             $table->float(column: 'start_longitude_top');
 
             $table->float(column: 'start_latitude_bottom');
             $table->float(column: 'start_longitude_bottom');
 
-             $table->float(column: 'end_latitude_top');
+            $table->float(column: 'end_latitude_top');
             $table->float(column: 'end_longitude_top');
 
             $table->float(column: 'end_latitude_bottom');

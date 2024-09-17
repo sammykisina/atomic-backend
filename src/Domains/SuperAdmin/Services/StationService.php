@@ -60,8 +60,8 @@ final class StationService
             'name' => $updatedStationData['name'],
             'start_kilometer' => $updatedStationData['start_kilometer'],
             'end_kilometer' => $updatedStationData['end_kilometer'],
-            
-             'start_latitude_top' => $updatedStationData['start_latitude_top'],
+
+            'start_latitude_top' => $updatedStationData['start_latitude_top'],
             'start_longitude_top' => $updatedStationData['start_longitude_top'],
             'start_latitude_bottom' => $updatedStationData['start_latitude_bottom'],
             'start_longitude_bottom' => $updatedStationData['start_longitude_bottom'],
