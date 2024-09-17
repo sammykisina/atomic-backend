@@ -21,6 +21,17 @@ final class LoopService
             'position' => $loopData['position'],
             'distance' => $loopData['distance'],
             'station_id' => $station->id,
+
+            'start_latitude_top' => $loopData['start_latitude_top'],
+            'start_longitude_top' => $loopData['start_longitude_top'],
+            'start_latitude_bottom' => $loopData['start_latitude_bottom'],
+            'start_longitude_bottom' => $loopData['start_longitude_bottom'],
+
+            'end_latitude_top' => $loopData['end_latitude_top'],
+            'end_longitude_top' => $loopData['end_longitude_top'],
+            'end_latitude_bottom' => $loopData['end_latitude_bottom'],
+            'end_longitude_bottom' => $loopData['end_longitude_bottom'],
+
             'line_id' => $line->id,
         ]);
     }
@@ -36,6 +47,17 @@ final class LoopService
         return $loop->update([
             'position' => $updatedLoopData['position'],
             'distance' => $updatedLoopData['distance'],
+
+            'start_latitude_top' => $updatedLoopData['start_latitude_top'],
+            'start_longitude_top' => $updatedLoopData['start_longitude_top'],
+            'start_latitude_bottom' => $updatedLoopData['start_latitude_bottom'],
+            'start_longitude_bottom' => $updatedLoopData['start_longitude_bottom'],
+
+            'end_latitude_top' => $updatedLoopData['end_latitude_top'],
+            'end_longitude_top' => $updatedLoopData['end_longitude_top'],
+            'end_latitude_bottom' => $updatedLoopData['end_latitude_bottom'],
+            'end_longitude_bottom' => $updatedLoopData['end_longitude_bottom'],
+
             'station_id' => $station->id,
         ]);
     }
