@@ -19,5 +19,6 @@ Route::middleware(['auth:sanctum', 'ability:read-roles,create-roles,edit-roles,d
         Route::patch('/permissions/{permission}/ability-revoke', 'revokeAbility')->name(name: 'revoke-ability');
 
         Route::patch('/{role}/{user}', 'assignUserRole')->name(name: 'assign-role');
+        Route::get('/{role}/show', action: 'show')->name(name: 'role');
     });
 });

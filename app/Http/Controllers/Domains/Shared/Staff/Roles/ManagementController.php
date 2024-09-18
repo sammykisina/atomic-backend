@@ -194,4 +194,22 @@ final class ManagementController
             status: Http::ACCEPTED(),
         );
     }
+
+    /**
+     * ROLE SHOW
+     * @param Role $role
+     * @return Response
+     */
+    public function show(Role $role): Response
+    {
+        return response(
+            content: [
+                'message' => 'Role fetched successfully.',
+                'role' => new RoleResource(
+                    resource: $role,
+                ),
+            ],
+            status: Http::OK(),
+        );
+    }
 }

@@ -61,10 +61,12 @@ services:
         container_name: atomic-backend-queue-worker
         restart: unless-stopped
         working_dir: /var/www/
-        command: php artisan queue:work
+        command: php artisan queue:work --verbose --timeout=0 --tries=3
         depends_on:
-            - db
-            - atomic-backend-app
+            db:
+                condition: service_healthy
+            atomic-backend-app:
+                condition: service_started
         volumes:
             - ./:/var/www
         environment:
@@ -112,28 +114,28 @@ services:
     #     networks:
     #         - atomic-backend-network
 
-    # queue-listen:
-    #     build:
-    #         context: ./
-    #         dockerfile: Dockerfile
-    #     container_name: atomic-backend-queue-listen
-    #     restart: unless-stopped
-    #     working_dir: /var/www/
-    #     command: php artisan queue:listen
-    #     depends_on:
-    #         - db
-    #         - atomic-backend-app
-    #     volumes:
-    #         - ./:/var/www
-    #     environment:
-    #         DB_CONNECTION: ${DB_CONNECTION}
-    #         DB_HOST: atomic-backend-db-container
-    #         DB_PORT: ${DB_PORT}
-    #         DB_DATABASE: ${DB_DATABASE}
-    #         DB_USERNAME: ${DB_USERNAME}
-    #         DB_PASSWORD: ${DB_PASSWORD}
-    #     networks:
-    #         - atomic-backend-network
+    queue-listen:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        container_name: atomic-backend-queue-listen
+        restart: unless-stopped
+        working_dir: /var/www/
+        command: php artisan queue:listen
+        depends_on:
+            - db
+            - atomic-backend-app
+        volumes:
+            - ./:/var/www
+        environment:
+            DB_CONNECTION: ${DB_CONNECTION}
+            DB_HOST: atomic-backend-db-container
+            DB_PORT: ${DB_PORT}
+            DB_DATABASE: ${DB_DATABASE}
+            DB_USERNAME: ${DB_USERNAME}
+            DB_PASSWORD: ${DB_PASSWORD}
+        networks:
+            - atomic-backend-network
 
 networks:
     atomic-backend-network:

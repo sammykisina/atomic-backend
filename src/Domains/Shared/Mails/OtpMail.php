@@ -8,13 +8,12 @@ use Domains\Shared\Enums\OtpTypes;
 use Domains\Shared\Models\Otp;
 use Domains\Shared\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-final class OtpMail extends Mailable implements ShouldQueue
+final class OtpMail extends Mailable
 {
     use Queueable;
     use SerializesModels;
