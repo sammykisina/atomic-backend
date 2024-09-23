@@ -17,7 +17,7 @@ final class DateResource extends JsonResource
     {
         return [
             'human' => $this->resource->diffForHumans(),
-            'string' => $this->resource->isoFormat('MMM Do YYYY'),
+            'string' => $this->resource->isoFormat('MMM Do YYYY HH:mm'),
         ];
     }
 }

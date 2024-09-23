@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Domains\Shared\Models;
 
 use Database\Factories\UserFactory;
+use Domains\RegionAdmin\Models\Region;
 use Domains\Shared\Enums\ModelStatuses;
 use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Enums\WorkStatuses;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -43,7 +43,6 @@ final class User extends Authenticatable
         'updater_id',
         'password',
         'role_id',
-        'active_desk_id',
     ];
 
     /** @var array<int, string> */
@@ -89,27 +88,6 @@ final class User extends Authenticatable
         return $query->where('type', '!=', $type);
     }
 
-    /** @return BelongsTo<User> */
-    public function activeDesk(): BelongsTo
-    {
-        return $this->belongsTo(
-            related: Desk::class,
-            foreignKey: 'active_desk_id',
-        );
-    }
-
-
-    /** @return BelongsToMany<User> */
-    public function desks(): BelongsToMany
-    {
-        return $this->belongsToMany(
-            related: Desk::class,
-            table: 'desks_users',
-            foreignPivotKey: 'user_id',
-            relatedPivotKey: 'desk_id',
-        );
-    }
-
     /** @return UserFactory */
     protected static function newFactory(): UserFactory
     {
@@ -126,6 +104,8 @@ final class User extends Authenticatable
             'work_status' => WorkStatuses::class,
             'type' => UserTypes::class,
             'is_admin' => 'boolean',
+            'employee_id' => 'integer',
+            'national_id' => 'integer',
         ];
     }
 }

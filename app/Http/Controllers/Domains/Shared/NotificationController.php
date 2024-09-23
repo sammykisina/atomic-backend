@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Domains\Shared;
 use Domains\Shared\Models\User;
 use Domains\Shared\Resources\NotificationResource;
 use Illuminate\Http\Response;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
 
@@ -42,14 +43,17 @@ final class NotificationController
     /** */
     public function readNotifications(User $user): Response
     {
-        // if($user->id !== Auth::id()){
-        //    abort(
-        //             code: Http::UNAUTHORIZED(),
-        //             message: 'Unauthorized',
-        //         );
-        // }
+        if ($user->id !== Auth::id()) {
+            abort(
+                code: Http::UNAUTHORIZED(),
+                message: 'Unauthorized',
+            );
+        }
 
-        $notifications = $user->readNotifications();
+        $notifications = DatabaseNotification::query()
+            ->where('notifiable_id', '=', $user->id)
+            ->where('read_at', '!=', null)
+            ->get();
 
         return response(
             content: [

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Resources;
 
-use Domains\Shared\Resources\RegionResource;
+use Domains\RegionAdmin\Resources\RegionResource;
 use Domains\SuperAdmin\Models\Line;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

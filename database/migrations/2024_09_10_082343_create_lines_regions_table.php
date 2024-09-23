@@ -21,6 +21,20 @@ return new class () extends Migration {
                 ->constrained()
                 ->cascadeOnDelete();
 
+            $table->foreignId(column: 'start_station_id')
+                ->references('id')
+                ->on('stations')
+                ->index()
+                ->constrained()
+                ->name('fk_start_station');
+
+            $table->foreignId(column: 'end_station_id')
+                ->references('id')
+                ->on('stations')
+                ->index()
+                ->constrained()
+                ->name('fk_end_station');
+
             $table->unique(['line_id', 'region_id']);
         });
     }

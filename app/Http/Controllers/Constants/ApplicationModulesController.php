@@ -36,9 +36,6 @@ final class ApplicationModulesController
                 'edit-departments',
                 'delete-departments',
             ],
-            'regions' => [
-                'read-regions',
-            ],
             'lines' => [
                 'read-lines',
                 'create-lines',
@@ -86,6 +83,27 @@ final class ApplicationModulesController
                 'delete-journeys',
                 'reject-journeys',
                 'accept-journeys',
+            ],
+            'desks' => [
+                'read-desks',
+                'edit-desks',
+                'create-desks',
+                'delete-desks',
+            ],
+            'shifts' => [
+                'read-shifts',
+                'edit-shifts',
+                'create-shifts',
+                'delete-shifts',
+                'reject-shifts',
+                'accept-shifts',
+            ],
+            'regions' => [
+                'read-regions',
+                'create-regions',
+                'edit-regions',
+                'delete-regions',
+                'line-regions-divisions',
             ],
         ];
 

@@ -47,7 +47,7 @@ final class JourneyNotification extends Notification
             'train_info' => [
                 'train_number' => $this->journey->train,
                 'service_order' => $this->journey->service_order,
-                'number_of_coaches' => $this->journey->number_of_coaches,
+                'number_of_wagons' => $this->journey->number_of_wagons,
             ],
             'type' => $this->type,
         ];

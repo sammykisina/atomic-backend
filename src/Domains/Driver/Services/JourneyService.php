@@ -44,9 +44,12 @@ final class JourneyService
         return Journey::query()->create([
             'train' => $journeyData['train'],
             'service_order' => $journeyData['service_order'],
-            'number_of_coaches' => $journeyData['number_of_coaches'],
+            'number_of_wagons' => $journeyData['number_of_wagons'],
+            'locomotive_number' => $journeyData['locomotive_number'],
+            'tail_number' => $journeyData['tail_number'],
             'origin_station_id' => $journeyData['origin_station_id'],
             'destination_station_id' => $journeyData['destination_station_id'],
+            'line_id' => $journeyData['line_id'],
             'driver_id' => Auth::id(),
         ]);
     }
@@ -62,10 +65,12 @@ final class JourneyService
         return $journey->update([
             'train' => $updatedJourneyData['train'],
             'service_order' => $updatedJourneyData['service_order'],
-            'number_of_coaches' => $updatedJourneyData['number_of_coaches'],
+            'number_of_wagons' => $updatedJourneyData['number_of_wagons'],
+            'locomotive_number' => $updatedJourneyData['locomotive_number'],
+            'tail_number' => $updatedJourneyData['tail_number'],
             'origin_station_id' => $updatedJourneyData['origin_station_id'],
+            'line_id' => $updatedJourneyData['line_id'],
             'destination_station_id' => $updatedJourneyData['destination_station_id'],
-            'driver_id' =>  Auth::id(),
         ]);
     }
 

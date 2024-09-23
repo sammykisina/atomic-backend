@@ -22,9 +22,20 @@ final class CreateOrEditJourneyRequest extends FormRequest
                 'required',
                 Rule::unique(table: 'journeys', column: 'service_order')->ignore(id: $this->journey ? $this->journey->id : ''),
             ],
-            'number_of_coaches' => [
+            'number_of_wagons' => [
                 'required',
                 'numeric',
+            ],
+            'locomotive_number' => [
+                'required',
+                'string',
+            ],'tail_number' => [
+                'required',
+                'string',
+            ],
+            'line_id' => [
+                'required',
+                'exists:lines,id',
             ],
             'origin_station_id' => [
                 'required',
@@ -34,6 +45,7 @@ final class CreateOrEditJourneyRequest extends FormRequest
                 'required',
                 'exists:stations,id',
             ],
+
             'current_location_latitude' => [
                 'required',
                 'numeric',

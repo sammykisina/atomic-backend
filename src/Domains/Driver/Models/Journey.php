@@ -23,9 +23,12 @@ final class Journey extends Model
         "driver_id",
         "train",
         "service_order",
-        "number_of_coaches",
+        "locomotive_number",
+        "number_of_wagons",
         "origin_station_id",
+        'tail_number',
         "destination_station_id",
+        'line_id',
         'status',
 
     ];

@@ -20,6 +20,19 @@ final class StationService
             $id,
         )->first();
     }
+
+    /**
+     * GET STATION WITH ID
+     * @param int $stationId
+     * @return Station
+     */
+    public static function getStationById(int $station_id): Station
+    {
+        return Station::query()->where(
+            'id',
+            $station_id,
+        )->first();
+    }
     /**
      * CREATE STATION
      * @param array $stationData

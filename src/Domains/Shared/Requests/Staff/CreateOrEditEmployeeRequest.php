@@ -40,8 +40,7 @@ final class CreateOrEditEmployeeRequest extends FormRequest
             ],
             'national_id' => [
                 'required',
-                // 'integer',
-                'size:8',
+                'numeric',
                 Rule::unique('users', 'national_id')->ignore($this->employee ? $this->employee->id : ''),
             ],
             'type' => [
@@ -53,17 +52,17 @@ final class CreateOrEditEmployeeRequest extends FormRequest
                 'exists:departments,id',
             ],
             'region_id' => [
-                'required',
+                'required_if:type,REGION_ADMIN,INSPECTOR',
                 'exists:regions,id',
             ],
             'work_status' => [
                 'required',
                 Rule::enum(WorkStatuses::class),
             ],
-            // 'desk_id' => [
-            //     'exists:desks,id',
-            //     Rule::requiredIf(fn(): bool => $this->type === UserTypes::OPERATOR_CONTROLLER->value),
-            // ],
+            'role_id' => [
+                'required',
+                'exists:roles,id',
+            ],
         ];
     }
 
@@ -71,9 +70,11 @@ final class CreateOrEditEmployeeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'national_id.size' => 'National ID number must be 8 numbers.',
-            'desk_id.required' => 'Employee current operating desk is required.',
             'department_id.required' => 'Employee current department is required.',
+            'region_id.required' => 'Employee current region is required.',
+            'role_id.required' => 'Role is required.',
+            'role_id.exists' => 'Invalid role selected.',
+            'region_id.required_if' => 'Employee current region is required.',
         ];
     }
 

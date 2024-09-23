@@ -6,6 +6,8 @@ namespace Domains\Operator\Notifications;
 
 use Domains\Driver\Models\License;
 use Domains\Shared\Enums\NotificationTypes;
+use Domains\SuperAdmin\Resources\LoopResource;
+use Domains\SuperAdmin\Resources\StationResource;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -28,7 +30,20 @@ final class LicenseNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'license' => $this->license,
+            'license' => [
+                'id' => $this->license->id,
+                'journey_id' => $this->license->journey_id,
+                'license_number' => $this->license->license_number,
+                'from' => new StationResource(
+                    resource: $this->license->originStation,
+                ),
+                'to' => new StationResource(
+                    resource: $this->license->destinationStation,
+                ),
+                'to_stop_in' => $this->license->main_id ? 'main line' : new LoopResource(
+                    $this->license->loop,
+                ),
+            ],
             'type' => $this->type,
         ];
     }

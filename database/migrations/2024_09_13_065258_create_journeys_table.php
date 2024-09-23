@@ -21,8 +21,10 @@ return new class () extends Migration {
 
             $table->string(column: 'train');
             $table->string(column: 'service_order')->unique();
+            $table->string(column: 'locomotive_number');
+            $table->string(column: 'tail_number');
 
-            $table->integer(column: "number_of_coaches");
+            $table->integer(column: "number_of_wagons");
 
             $table->foreignId(column: 'origin_station_id')
                 ->references('id')
@@ -37,6 +39,12 @@ return new class () extends Migration {
                 ->index()
                 ->constrained()
                 ->name('fk_destination_station');
+
+            $table->foreignId(column: 'line_id')
+                ->index()
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
 
             $table->boolean(column: 'status')->default(value: true);
 

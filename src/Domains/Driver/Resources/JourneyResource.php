@@ -22,7 +22,7 @@ final class JourneyResource extends JsonResource
             'train_information' => [
                 'train_number' => $this->resource->train,
                 'service_order' => $this->resource->service_order,
-                'number_of_coaches' => $this->resource->number_of_coaches,
+                'number_of_wagons' => $this->resource->number_of_wagons,
             ],
             'origin' => new StationResource(
                 resource: $this->whenLoaded(

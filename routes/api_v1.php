@@ -29,6 +29,9 @@ Route::prefix('/super-admin')->as('super-admin:')->group(
         // COUNTY ROUTES
         base_path('routes/api_v1/super_admin/setup/county.php'),
 
+        // DESK ROUTES
+        base_path('routes/api_v1/super_admin/setup/desks.php'),
+
         // LINES
         base_path('routes/api_v1/super_admin/lines.php'),
 
@@ -40,6 +43,9 @@ Route::prefix('/super-admin')->as('super-admin:')->group(
 
         // SECTIONS
         base_path('routes/api_v1/super_admin/sections.php'),
+
+        // SHIFTS
+        base_path('routes/api_v1/super_admin/shifts.php'),
     ],
 );
 
@@ -55,11 +61,23 @@ Route::prefix('/driver')->as('driver:')->group(
 Route::prefix('/operator')->as('operator:')->group(
     [
         // JOURNEYS
-        base_path('routes/api_v1/operator/journeys_management.php'),
+        base_path('routes/api_v1/operator/journeys.php'),
+
+        // SHIFTS
+        base_path('routes/api_v1/operator/shifts.php'),
     ],
 );
 
 // NOTIFICATIONS
 Route::prefix('/notifications')->as('notifications:')->group(
     base_path('routes/api_v1/shared/notifications.php'),
+);
+
+// REGION ADMIN
+Route::prefix('/region-admin')->as('region-admin:')->group(
+    [
+        // REGIONS
+        base_path('routes/api_v1/region_admin/regions.php'),
+        base_path('routes/api_v1/region_admin/line_regions_divisions.php'),
+    ],
 );

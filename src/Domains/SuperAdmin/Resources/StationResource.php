@@ -23,14 +23,14 @@ final class StationResource extends JsonResource
                 'end' => $this->resource->end_kilometer,
             ],
 
-            'start_latitude_top' => $this->resource->start_latitude_top,
-            'start_longitude_top' => $this->resource->start_longitude_top,
-            'start_latitude_bottom' => $this->resource->start_latitude_bottom,
-            'start_longitude_bottom' => $this->resource->start_longitude_bottom,
-            'end_latitude_top' => $this->resource->end_latitude_top,
-            'end_longitude_top' => $this->resource->end_longitude_top,
-            'end_latitude_bottom' => $this->resource->end_latitude_bottom,
-            'end_longitude_bottom' => $this->resource->end_longitude_bottom,
+            // 'start_latitude_top' => $this->resource->start_latitude_top,
+            // 'start_longitude_top' => $this->resource->start_longitude_top,
+            // 'start_latitude_bottom' => $this->resource->start_latitude_bottom,
+            // 'start_longitude_bottom' => $this->resource->start_longitude_bottom,
+            // 'end_latitude_top' => $this->resource->end_latitude_top,
+            // 'end_longitude_top' => $this->resource->end_longitude_top,
+            // 'end_latitude_bottom' => $this->resource->end_latitude_bottom,
+            // 'end_longitude_bottom' => $this->resource->end_longitude_bottom,
 
             'is_yard' => $this->resource->is_yard,
             'line' => new LineResource(

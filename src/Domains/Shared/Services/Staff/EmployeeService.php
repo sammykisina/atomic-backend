@@ -4,40 +4,25 @@ declare(strict_types=1);
 
 namespace Domains\Shared\Services\Staff;
 
-use Domains\Driver\Enums\LicenseDirections;
-use Domains\Driver\Models\Journey;
-use Domains\Driver\Services\JourneyService;
-use Domains\Shared\Enums\DeskNames;
-use Domains\Shared\Models\Desk;
+use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 final class EmployeeService
 {
-    public static function currentDeskOperator(Journey $journey): ?User
+    /**
+     * GET EMPLOYEE BY ID
+     * @param UserTypes $type
+     * @param int $employee_id
+     * @return User|null
+     */
+    public static function getEmployee(UserTypes $type, int $employee_id): ?User
     {
-        $operator = null;
-
-        $desk_1 = Desk::query()->where('name', DeskNames::DESK_ONE->value)->first();
-
-        $desk_2 = Desk::query()->where('name', DeskNames::DESK_TWO->value)->first();
-
-        $journeyDirection = JourneyService::getJourneyDirection(
-            origin: $journey->origin->start_kilometer,
-            destination: $journey->destination->start_kilometer,
-        );
-
-        if (LicenseDirections::UP_TRAIN === $journeyDirection) {
-            $operator = User::query()->where('active_desk_id', $desk_1->id)->first();
-        }
-
-        if (LicenseDirections::DOWN_TRAIN === $journeyDirection) {
-            $operator = User::query()->where('active_desk_id', $desk_2->id)->first();
-        }
-
-        return $operator;
+        return User::query()
+            ->where('id', $employee_id)
+            ->where('type', $type->value)
+            ->first();
     }
     /**
      * CREATE EMPLOYEE
@@ -61,6 +46,7 @@ final class EmployeeService
             'password' => Hash::make(
                 value: $employeeData['email'],
             ),
+            'role_id' => $employeeData['role_id'],
         ]);
     }
 
@@ -85,66 +71,7 @@ final class EmployeeService
             'region_id' => $updatedEmployeeData['region_id'],
             'work_status' => $updatedEmployeeData['work_status'],
             'updater_id' => Auth::id(),
+            'role_id' => $updatedEmployeeData['role_id'],
         ]);
-    }
-
-    /**
-     * UPDATE EMPLOYEE CURRENT DESK
-     * @param User $employee
-     * @param int $desk_id
-     * @return bool
-     */
-    public function updateEmployeeDesk(User $employee, int $desk_id): bool
-    {
-        $employee->desks()->attach($desk_id, ['status' => true]);
-
-        return $employee->update([
-            'active_desk_id' => $desk_id,
-        ]);
-    }
-
-    /**
-     * MOVE EMPLOYEE TO NEW DESK
-     * @param User $employee
-     * @param Desk $desk
-     * @return bool
-     */
-    public function moveEmployeeToNewDesk(User $employee, Desk $desk): bool
-    {
-        $result = DB::transaction(function () use ($employee, $desk) {
-            $employee->desks()->updateExistingPivot($desk->id, [
-                'status' => false,
-            ]);
-
-            $employee->desks()->attach($desk->id, ['status' => true]);
-
-            return $employee->update([
-                'active_desk_id' => $desk->id,
-            ]);
-        });
-
-        return $result;
-    }
-
-
-    /**
-     * REMOVE EMPLOYEE FROM DESK
-     * @param User $employee
-     * @param Desk $desk
-     * @return bool
-     */
-    public function removeEmployeeFromDesk(User $employee, Desk $desk): bool
-    {
-        $result = DB::transaction(function () use ($employee, $desk) {
-            $employee->desks()->updateExistingPivot($desk->id, [
-                'status' => false,
-            ]);
-
-            return $employee->update([
-                'active_desk_id' => null,
-            ]);
-        });
-
-        return $result;
     }
 }

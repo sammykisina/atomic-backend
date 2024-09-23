@@ -32,11 +32,6 @@ final class ManagementController
                 name: $request->validated(key : 'name'),
             );
 
-            $this->lineService->createLineRegions(
-                regions: $request->validated(key: 'regions'),
-                line: $line,
-            );
-
             $this->lineService->createLineCounties(
                 counties: $request->validated(key : 'counties'),
                 line: $line,
@@ -63,16 +58,17 @@ final class ManagementController
         );
     }
 
+    /**
+     * EDIT LINE
+     * @param CreateOrEditLineRequest $request
+     * @param Line $line
+     * @return HttpException|Response
+     */
     public function edit(CreateOrEditLineRequest $request, Line $line): HttpException | Response
     {
         $edited = DB::transaction(function () use ($request, $line): bool {
             $edited = $this->lineService->editLine(
                 name: $request->validated(key : 'name'),
-                line: $line,
-            );
-
-            $this->lineService->createLineRegions(
-                regions: $request->validated(key: 'regions'),
                 line: $line,
             );
 

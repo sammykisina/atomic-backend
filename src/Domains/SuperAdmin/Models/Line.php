@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Models;
 
-use Domains\Shared\Models\Region;
+use Domains\RegionAdmin\Models\Region;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -22,14 +21,6 @@ final class Line extends Model
         'county_id',
     ];
 
-    /** @return  BelongsTo<Region> */
-    public function Region(): BelongsTo
-    {
-        return $this->belongsTo(
-            related: Region::class,
-            foreignKey: 'region_id',
-        );
-    }
 
     /** @return  BelongsToMany<County> */
     public function counties(): BelongsToMany
@@ -48,7 +39,7 @@ final class Line extends Model
             related: Region::class,
             table: "lines_regions",
             foreignPivotKey: "line_id",
-        );
+        )->withPivot('start_station_id', 'end_station_id');
     }
 
     /** @return  HasMany<Station> */

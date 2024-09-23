@@ -42,16 +42,14 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
 # Set ownership for the entire working directory
 RUN chown -R $user:www-data /var/www
 
-# Copy the entrypoint and wrapper scripts
+# Copy the entrypoint script
 COPY docker-compose/entrypoint.sh /usr/local/bin/entrypoint.sh
-COPY docker-compose/entrypoint-wrapper.sh /usr/local/bin/entrypoint-wrapper.sh
 
 # Set executable permissions
-RUN chmod +x /usr/local/bin/entrypoint.sh \
-    && chmod +x /usr/local/bin/entrypoint-wrapper.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Use the wrapper script as entrypoint
-ENTRYPOINT ["/usr/local/bin/entrypoint-wrapper.sh"]
+# Use the single entrypoint script
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # Expose port 80
 EXPOSE 80

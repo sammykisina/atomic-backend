@@ -4,19 +4,23 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Driver\Journey;
 
+use Carbon\Carbon;
 use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\Driver\Notifications\JourneyNotification;
+use Domains\Driver\Notifications\LicenseRequestNotification;
 use Domains\Driver\Requests\CreateOrEditJourneyRequest;
 use Domains\Driver\Requests\LocationRequest;
 use Domains\Driver\Resources\JourneyResource;
 use Domains\Driver\Services\JourneyService;
+use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Shared\Enums\NotificationTypes;
-use Domains\Shared\Services\Staff\EmployeeService;
+use Domains\SuperAdmin\Models\Shift;
+use Illuminate\Http\Response;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\DB;
 use JustSteveKing\StatusCode\Http;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class ManagementController
@@ -61,19 +65,31 @@ final class ManagementController
                 ],
             );
 
-            $operator = EmployeeService::currentDeskOperator(journey: $journey);
+            // $currentShift = Shift::where('shift_start_station_id', '<=', $journey->origin_station_id)
+            //     ->where('shift_end_station_id', '>=', $journey->origin_station_id)
+            //     ->with('user')
+            //     ->first();
 
-            if ( ! $operator) {
-                abort(
-                    code: Http::EXPECTATION_FAILED(),
-                    message: 'Please inform your system administration that you have no operator set for the desk you are trying to request a trip.',
-                );
-            }
 
-            $operator->notify(new JourneyNotification(
-                journey: $journey,
-                type: NotificationTypes::JOURNEY_CREATED,
-            ));
+            $shift = Shift::query()
+                ->where("line_id", $request->validated(key: "line_id"))
+                ->where("status", ShiftStatuses::PENDING)
+                ->whereJsonContains('stations', $request->validated('origin_station_id'))->first();
+
+            dd($shift);
+
+
+            // if ( ! $currentShift) {
+            //     abort(
+            //         code: Http::EXPECTATION_FAILED(),
+            //         message: 'Please inform your system administration that you have no operator set for the desk you are trying to request a trip.',
+            //     );
+            // }
+
+            // $currentShift->user->notify(new JourneyNotification(
+            //     journey: $journey,
+            //     type: NotificationTypes::JOURNEY_CREATED,
+            // ));
 
             return $journey;
         });
@@ -105,54 +121,54 @@ final class ManagementController
      * @param Journey $journey
      * @return Response | HttpException
      */
-    public function edit(CreateOrEditJourneyRequest $request, Journey $journey): Response | HttpException
-    {
-        $edited = DB::transaction(function () use ($request, $journey): bool {
-            $edited = $this->journeyService->editJourney(
-                journey: $journey,
-                updatedJourneyData: $request->validated(),
-            );
+    // public function edit(CreateOrEditJourneyRequest $request, Journey $journey): Response | HttpException
+    // {
+    //     $edited = DB::transaction(function () use ($request, $journey): bool {
+    //         $edited = $this->journeyService->editJourney(
+    //             journey: $journey,
+    //             updatedJourneyData: $request->validated(),
+    //         );
 
-            $this->journeyService->createTrainLocation(
-                journey: $journey,
-                locationData: [
-                    'station_id' => $journey->origin->id,
-                    'latitude' => $request->validated(key: "current_location_latitude"),
-                    'longitude' => $request->validated(key: "current_location_longitude"),
-                ],
-            );
+    //         $this->journeyService->createTrainLocation(
+    //             journey: $journey,
+    //             locationData: [
+    //                 'station_id' => $journey->origin->id,
+    //                 'latitude' => $request->validated(key: "current_location_latitude"),
+    //                 'longitude' => $request->validated(key: "current_location_longitude"),
+    //             ],
+    //         );
 
-            $operator = EmployeeService::currentDeskOperator(journey: $journey);
+    //         $shift = ShiftService::firstJourneyAuthorizer(journey: $journey);
 
-            if ( ! $operator) {
-                abort(
-                    code: Http::EXPECTATION_FAILED(),
-                    message: 'Please inform your system administration that you have no operator set for the desk you are trying to request a trip.',
-                );
-            }
+    //         if ( ! $shift) {
+    //             abort(
+    //                 code: Http::EXPECTATION_FAILED(),
+    //                 message: 'Please inform your system administration that you have no operator set for the desk you are trying to request a trip.',
+    //             );
+    //         }
 
-            $operator->notify(new JourneyNotification(
-                journey: $journey,
-                type: NotificationTypes::JOURNEY_EDITED,
-            ));
+    //         $shift->user->notify(new JourneyNotification(
+    //             journey: $journey,
+    //             type: NotificationTypes::JOURNEY_EDITED,
+    //         ));
 
-            return $edited;
-        });
+    //         return $edited;
+    //     });
 
-        if ( ! $edited) {
-            abort(
-                code: Http::EXPECTATION_FAILED(),
-                message: 'Journey creation failed.',
-            );
-        }
+    //     if ( ! $edited) {
+    //         abort(
+    //             code: Http::EXPECTATION_FAILED(),
+    //             message: 'Journey creation failed.',
+    //         );
+    //     }
 
-        return response(
-            content: [
-                'message' => 'Journey updated successfully.',
-            ],
-            status: Http::ACCEPTED(),
-        );
-    }
+    //     return response(
+    //         content: [
+    //             'message' => 'Journey updated successfully.',
+    //         ],
+    //         status: Http::ACCEPTED(),
+    //     );
+    // }
 
     /**
      * CONFIRM CURRENT TRAIN LOCATION
@@ -205,34 +221,102 @@ final class ManagementController
      * @param License $license
      * @return Response|HttpException
      */
-    public function confirmLicense(Journey $journey, License $license): Response | HttpException
+    public function confirmLicense(Journey $journey, License $license, DatabaseNotification $notification): Response | HttpException
     {
-        $operator = EmployeeService::currentDeskOperator(journey: $journey);
+        $result = DB::transaction(function () use ($journey, $license, $notification): bool {
+            if (null !== $notification->read_at) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'License confirmation already.Incase of inquires please contact your system administration.',
+                );
+            }
 
-        if ( ! $operator) {
+            if ( ! $license->update([
+                'status' => LicenseStatuses::CONFIRMED,
+                'confirmed_at' => Carbon::now(),
+            ])) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'License confirmation failed. Please try again',
+                );
+            }
+
+            $license->issuer->notify(new JourneyNotification(
+                journey: $journey,
+                type: NotificationTypes::LICENSE_CONFIRMED,
+            ));
+
+            $notification->markAsRead();
+
+            return true;
+        });
+
+
+        if ( ! $result) {
+            return response(
+                content: [
+                    'message' => 'Something went wrong.Please try again.',
+                ],
+                status: Http::NOT_IMPLEMENTED(),
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'License confirmed successfully. You can begin or continue with your journey.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
+
+    public function requestLicense(Journey $journey)
+    {
+        // Get the last license issued for this journey
+        $lastLicense = License::where('journey_id', $journey->id)
+            ->orderBy('issued_at', 'desc')
+            ->first();
+
+        // Get the shift responsible for the last destination station
+        $currentShift = Shift::where('shift_start_station_id', '<=', $lastLicense->destination_station_id)
+            ->where('shift_end_station_id', '>=', $lastLicense->destination_station_id)
+            ->first();
+
+        // If journey is still within the current shift
+        if ($lastLicense->destination_station_id < $currentShift->shift_end_station_id) {
+            // Notify the current shift to assign the next license
+            $currentShift->user->notify(new LicenseRequestNotification(
+                journey: $journey,
+                lastLicense: $lastLicense,
+                type: NotificationTypes::LICENSE_REQUEST,
+            ));
+
+            return response(
+                content: [
+                    'message' => 'Your request for a license has been send successfully to your current operator. You will be notified when the new license is assigned for your confirmation.',
+                ],
+                status: Http::ACCEPTED(),
+            );
+        }
+
+        $nextShift = Shift::where('shift_start_station_id', '>', $lastLicense->destination_station_id)
+            ->first();
+
+        if ( ! $nextShift) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: 'Please inform your system administration that you have no operator set for the desk you are trying to request a trip.',
             );
         }
 
-        if ( ! $license->update([
-            'status' => LicenseStatuses::CONFIRMED,
-        ])) {
-            abort(
-                code: Http::EXPECTATION_FAILED(),
-                message: 'License confirmation failed. Please try again',
-            );
-        }
-
-        $operator->notify(new JourneyNotification(
+        $nextShift->user->notify(new LicenseRequestNotification(
             journey: $journey,
-            type: NotificationTypes::LICENSE_CONFIRMED,
+            lastLicense: $lastLicense,
+            type: NotificationTypes::LICENSE_REQUEST,
         ));
 
         return response(
             content: [
-                'message' => 'License confirmed successfully. You can begin or continue with your journey.',
+                'message' => 'Your request for a license has been send successfully to your next operator. You will be notified when the new license is assigned for your confirmation.',
             ],
             status: Http::ACCEPTED(),
         );

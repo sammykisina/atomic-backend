@@ -6,7 +6,7 @@ use App\Http\Controllers\Domains\SuperAdmin\Loops\IndexController;
 use App\Http\Controllers\Domains\SuperAdmin\Loops\ManagementController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:sanctum', 'ability:read-loops,create-loops,update-loops,delete-loops'])->group(function (): void {
+Route::middleware(['auth:sanctum', 'ability:read-loops,create-loops,edit-loops,delete-loops'])->group(function (): void {
     Route::get('loops', IndexController::class)->name(name: 'index');
 
     Route::controller(ManagementController::class)->group(function (): void {

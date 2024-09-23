@@ -7,9 +7,19 @@ namespace Domains\Shared\Services\Staff;
 use Domains\Shared\Models\Permission;
 use Domains\Shared\Models\Role;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 final class RoleService
 {
+    /**
+     * GET ROLE BY ID
+     * @param int $role_id
+     * @return Role|null
+     */
+    public static function getRole(int $role_id): Role|null
+    {
+        return Role::query()->where('id', $role_id)->with('permissions')->first();
+    }
     /**
      * CREATE ROLE
      * @param array $roleData
@@ -20,7 +30,7 @@ final class RoleService
         return Role::query()->create([
             'name' => $roleData['name'],
             'description' => $roleData['description'],
-            'creator_id' => auth()->id(),
+            'creator_id' => Auth::id(),
         ]);
     }
 
@@ -35,7 +45,7 @@ final class RoleService
         return $role->update([
             'name' => $updatedRoleData['name'],
             'description' => $updatedRoleData['description'],
-            'updater_id' => auth()->id(),
+            'updater_id' => Auth::id(),
         ]);
     }
 
@@ -65,6 +75,12 @@ final class RoleService
         return $permission->delete();
     }
 
+    /**
+     * DELETE PERMISSION ABILITY
+     * @param Permission $permission
+     * @param string $ability
+     * @return Permission
+     */
     public function deleteAbility(Permission $permission, string $ability): Permission
     {
         return Permission::updateOrCreate(

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\Shared\Resources;
 
+use Domains\RegionAdmin\Resources\RegionResource;
 use Domains\Shared\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -28,6 +29,8 @@ final class UserResource extends JsonResource
             'employee_id' => $this->resource->employee_id,
             'national_id' => $this->resource->national_id,
             'role_id' => $this->resource->role_id,
+            'department_id' => $this->resource->department_id,
+            'region_id' => $this->resource->region_id,
             'department' => new DepartmentResource(
                 resource: $this->whenLoaded(
                     relationship: 'department',
@@ -41,11 +44,6 @@ final class UserResource extends JsonResource
             'role' => new RoleResource(
                 resource: $this->whenLoaded(
                     relationship: 'role',
-                ),
-            ),
-            'active_desk' => new DeskResource(
-                resource: $this->whenLoaded(
-                    relationship: 'activeDesk',
                 ),
             ),
         ];
