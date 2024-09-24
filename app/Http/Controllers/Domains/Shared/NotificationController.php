@@ -5,31 +5,26 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\Shared;
 
 use Carbon\Carbon;
-use Domains\Shared\Models\User;
 use Domains\Shared\Resources\NotificationResource;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
+use Spatie\QueryBuilder\QueryBuilder;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class NotificationController
 {
     /**
      * GET UNREAD NOTIFICATIONS
-     * @param User $user
      * @return Response
      */
-    public function unreadNotifications(User $user): Response
+    public function unreadNotifications(): Response
     {
-        if ($user->id !== Auth::id()) {
-            abort(
-                code: Http::UNAUTHORIZED(),
-                message: 'Unauthorized',
-            );
-        }
-
-        $notifications = $user->unreadNotifications;
+        $notifications = QueryBuilder::for(DatabaseNotification::class)
+            ->where('notifiable_id', Auth::id())
+            ->whereNull(columns: 'read_at')
+            ->get();
 
         return response(
             content: [
@@ -44,21 +39,13 @@ final class NotificationController
 
     /**
      * GET READ NOTIFICATIONS
-     * @param User $user
      * @return Response
      */
-    public function readNotifications(User $user): Response
+    public function readNotifications(): Response
     {
-        if ($user->id !== Auth::id()) {
-            abort(
-                code: Http::UNAUTHORIZED(),
-                message: 'Unauthorized',
-            );
-        }
-
-        $notifications = DatabaseNotification::query()
-            ->where('notifiable_id', '=', $user->id)
-            ->where('read_at', '!=', null)
+        $notifications = QueryBuilder::for(DatabaseNotification::class)
+            ->where('notifiable_id', Auth::id())
+            ->whereNotNull(columns: 'read_at')
             ->get();
 
         return response(
