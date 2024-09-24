@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Domains\Operator\Licenses;
 
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Services\JourneyService;
+use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Operator\Notifications\LicenseNotification;
 use Domains\Operator\Requests\LicenseRequest;
 use Domains\Operator\Resources\LicenseResource;
@@ -13,9 +14,12 @@ use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\NotificationTypes;
 use Domains\SuperAdmin\Models\Shift;
 use Domains\SuperAdmin\Services\StationService;
+use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use JustSteveKing\StatusCode\Http;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class ManagementController
 {
@@ -28,24 +32,28 @@ final class ManagementController
      * @param Journey $journey
      * @return mixed
      */
-    public function acceptRequest(LicenseRequest $request, Journey $journey, DatabaseNotification $notification)
+    public function acceptRequest(LicenseRequest $request, Journey $journey, DatabaseNotification $notification): Response | HttpException
     {
         $license = DB::transaction(function () use ($request, $journey, $notification) {
-            $currentShift = Shift::where('shift_start_station_id', '<=', $request->validated('origin_station_id'))
-                ->where('shift_end_station_id', '>=', $request->validated('origin_station_id'))
+            $currentShift = Shift::query()
+                ->where("status", ShiftStatuses::CONFIRMED)
+                ->where("active", true)
+                ->where('user_id', Auth::id())
                 ->first();
 
-            dd($request->validated('destination_station_id'));
-            dd($currentShift->shift_end_station_id);
+            if ( ! $currentShift) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'Opps! You don`t have an active shift to accept this request. Please contact your system administrator.',
+                );
+            }
 
-
-            if ( ! $currentShift || $request->validated('destination_station_id') > $currentShift->shift_end_station_id) {
+            if ( ! in_array($request->validated('destination_station_id'), $currentShift->stations)) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
                     message: 'Destination station is outside of the current shift\'s control.',
                 );
             }
-
 
             if (null !== $notification->read_at) {
                 abort(
@@ -54,16 +62,33 @@ final class ManagementController
                 );
             }
 
-            $uniqueLicenseNumber = $this->licenseService->getLicense();
+            $journey_direction = JourneyService::getJourneyDirection(
+                origin: $journey->origin->start_kilometer,
+                destination: $journey->destination->end_kilometer,
+            );
 
-            $originStation = StationService::getStation(
+            $license_origin_station = StationService::getStation(
                 id: $request->validated(key: 'origin_station_id'),
             );
 
-            $destinationStation = StationService::getStation(
+            $license_destination_station = StationService::getStation(
                 id: $request->validated(key: 'destination_station_id'),
             );
 
+            $license_direction =  JourneyService::getJourneyDirection(
+                origin: $license_origin_station->start_kilometer,
+                destination: $license_destination_station->start_kilometer,
+            );
+
+
+            if ($license_direction !== $journey_direction) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'License direction does not match journey direction',
+                );
+            }
+
+            $uniqueLicenseNumber = $this->licenseService->getLicense();
 
             $license = $this->licenseService->acceptJourneyRequest(
                 licenseData: [
@@ -74,13 +99,9 @@ final class ManagementController
                     'main_id' => $request->validated(key: 'stop_at_main_line') ? $request->validated(key: 'origin_station_id') : null,
                     'loop_id' => ! $request->validated(key: 'stop_at_main_line') ? $request->validated(key: 'loop_id') : null,
                     'section_id' => $request->validated(key: 'section_id'),
-                    'direction' =>  JourneyService::getJourneyDirection(
-                        origin: $originStation->start_kilometer,
-                        destination: $destinationStation->start_kilometer,
-                    ),
+                    'direction' =>  $license_direction,
                 ],
             );
-
 
             if ( ! $license) {
                 abort(

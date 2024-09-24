@@ -90,6 +90,7 @@ final class Shift extends Model
         return [
             'status' => ShiftStatuses::class,
             'stations' => 'json',
+            'active'  => 'boolean',
         ];
     }
 }

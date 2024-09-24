@@ -19,5 +19,7 @@ Route::middleware(['auth:sanctum', 'ability:read-journeys,request-journeys,edit-
             Route::patch('/{journey}/licenses/{license}/notifications/{notification}/confirm-license', 'confirmLicense')->name(name: 'confirm-license');
 
             Route::patch('/{journey}/licenses/request', 'requestLicense')->name(name: 'request-license');
+
+            Route::patch('/{journey}/end', 'endJourney')->name(name: 'end-journey');
         });
     });

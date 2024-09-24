@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\Driver\Journey;
 
 use Carbon\Carbon;
+use Domains\Driver\Enums\LicenseDirections;
 use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
@@ -19,6 +20,7 @@ use Domains\Shared\Enums\NotificationTypes;
 use Domains\SuperAdmin\Models\Shift;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use JustSteveKing\StatusCode\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -45,6 +47,20 @@ final class ManagementController
                 );
             }
 
+            $shift = Shift::query()
+                ->where("line_id", $request->validated(key: "line_id"))
+                ->where("status", ShiftStatuses::CONFIRMED)
+                ->where("active", true)
+                ->whereJsonContains('stations', $request->validated('origin_station_id'))
+                ->first();
+
+            if ( ! $shift) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'Please inform your system administrator there is no active shift currently set for the line you are trying to request a trip.',
+                );
+            }
+
             $journey = $this->journeyService->createJourney(
                 journeyData: $request->validated(),
             );
@@ -65,36 +81,13 @@ final class ManagementController
                 ],
             );
 
-            // $currentShift = Shift::where('shift_start_station_id', '<=', $journey->origin_station_id)
-            //     ->where('shift_end_station_id', '>=', $journey->origin_station_id)
-            //     ->with('user')
-            //     ->first();
-
-
-            $shift = Shift::query()
-                ->where("line_id", $request->validated(key: "line_id"))
-                ->where("status", ShiftStatuses::PENDING)
-                ->whereJsonContains('stations', $request->validated('origin_station_id'))->first();
-
-            dd($shift);
-
-
-            // if ( ! $currentShift) {
-            //     abort(
-            //         code: Http::EXPECTATION_FAILED(),
-            //         message: 'Please inform your system administration that you have no operator set for the desk you are trying to request a trip.',
-            //     );
-            // }
-
-            // $currentShift->user->notify(new JourneyNotification(
-            //     journey: $journey,
-            //     type: NotificationTypes::JOURNEY_CREATED,
-            // ));
+            $shift->user->notify(new JourneyNotification(
+                journey: $journey,
+                type: NotificationTypes::JOURNEY_CREATED,
+            ));
 
             return $journey;
         });
-
-
 
         // broadcast(
         //     event: new NotificationSent(
@@ -269,54 +262,143 @@ final class ManagementController
         );
     }
 
-    public function requestLicense(Journey $journey)
+    /**
+     * REQUEST LICENSE
+     * @param Journey $journey
+     * @return void
+     */
+    public function requestLicense(Journey $journey): Response | HttpException
     {
-        // Get the last license issued for this journey
-        $lastLicense = License::where('journey_id', $journey->id)
-            ->orderBy('issued_at', 'desc')
-            ->first();
-
-        // Get the shift responsible for the last destination station
-        $currentShift = Shift::where('shift_start_station_id', '<=', $lastLicense->destination_station_id)
-            ->where('shift_end_station_id', '>=', $lastLicense->destination_station_id)
-            ->first();
-
-        // If journey is still within the current shift
-        if ($lastLicense->destination_station_id < $currentShift->shift_end_station_id) {
-            // Notify the current shift to assign the next license
-            $currentShift->user->notify(new LicenseRequestNotification(
-                journey: $journey,
-                lastLicense: $lastLicense,
-                type: NotificationTypes::LICENSE_REQUEST,
-            ));
-
-            return response(
-                content: [
-                    'message' => 'Your request for a license has been send successfully to your current operator. You will be notified when the new license is assigned for your confirmation.',
-                ],
-                status: Http::ACCEPTED(),
-            );
-        }
-
-        $nextShift = Shift::where('shift_start_station_id', '>', $lastLicense->destination_station_id)
-            ->first();
-
-        if ( ! $nextShift) {
+        // ensure that the current license destination is not equal to the journey destination
+        $latest_journey_license = $journey->licenses()->latest()->first();
+        if ($latest_journey_license->destination_station_id === $journey->destination_station_id) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
-                message: 'Please inform your system administration that you have no operator set for the desk you are trying to request a trip.',
+                message: 'You are at your destination according to the journey information.If you wish to continue please end this journey and create a new one.',
             );
         }
 
-        $nextShift->user->notify(new LicenseRequestNotification(
-            journey: $journey,
-            lastLicense: $lastLicense,
-            type: NotificationTypes::LICENSE_REQUEST,
-        ));
+        // check if the next license should be handled by the previous license issuer
+        $last_license_shift = $latest_journey_license->issuer->shifts()->latest()->first();
+
+        $journey_direction = JourneyService::getJourneyDirection(
+            origin: $journey->origin->start_kilometer,
+            destination: $journey->destination->end_kilometer,
+        );
+
+        // up train
+        if (LicenseDirections::UP_TRAIN === $journey_direction) {
+            if ($latest_journey_license->destination_station_id === max($last_license_shift->stations)) {
+                // look for the next station
+                $next_shift = Shift::query()
+                    ->where("status", ShiftStatuses::CONFIRMED)
+                    ->where("active", operator: true)
+                    ->whereJsonContains("stations", max($last_license_shift->stations) + 1)
+                    ->first();
+
+                if ( ! $next_shift) {
+                    abort(
+                        code: Http::EXPECTATION_FAILED(),
+                        message: 'Opps! You don`t have an active shift to accept this request. Please contact your system administrator.',
+                    );
+                }
+
+
+
+                $next_shift->user->notify(new LicenseRequestNotification(
+                    journey: $journey,
+                    lastLicense: $latest_journey_license,
+                    type: NotificationTypes::LICENSE_REQUEST,
+                ));
+            } else {
+                $last_license_shift->user->notify(new LicenseRequestNotification(
+                    journey: $journey,
+                    lastLicense: $latest_journey_license,
+                    type: NotificationTypes::LICENSE_REQUEST,
+                ));
+            }
+
+            $latest_journey_license->update([
+                'status' => LicenseStatuses::USED,
+            ]);
+        }
+
+        // down train
+        if (LicenseDirections::DOWN_TRAIN === $journey_direction) {
+            if ($latest_journey_license->destination_station_id === min($last_license_shift->stations)) {
+                // look for the next station
+                $next_shift = Shift::query()
+                    ->where("status", ShiftStatuses::CONFIRMED)
+                    ->where("active", operator: true)
+                    ->whereJsonContains("stations", min($last_license_shift->stations) - 1)
+                    ->first();
+
+                if ( ! $next_shift) {
+                    abort(
+                        code: Http::EXPECTATION_FAILED(),
+                        message: 'Opps! You don`t have an active shift to accept this request. Please contact your system administrator.',
+                    );
+                }
+
+                $next_shift->user->notify(new LicenseRequestNotification(
+                    journey: $journey,
+                    lastLicense: $latest_journey_license,
+                    type: NotificationTypes::LICENSE_REQUEST,
+                ));
+            } else {
+                $last_license_shift->user->notify(new LicenseRequestNotification(
+                    journey: $journey,
+                    lastLicense: $latest_journey_license,
+                    type: NotificationTypes::LICENSE_REQUEST,
+                ));
+            }
+
+            $latest_journey_license->update([
+                'status' => LicenseStatuses::USED,
+            ]);
+        }
 
         return response(
             content: [
-                'message' => 'Your request for a license has been send successfully to your next operator. You will be notified when the new license is assigned for your confirmation.',
+                'message' => 'Your license request has been sent successfully.Please be patient while your license is being assigned.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
+
+
+    /**
+     * END JOURNEY
+     * @param Journey $journey
+     * @return Response|HttpException
+     */
+    public function endJourney(Journey $journey): Response | HttpException
+    {
+        if ($journey->driver_id !== Auth::id()) {
+            abort(
+                code: Http::UNAUTHORIZED(),
+                message: 'This journey can only be ended by the driver.',
+            );
+        }
+
+        $latest_journey_license = $journey->licenses()->latest()->first();
+
+        DB::transaction(function () use ($journey, $latest_journey_license): void {
+            if ( ! $journey->update([
+                'status' => false,
+            ]) || ! $latest_journey_license->update([
+                'status' => LicenseStatuses::USED,
+            ])) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'Journey not ended.Please try again.',
+                );
+            }
+        });
+
+        return response(
+            content: [
+                'message' => 'Journey ended successfully.',
             ],
             status: Http::ACCEPTED(),
         );

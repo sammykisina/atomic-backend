@@ -97,6 +97,7 @@ final class ApplicationModulesController
                 'delete-shifts',
                 'reject-shifts',
                 'accept-shifts',
+                'manual-shift-activation',
             ],
             'regions' => [
                 'read-regions',

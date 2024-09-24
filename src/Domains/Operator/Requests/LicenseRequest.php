@@ -21,10 +21,10 @@ final class LicenseRequest extends FormRequest
                 'required',
                 'exists:stations,id',
             ],
-            'section_id' => [
-                'required',
-                'exists:sections,id',
-            ],
+            // 'section_id' => [
+            //     'required',
+            //     'exists:sections,id',
+            // ],
             'stop_at_main_line' => [
                 'required',
                 'boolean',

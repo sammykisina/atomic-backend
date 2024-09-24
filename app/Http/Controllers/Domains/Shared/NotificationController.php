@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Shared;
 
+use Carbon\Carbon;
 use Domains\Shared\Models\User;
 use Domains\Shared\Resources\NotificationResource;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class NotificationController
 {
@@ -40,7 +42,11 @@ final class NotificationController
         );
     }
 
-    /** */
+    /**
+     * GET READ NOTIFICATIONS
+     * @param User $user
+     * @return Response
+     */
     public function readNotifications(User $user): Response
     {
         if ($user->id !== Auth::id()) {
@@ -63,6 +69,30 @@ final class NotificationController
                 ),
             ],
             status: Http::OK(),
+        );
+    }
+
+    /**
+     * MARK NOTIFICATION AS READ
+     * @param DatabaseNotification $notification
+     * @return HttpException|Response
+     */
+    public function markAsRead(DatabaseNotification $notification): HttpException | Response
+    {
+        if ( ! $notification->update([
+            'read_at' => Carbon::now(),
+        ])) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Notification not marked as read.Please try again.',
+            );
+        }
+
+        return Response(
+            content: [
+                'message' => 'Notification marked as read successfully.',
+            ],
+            status: Http::ACCEPTED(),
         );
     }
 }

@@ -46,4 +46,28 @@ final class ManagementController
             status: Http::CREATED(),
         );
     }
+
+    /**
+     * MANUAL SHIFT ACTIVATION
+     * @param Shift $shift
+     * @return HttpException|Response
+     */
+    public function manualShiftActivation(Shift $shift): HttpException | Response
+    {
+        if ( ! $shift->update([
+            'active' => true,
+        ])) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Shift activation failed.',
+            );
+        }
+
+        return Response(
+            content: [
+                'message' => 'Shift activated successfully.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
 }

@@ -9,9 +9,11 @@ use Domains\RegionAdmin\Models\Region;
 use Domains\Shared\Enums\ModelStatuses;
 use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Enums\WorkStatuses;
+use Domains\SuperAdmin\Models\Shift;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -75,6 +77,15 @@ final class User extends Authenticatable
         return $this->belongsTo(
             related: Role::class,
             foreignKey: 'role_id',
+        );
+    }
+
+    /** @return HasMany<Shift> */
+    public function shifts(): HasMany
+    {
+        return $this->hasMany(
+            related: Shift::class,
+            foreignKey: 'user_id',
         );
     }
 

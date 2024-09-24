@@ -9,5 +9,6 @@ Route::middleware(['auth:sanctum'])->group(function (): void {
     Route::controller(NotificationController::class)->group(function (): void {
         Route::get('{user}/unread', 'unreadNotifications')->name(name: 'unread-notifications');
         Route::get('{user}/read', 'readNotifications')->name(name: 'read-notifications');
+        Route::patch('{notification}/mark-as-read', 'markAsRead')->name(name: 'mark-as-read');
     });
 });
