@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\RegionAdmin\Regions;
+namespace App\Http\Controllers\Domains\SuperAdmin\Setup\Regions;
 
-use Domains\RegionAdmin\Models\Region;
 use Domains\RegionAdmin\Resources\RegionResource;
+use Domains\SuperAdmin\Models\Region;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
@@ -15,8 +15,7 @@ final class IndexController
 {
     public function __invoke(Request $request): Response
     {
-        $regions = QueryBuilder::for(Region::class)
-            ->allowedFilters([])
+        $regions = QueryBuilder::for(subject: Region::class)
             ->get();
 
         return response(

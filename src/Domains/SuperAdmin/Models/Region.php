@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Domains\RegionAdmin\Models;
+namespace Domains\SuperAdmin\Models;
 
 use Domains\SuperAdmin\Models\Station;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

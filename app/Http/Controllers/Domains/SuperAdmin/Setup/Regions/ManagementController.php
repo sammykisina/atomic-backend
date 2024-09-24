@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\RegionAdmin\Regions;
 
-use Domains\RegionAdmin\Models\Region;
+namespace App\Http\Controllers\Domains\SuperAdmin\Setup\Regions;
+
+
 use Domains\RegionAdmin\Requests\CreateOrEditRegionRequest;
 use Domains\RegionAdmin\Resources\RegionResource;
 use Domains\RegionAdmin\Services\RegionService;
+use Domains\SuperAdmin\Models\Region;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;

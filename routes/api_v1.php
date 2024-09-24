@@ -46,6 +46,10 @@ Route::prefix('/super-admin')->as('super-admin:')->group(
 
         // SHIFTS
         base_path('routes/api_v1/super_admin/shifts.php'),
+
+        // REGIONS MANAGEMENT
+        base_path('routes/api_v1/super_admin/setup/regions.php'),
+        base_path('routes/api_v1/super_admin/setup/line_regions_divisions.php'),
     ],
 );
 
@@ -77,7 +81,6 @@ Route::prefix('/notifications')->as('notifications:')->group(
 Route::prefix('/region-admin')->as('region-admin:')->group(
     [
         // REGIONS
-        base_path('routes/api_v1/region_admin/regions.php'),
-        base_path('routes/api_v1/region_admin/line_regions_divisions.php'),
+        
     ],
 );

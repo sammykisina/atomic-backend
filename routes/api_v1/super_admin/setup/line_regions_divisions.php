@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Domains\RegionAdmin\Regions\LineRegionManagementController;
+
+use App\Http\Controllers\Domains\SuperAdmin\Setup\Regions\LineRegionManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'ability:line-regions-divisions'])->group(function (): void {

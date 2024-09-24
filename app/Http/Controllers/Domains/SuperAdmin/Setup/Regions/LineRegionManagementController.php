@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\RegionAdmin\Regions;
+namespace App\Http\Controllers\Domains\SuperAdmin\Setup\Regions;
 
 use Domains\RegionAdmin\Requests\LineRegionDivideRequest;
 use Domains\RegionAdmin\Services\LineRegionService;

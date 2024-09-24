@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Domains\Shared\Models;
 
 use Database\Factories\UserFactory;
-use Domains\RegionAdmin\Models\Region;
+use Domains\SuperAdmin\Models\Region;
 use Domains\Shared\Enums\ModelStatuses;
 use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Enums\WorkStatuses;

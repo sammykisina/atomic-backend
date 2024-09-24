@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\RegionAdmin\Services;
 
-use Domains\RegionAdmin\Models\Region;
+use Domains\SuperAdmin\Models\Region;
 
 final class RegionService
 {

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Domains\RegionAdmin\Regions\IndexController;
-use App\Http\Controllers\Domains\RegionAdmin\Regions\ManagementController;
+use App\Http\Controllers\Domains\SuperAdmin\Setup\Regions\IndexController;
+use App\Http\Controllers\Domains\SuperAdmin\Setup\Regions\ManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'ability:read-regions,edit-regions,delete-regions'])

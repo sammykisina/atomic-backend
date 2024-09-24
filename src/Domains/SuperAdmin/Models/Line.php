@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Models;
 
-use Domains\RegionAdmin\Models\Region;
+use Domains\SuperAdmin\Models\Region;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

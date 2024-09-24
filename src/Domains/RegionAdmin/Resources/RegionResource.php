@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\RegionAdmin\Resources;
 
-use Domains\RegionAdmin\Models\Region;
+use Domains\SuperAdmin\Models\Region;
 use Domains\SuperAdmin\Models\Station;
 use Domains\SuperAdmin\Resources\StationResource;
 use Illuminate\Http\Request;
