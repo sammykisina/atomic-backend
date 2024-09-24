@@ -50,7 +50,9 @@ final class LoginController
 
             return response(
                 content: [
-                    'user' => new UserResource($user),
+                    'user' => [
+                        'id' => $user->id,
+                    ],
                     'token' => $token,
                     'message' => '-Login Successful-',
                 ],
