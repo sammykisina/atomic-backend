@@ -81,6 +81,6 @@ Route::prefix('/notifications')->as('notifications:')->group(
 Route::prefix('/region-admin')->as('region-admin:')->group(
     [
         // REGIONS
-        
+
     ],
 );

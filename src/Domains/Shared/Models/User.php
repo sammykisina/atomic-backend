@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Domains\Shared\Models;
 
 use Database\Factories\UserFactory;
-use Domains\SuperAdmin\Models\Region;
 use Domains\Shared\Enums\ModelStatuses;
 use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Enums\WorkStatuses;
+use Domains\SuperAdmin\Models\Region;
 use Domains\SuperAdmin\Models\Shift;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

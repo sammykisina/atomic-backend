@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace App\Http\Controllers\Domains\SuperAdmin\Setup\Regions;
-
 
 use Domains\RegionAdmin\Requests\CreateOrEditRegionRequest;
 use Domains\RegionAdmin\Resources\RegionResource;

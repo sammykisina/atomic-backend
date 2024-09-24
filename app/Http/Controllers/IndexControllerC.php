@@ -1,10 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-class IndexControllerC extends Controller
-{
-    //
-}
+final class IndexControllerC extends Controller {}
