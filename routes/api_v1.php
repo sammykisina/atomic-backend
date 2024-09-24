@@ -78,9 +78,9 @@ Route::prefix('/notifications')->as('notifications:')->group(
 );
 
 // REGION ADMIN
-Route::prefix('/region-admin')->as('region-admin:')->group(
-    [
-        // REGIONS
+// Route::prefix('/region-admin')->as('region-admin:')->group(
+//     [
+//         // REGIONS
 
-    ],
-);
+//     ],
+// );

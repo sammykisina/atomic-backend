@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Domains\Shared\Auth\LoginController;
 use App\Http\Controllers\Domains\Shared\Auth\RequestPasswordRestCodeController;
 use App\Http\Controllers\Domains\Shared\Auth\RestPasswordController;
+use App\Http\Controllers\Domains\Shared\Profile\MeController;
 use Illuminate\Support\Facades\Route;
 
 // LOGIN ROUTES
@@ -15,3 +16,7 @@ Route::post('/request-password-rest-code', RequestPasswordRestCodeController::cl
 
 // RESET PASSWORD
 Route::post('/reset-password', RestPasswordController::class)->name(name: "reset-password");
+
+Route::middleware(['auth:sanctum'])->prefix('/profile')->as('profile:')->group(function (): void {
+    Route::get('/me', MeController::class)->name(name: 'me');
+});
