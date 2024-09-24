@@ -8,8 +8,8 @@ use Domains\Driver\Models\Journey;
 use Domains\Driver\Resources\JourneyResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
-use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 final class IndexController
@@ -17,9 +17,7 @@ final class IndexController
     public function __invoke(Request $request): Response
     {
         $journeys  = QueryBuilder::for(Journey::class)
-            ->allowedFilters([
-                AllowedFilter::exact('driver_id'),
-            ])
+            ->where('driver_id', Auth::id())
             ->allowedIncludes('origin', 'destination', 'licenses.section', 'licenses.originStation', 'licenses.destinationStation', 'licenses.main', 'licenses.loop')
             ->get();
 
