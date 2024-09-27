@@ -18,14 +18,14 @@ final class IndexController
     {
         $inspection_schedule = InspectionService::getInspectionSchedule();
 
-        if(! $inspection_schedule){
+        if ( ! $inspection_schedule) {
             return response(
-            content: [
-                'message' => 'Inspections fetched successfully.',
-                'inspections' => []
-            ],
-            status: Http::OK(),
-        );
+                content: [
+                    'message' => 'Inspections fetched successfully.',
+                    'inspections' => [],
+                ],
+                status: Http::OK(),
+            );
         }
 
         $inspections  = QueryBuilder::for(subject: Inspection::class)

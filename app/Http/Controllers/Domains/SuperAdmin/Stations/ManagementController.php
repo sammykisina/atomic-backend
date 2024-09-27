@@ -73,7 +73,7 @@ final class ManagementController
         );
     }
 
-     /**
+    /**
      * SHOW SECTION
      * @param Station $Station
      * @return Response
