@@ -11,6 +11,7 @@ use Domains\Shared\Enums\WorkStatuses;
 use Domains\SuperAdmin\Models\Region;
 use Domains\SuperAdmin\Models\Shift;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -118,5 +119,12 @@ final class User extends Authenticatable
             'employee_id' => 'integer',
             'national_id' => 'integer',
         ];
+    }
+
+    protected function fullname(): Attribute
+    {
+        return Attribute::make(
+            get: fn(mixed $value, array $attributes) => $attributes['first_name'] . ' ' . $attributes['last_name'],
+        );
     }
 }

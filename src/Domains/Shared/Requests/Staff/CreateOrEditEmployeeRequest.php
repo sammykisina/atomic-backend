@@ -72,6 +72,7 @@ final class CreateOrEditEmployeeRequest extends FormRequest
         return [
             'department_id.required' => 'Employee current department is required.',
             'region_id.required' => 'Employee current region is required.',
+            'region_id.exists' => 'Employee current region selected is invalid or does not exits.',
             'role_id.required' => 'Role is required.',
             'role_id.exists' => 'Invalid role selected.',
             'region_id.required_if' => 'Employee current region is required.',

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Domains\RegionAdmin\Services;
+namespace Domains\SuperAdmin\Services;
 
 use Domains\SuperAdmin\Models\Line;
 

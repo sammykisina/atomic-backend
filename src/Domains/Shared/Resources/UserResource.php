@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Domains\Shared\Resources;
 
-use Domains\RegionAdmin\Resources\RegionResource;
 use Domains\Shared\Models\User;
+use Domains\SuperAdmin\Resources\RegionResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,6 +19,7 @@ final class UserResource extends JsonResource
             'id' => $this->resource->id,
             'first_name' => $this->resource->first_name,
             'last_name' => $this->resource->last_name,
+            'full_name' => $this->resource->fullname,
             'email' => $this->resource->email,
             'phone' => $this->resource->phone,
             'image_url' => $this->resource->image_url,

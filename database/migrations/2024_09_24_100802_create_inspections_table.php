@@ -12,25 +12,15 @@ return new class () extends Migration {
         Schema::create(table: 'inspections', callback: function (Blueprint $table): void {
             $table->id();
 
-            $table->foreignId(column: 'inspector_id')
-                ->references(column: 'id')
-                ->on(table: 'users')
-                ->index()
-                ->constrained()
-                ->name('fk_inspector');
-
-            $table->timestamp(column: 'time');
-            $table->boolean(column: 'active');
-            $table->string(column: 'status');
-
-            $table->foreignId(column: 'line_id')
+            $table->foreignId(column: 'inspection_schedule_id')
                 ->index()
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
 
-            $table->float(column: 'start_kilometer');
-            $table->float(column: 'end_kilometer');
+            $table->date(column: 'date');
+            $table->time(column: 'time');
+            $table->boolean(column: 'is_active');
 
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();

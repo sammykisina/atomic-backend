@@ -77,10 +77,18 @@ Route::prefix('/notifications')->as('notifications:')->group(
     base_path('routes/api_v1/shared/notifications.php'),
 );
 
-// REGION ADMIN
-// Route::prefix('/region-admin')->as('region-admin:')->group(
-//     [
-//         // REGIONS
+// REGINAL_CIVIL_ENGINEER
+Route::prefix('/reginal-civil-engineer')->as('reginal-civil-engineer:')->group(
+    [
+        // INSPECTIONS
+        base_path('routes/api_v1/reginal_civil_engineer/inspection_schedules.php'),
+    ],
+);
 
-//     ],
-// );
+// INSPECTOR
+Route::prefix('/inspector')->as('inspector:')->group(
+    [
+        // INSPECTION SCHEDULES
+        base_path('routes/api_v1/inspector/inspection-schedules.php'),
+    ],
+);

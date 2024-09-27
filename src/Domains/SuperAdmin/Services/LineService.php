@@ -9,6 +9,15 @@ use Domains\SuperAdmin\Models\Line;
 final class LineService
 {
     /**
+     * GET LINE WITH ID
+     * @param int $line_id
+     * @return Line|null
+     */
+    public static function getLineWithId(int $line_id): ?Line
+    {
+        return Line::query()->where('id', $line_id)->first();
+    }
+    /**
      * CREATE LINE
      * @param string $name
      * @return Line

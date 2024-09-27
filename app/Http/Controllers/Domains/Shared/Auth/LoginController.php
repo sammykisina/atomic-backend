@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\Shared\Auth;
 
 use Domains\Shared\Requests\LoginRequest;
+use Domains\Shared\Resources\UserResource;
 use Domains\Shared\Services\AuthService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -49,9 +50,9 @@ final class LoginController
 
             return response(
                 content: [
-                    'user' => [
-                        'id' => $user->id,
-                    ],
+                    'user' => new UserResource(
+                        resource: $user,
+                    ),
                     'token' => $token,
                     'message' => '-Login Successful-',
                 ],

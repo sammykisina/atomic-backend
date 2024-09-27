@@ -18,6 +18,9 @@ final class NotificationResource extends JsonResource
                 resource: $this->created_at,
             ),
             'data' => $this->data,
+            'read_at' =>  new DateResource(
+                resource: $this->read_at,
+            ),
         ];
     }
 }

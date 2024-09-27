@@ -44,12 +44,12 @@ final class AuthService
             'type' => $type,
         ])->where('created_at', '>=', $time)->count();
 
-        // if ($count >= $tries) {
-        //     abort(
-        //         code: Http::UNPROCESSABLE_ENTITY(),
-        //         message: 'Too many attempts. Try again in 30 minutes.',
-        //     );
-        // }
+        if ($count >= $tries) {
+            abort(
+                code: Http::UNPROCESSABLE_ENTITY(),
+                message: 'Too many attempts. Try again in 30 minutes.',
+            );
+        }
 
         $code = random_int(min: 100000, max: 999999);
 

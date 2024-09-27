@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Resources;
 
-use Domains\RegionAdmin\Resources\RegionResource;
+use Domains\Shared\Resources\DateResource;
 use Domains\SuperAdmin\Models\Line;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -37,6 +37,9 @@ final class LineResource extends JsonResource
                 resource: $this->whenLoaded(
                     relationship: 'loops',
                 ),
+            ),
+            'created_at' => new DateResource(
+                $this->resource->created_at,
             ),
         ];
     }

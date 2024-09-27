@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\SuperAdmin\Setup\Regions;
 
-use Domains\RegionAdmin\Requests\CreateOrEditRegionRequest;
-use Domains\RegionAdmin\Resources\RegionResource;
-use Domains\RegionAdmin\Services\RegionService;
 use Domains\SuperAdmin\Models\Region;
+use Domains\SuperAdmin\Requests\Setup\CreateOrEditRegionRequest;
+use Domains\SuperAdmin\Resources\RegionResource;
+use Domains\SuperAdmin\Services\RegionService;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;

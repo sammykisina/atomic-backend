@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Domains\RegionAdmin\Requests;
+namespace Domains\SuperAdmin\Requests\Setup;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;

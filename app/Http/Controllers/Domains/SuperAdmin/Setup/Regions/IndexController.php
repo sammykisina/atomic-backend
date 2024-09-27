@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\SuperAdmin\Setup\Regions;
 
-use Domains\RegionAdmin\Resources\RegionResource;
 use Domains\SuperAdmin\Models\Region;
+use Domains\SuperAdmin\Resources\RegionResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;

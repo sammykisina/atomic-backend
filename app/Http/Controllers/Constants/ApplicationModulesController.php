@@ -77,7 +77,7 @@ final class ApplicationModulesController
                 'edit-journeys',
                 'delete-journeys',
             ],
-            'journeys management' => [
+            'journeys-management' => [
                 'read-journeys',
                 'edit-journeys',
                 'delete-journeys',
@@ -105,6 +105,17 @@ final class ApplicationModulesController
                 'edit-regions',
                 'delete-regions',
                 'line-regions-divisions',
+            ],
+            'inspections-management' => [
+                'read-inspection-schedules',
+                'create-inspection-schedules',
+                'edit-inspection-schedules',
+                'delete-inspection-schedules',
+                'confirm-inspection-schedules'
+            ],
+            'inspections' => [
+                'read-inspections',
+                'create-inspections',
             ],
         ];
 

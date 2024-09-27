@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\SuperAdmin\Setup\Regions;
 
-use Domains\RegionAdmin\Requests\LineRegionDivideRequest;
-use Domains\RegionAdmin\Services\LineRegionService;
 use Domains\SuperAdmin\Models\Line;
 use Domains\SuperAdmin\Models\Station;
+use Domains\SuperAdmin\Requests\Setup\LineRegionDivideRequest;
+use Domains\SuperAdmin\Services\LineRegionService;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
