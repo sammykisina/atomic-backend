@@ -19,7 +19,9 @@ return new class () extends Migration {
                 ->nullOnDelete();
 
             $table->date(column: 'date');
-            $table->time(column: 'time');
+            $table->time(column: 'start_time');
+            $table->time(column: 'end_time')->nullable();
+
             $table->boolean(column: 'is_active');
 
             $table->timestamp(column: 'created_at')->useCurrent();

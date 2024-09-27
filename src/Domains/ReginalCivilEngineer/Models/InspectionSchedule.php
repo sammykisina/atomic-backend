@@ -10,6 +10,7 @@ use Domains\SuperAdmin\Models\Line;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class InspectionSchedule extends Model
 {
@@ -41,6 +42,16 @@ final class InspectionSchedule extends Model
         return $this->belongsTo(
             related: User::class,
             foreignKey: 'inspector_id',
+        );
+    }
+
+
+    /** @return HasMany<Inspection>*/
+    public function inspections(): HasMany
+    {
+        return $this->hasMany(
+            related: Inspection::class,
+            foreignKey: 'inspection_schedule_id',
         );
     }
 

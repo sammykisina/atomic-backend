@@ -121,6 +121,10 @@ final class User extends Authenticatable
         ];
     }
 
+    /**
+     * GENERATE FULL NAME
+     * @return Attribute
+     */
     protected function fullname(): Attribute
     {
         return Attribute::make(

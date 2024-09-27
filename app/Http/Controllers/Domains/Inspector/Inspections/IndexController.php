@@ -1,0 +1,35 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers\Domains\Inspector\Inspections;
+
+use Domains\Inspector\Resources\InspectionResource;
+use Domains\Inspector\Services\InspectionService;
+use Domains\ReginalCivilEngineer\Models\Inspection;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use JustSteveKing\StatusCode\Http;
+use Spatie\QueryBuilder\QueryBuilder;
+
+final class IndexController
+{
+    public function __invoke(Request $request): Response
+    {
+        $inspection_schedule = InspectionService::getInspectionSchedule();
+        $inspections  = QueryBuilder::for(subject: Inspection::class)
+            ->where('inspection_schedule_id', $inspection_schedule->id)
+            ->allowedIncludes(includes: [
+            ])->get();
+
+        return response(
+            content: [
+                'message' => 'Inspections fetched successfully.',
+                'inspections' => InspectionResource::collection(
+                    resource: $inspections,
+                ),
+            ],
+            status: Http::OK(),
+        );
+    }
+}

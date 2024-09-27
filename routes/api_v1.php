@@ -89,6 +89,6 @@ Route::prefix('/reginal-civil-engineer')->as('reginal-civil-engineer:')->group(
 Route::prefix('/inspector')->as('inspector:')->group(
     [
         // INSPECTION SCHEDULES
-        base_path('routes/api_v1/inspector/inspection-schedules.php'),
+        base_path('routes/api_v1/inspector/inspection.php'),
     ],
 );

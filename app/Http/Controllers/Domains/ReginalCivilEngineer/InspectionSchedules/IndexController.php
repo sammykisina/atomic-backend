@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedInclude;
 use Spatie\QueryBuilder\QueryBuilder;
 
 final class IndexController
@@ -17,10 +18,15 @@ final class IndexController
     public function __invoke(Request $request): Response
     {
         $inspectionSchedules  = QueryBuilder::for(subject: InspectionSchedule::class)
-            ->allowedIncludes(includes: ['line', 'inspector'])
+            ->allowedIncludes(includes: [
+                'line',
+                'inspector',
+                AllowedInclude::count(name: 'inspectionsCount'),
+            ])
             ->allowedSorts('start_kilometer')
             ->allowedFilters([
                 AllowedFilter::exact('line_id'),
+
             ])
             ->get();
 
