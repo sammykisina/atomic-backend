@@ -6,6 +6,7 @@ namespace Domains\ReginalCivilEngineer\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Inspection extends Model
 {
@@ -19,6 +20,16 @@ final class Inspection extends Model
         'end_time',
         'is_active',
     ];
+
+
+    /** @return HasMany<Inspection>*/
+    public function issues(): HasMany
+    {
+        return $this->hasMany(
+            related: Issue::class,
+            foreignKey: 'inspection_id',
+        );
+    }
 
     /** @return array<string, mixed> */
     protected function casts(): array

@@ -116,6 +116,10 @@ final class ApplicationModulesController
                 'read-inspections',
                 'create-inspections',
                 'confirm-inspection-schedules',
+                'create-issues',
+                'read-issues',
+                'delete-issues',
+                'edit-issues',
             ],
         ];
 

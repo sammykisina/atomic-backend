@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Domains\ReginalCivilEngineer\Enums\InspectionScheduleStatuses;
 use Domains\ReginalCivilEngineer\Models\Inspection;
 use Domains\ReginalCivilEngineer\Models\InspectionSchedule;
+use Domains\ReginalCivilEngineer\Models\Issue;
 use Illuminate\Support\Facades\Auth;
 
 final class InspectionService
@@ -49,6 +50,24 @@ final class InspectionService
             'date' => Carbon::now(),
             'start_time' => $inspectionData['start_time'],
             'is_active' => true,
+        ]);
+    }
+
+    /**
+     * CREATE INSPECTION ISSUE
+     * @param Inspection $inspection
+     * @param array $inspectionIssueData
+     * @return Issue
+     */
+    public function createInspectionIssue(Inspection $inspection, array $inspectionIssueData): Issue
+    {
+        return Issue::query()->create([
+            'inspection_id' => $inspection->id,
+            'description' => $inspectionIssueData['description'],
+            'condition' => $inspectionIssueData['condition'],
+            'latitude' => $inspectionIssueData['latitude'],
+            'longitude' => $inspectionIssueData['longitude'],
+            'image_url' => $inspectionIssueData['image_url'],
         ]);
     }
 }

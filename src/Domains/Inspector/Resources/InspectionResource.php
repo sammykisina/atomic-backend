@@ -20,6 +20,11 @@ final class InspectionResource extends JsonResource
             'start_time' => $this->resource->start_time,
             'end_time' => $this->resource->end_time,
             'is_active' => $this->resource->is_active,
+            'issues' => IssueResource::collection(
+                resource: $this->whenLoaded(
+                    relationship: 'issues',
+                ),
+            ),
         ];
     }
 }

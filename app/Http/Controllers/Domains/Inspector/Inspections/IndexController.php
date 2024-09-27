@@ -17,9 +17,21 @@ final class IndexController
     public function __invoke(Request $request): Response
     {
         $inspection_schedule = InspectionService::getInspectionSchedule();
+
+        if(! $inspection_schedule){
+            return response(
+            content: [
+                'message' => 'Inspections fetched successfully.',
+                'inspections' => []
+            ],
+            status: Http::OK(),
+        );
+        }
+
         $inspections  = QueryBuilder::for(subject: Inspection::class)
             ->where('inspection_schedule_id', $inspection_schedule->id)
             ->allowedIncludes(includes: [
+                'issues',
             ])->get();
 
         return response(

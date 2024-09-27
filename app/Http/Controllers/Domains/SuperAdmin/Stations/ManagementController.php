@@ -72,4 +72,22 @@ final class ManagementController
             status: Http::ACCEPTED(),
         );
     }
+
+     /**
+     * SHOW SECTION
+     * @param Station $Station
+     * @return Response
+     */
+    public function show(Station $station): Response | HttpException
+    {
+        return response(
+            content: [
+                'message' => 'Station fetched successfully.',
+                'Station' => new StationResource(
+                    resource: $station,
+                ),
+            ],
+            status: Http::OK(),
+        );
+    }
 }
