@@ -111,7 +111,7 @@ final class ApplicationModulesController
                 'create-inspection-schedules',
                 'edit-inspection-schedules',
                 'delete-inspection-schedules',
-                'confirm-inspection-schedules'
+                'confirm-inspection-schedules',
             ],
             'inspections' => [
                 'read-inspections',
