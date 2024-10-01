@@ -25,7 +25,7 @@ final class IssueResource extends JsonResource
             'condition' => $this->resource->condition,
             'latitude' => $this->resource->latitude,
             'longitude' => $this->resource->longitude,
-            'image_url' => $this->resource->image_url
+            'image_url' => $this->resource->image_url,
         ];
     }
 }
