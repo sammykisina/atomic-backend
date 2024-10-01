@@ -21,6 +21,12 @@ return new class () extends Migration {
                 ->constrained()
                 ->nullOnDelete();
 
+            $table->foreignId(column: 'issue_name_id')
+                ->index()
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
             $table->string(column: 'condition');
             $table->string(column: 'description')->nullable();
             $table->string(column: 'image_url')->nullable();

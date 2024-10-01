@@ -20,11 +20,14 @@ final class IssueRequest extends FormRequest
                 Rule::enum(type: IssueConditions::class),
             ],
             'description' => [
-                'required_if:condition,CRITICAL',
+                'required',
+                'string',
             ],
             'image_url' => [
-                'required_if:condition,CRITICAL',
+                'required',
+                'string',
             ],
+
             'latitude' => [
                 'required',
                 'numeric',
@@ -32,6 +35,10 @@ final class IssueRequest extends FormRequest
             'longitude' => [
                 'required',
                 'numeric',
+            ],
+            'issue_name_id' => [
+                'required',
+                'exists:issue_names,id',
             ],
         ];
     }

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Domains\Inspector\Services;
 
 use Carbon\Carbon;
-use Domains\ReginalCivilEngineer\Enums\InspectionScheduleStatuses;
-use Domains\ReginalCivilEngineer\Models\Inspection;
-use Domains\ReginalCivilEngineer\Models\InspectionSchedule;
-use Domains\ReginalCivilEngineer\Models\Issue;
+use Domains\Inspector\Models\Inspection;
+use Domains\Inspector\Models\Issue;
+use Domains\PermanentWayInspector\Enums\InspectionScheduleStatuses;
+use Domains\PermanentWayInspector\Models\InspectionSchedule;
 use Illuminate\Support\Facades\Auth;
 
 final class InspectionService

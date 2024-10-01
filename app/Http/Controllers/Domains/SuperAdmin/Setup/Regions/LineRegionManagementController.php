@@ -45,7 +45,7 @@ final class LineRegionManagementController
             // ensure regions are sequential (no gaps between regions)
             if ($index > 0) {
                 $previous_region = $region_divisions[$index - 1];
-                if ($region_division['start_station_id'] !== $previous_region['end_station_id']) {
+                if ($previous_region['end_station_id'] + 1 !== $region_division['start_station_id']) {
                     abort(
                         code: Http::EXPECTATION_FAILED(),
                         message: "Region {$index} start_station_id must match the previous region's end_station_id.",

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Inspector;
 
+use Domains\Inspector\Models\Inspection;
 use Domains\Inspector\Requests\IssueRequest;
 use Domains\Inspector\Services\InspectionService;
-use Domains\ReginalCivilEngineer\Models\Inspection;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -26,6 +26,7 @@ final class InspectionIssueManagementController
                 'latitude' => $request->validated('latitude'),
                 'longitude' => $request->validated('longitude'),
                 'image_url' => $request->validated('image_url') ?? null,
+                'issue_name_id' => $request->validated('issue_name_id'),
             ],
         );
 

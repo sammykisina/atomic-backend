@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Inspector\Inspections;
 
+use Domains\Inspector\Models\Inspection;
 use Domains\Inspector\Requests\InspectionRequest;
+use Domains\Inspector\Resources\InspectionResource;
 use Domains\Inspector\Services\InspectionService;
-use Domains\ReginalCivilEngineer\Enums\InspectionScheduleStatuses;
-use Domains\ReginalCivilEngineer\Models\InspectionSchedule;
+use Domains\PermanentWayInspector\Enums\InspectionScheduleStatuses;
+use Domains\PermanentWayInspector\Models\InspectionSchedule;
 use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Services\Staff\EmployeeService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
@@ -79,19 +82,19 @@ final class InspectionManagementController
         }
 
         // check if the current user has an active inspection
-        $inspection = InspectionService::getActiveInspection(inspectionSchedule: $inspection_schedule);
+        $pre_inspection = InspectionService::getActiveInspection(inspectionSchedule: $inspection_schedule);
 
-        if ($inspection) {
+        if ($pre_inspection) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: 'You can only have one inspection a day. Check on the current active inspection actions to continue if you are not done inspecting.',
             );
         }
-
-        if ( ! $this->inspectionService->createInspection(
+        $inspection = $this->inspectionService->createInspection(
             inspectionData: $request->validated(),
             inspection_schedule: $inspection_schedule,
-        )) {
+        );
+        if ( ! $inspection) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: 'Inspection no initialized.Please try again',
@@ -100,9 +103,31 @@ final class InspectionManagementController
 
         return Response(
             content: [
+                'inspection' => new InspectionResource(
+                    resource: $inspection,
+                ),
                 'message' => 'Inspection created. Please start your walk. Be sure to record all the issues noticed on your inspection.',
             ],
             status: Http::CREATED(),
+        );
+    }
+
+    /**
+     * SHOW INSPECTION
+     * @param Request $request
+     * @param Inspection $inspection
+     * @return Response
+     */
+    public function show(Request $request, Inspection $inspection): Response
+    {
+        return Response(
+            content: [
+                'inspection' => new InspectionResource(
+                    resource: $inspection,
+                ),
+                'message' => 'Inspection fetched successfully.',
+            ],
+            status: Http::OK(),
         );
     }
 

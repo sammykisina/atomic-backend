@@ -77,11 +77,31 @@ Route::prefix('/notifications')->as('notifications:')->group(
     base_path('routes/api_v1/shared/notifications.php'),
 );
 
-// REGINAL_CIVIL_ENGINEER
-Route::prefix('/reginal-civil-engineer')->as('reginal-civil-engineer:')->group(
+// CHIEF_CIVIL_ENGINEER
+Route::prefix('/chief-civil-engineer')->as('chief-civil-engineer:')->group(
     [
-        // INSPECTIONS
-        base_path('routes/api_v1/reginal_civil_engineer/inspection_schedules.php'),
+        base_path('routes/api_v1/chief_civil_engineer/rce_management.php'),
+    ],
+);
+
+// REGIONAL_CIVIL_ENGINEER
+Route::prefix('/regional-civil-engineer')->as('regional-civil-engineer:')->group(
+    [
+        base_path('routes/api_v1/regional_civil_engineer/rpwi_management.php'),
+    ],
+);
+
+// REGIONAL_PERMANENT_WAY_INSPECTOR
+Route::prefix('/regional-permanent-way-inspector')->as('regional-permanent-way-inspector:')->group(
+    [
+        base_path('routes/api_v1/regional_permanent_way_inspector/pwi_management.php'),
+    ],
+);
+
+// PERMANENT_WAY_INSPECTOR
+Route::prefix('/permanent-way-inspector')->as('permanent-way-inspector:')->group(
+    [
+        base_path('routes/api_v1/permanent_way_inspector/inspection_schedules.php'),
     ],
 );
 

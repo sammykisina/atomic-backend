@@ -42,7 +42,12 @@ final class ManagementController
             }
 
             $employee = $this->employeeService->createEmployee(
-                employeeData: $request->validated(),
+                employeeData: array_merge(
+                    [
+                        'region_id' => $request->validated('region_id') ?? null,
+                    ],
+                    $request->validated(),
+                ),
             );
 
             if ( ! $employee) {

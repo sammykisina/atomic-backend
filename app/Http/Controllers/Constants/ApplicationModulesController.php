@@ -121,6 +121,18 @@ final class ApplicationModulesController
                 'delete-issues',
                 'edit-issues',
             ],
+            'rce-management' => [
+                'read-rce-assignment',
+                'create-rce-assignment',
+                'edit-rce-assignment',
+                'delete-rce-assignment',
+            ],
+            'rpwi-management' => [
+                'read-rpwi-assignment',
+                'create-rpwi-assignment',
+                'edit-rpwi-assignment',
+                'delete-rpwi-assignment',
+            ],
         ];
 
         return response(
