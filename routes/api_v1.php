@@ -13,6 +13,11 @@ Route::prefix('/auth')->as('auth:')->group(
     base_path('routes/api_v1/shared/auth.php'),
 );
 
+// DASHBOARDS
+Route::prefix('/dashboards')->as('dashboards:')->group(
+    base_path('routes/api_v1/shared/dashboards.php'),
+);
+
 // CONSTANTS
 Route::prefix('/constants')->as('constants:')->group(
     base_path('routes/api_v1/constants.php'),
@@ -102,6 +107,7 @@ Route::prefix('/regional-permanent-way-inspector')->as('regional-permanent-way-i
 Route::prefix('/permanent-way-inspector')->as('permanent-way-inspector:')->group(
     [
         base_path('routes/api_v1/permanent_way_inspector/inspection_schedules.php'),
+        base_path('routes/api_v1/permanent_way_inspector/inspections.php'),
     ],
 );
 

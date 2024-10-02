@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\Inspector\Models;
 
+use Domains\Inspector\Enums\IssueStatuses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,7 @@ final class Issue extends Model
         'condition',
         'description',
         'image_url',
+        'status',
     ];
 
     /** @return BelongsTo<IssueName>*/
@@ -30,5 +32,12 @@ final class Issue extends Model
             related: IssueName::class,
             foreignKey: 'issue_name_id',
         );
+    }
+
+    public function casts(): array
+    {
+        return [
+            'status' => IssueStatuses::class,
+        ];
     }
 }

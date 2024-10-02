@@ -32,7 +32,11 @@ final class InspectionScheduleResource extends JsonResource
             ),
             'start_kilometer' => $this->resource->start_kilometer,
             'end_kilometer' => $this->resource->end_kilometer,
-            'inspections_count' => $this->resource->inspections_count,
+            'start_kilometer_latitude' => $this->resource->start_kilometer_latitude,
+            'start_kilometer_longitude' => $this->resource->start_kilometer_longitude,
+
+            'end_kilometer_latitude' => $this->resource->end_kilometer_latitude,
+            'end_kilometer_longitude' => $this->resource->end_kilometer_longitude,
         ];
     }
 }

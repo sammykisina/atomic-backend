@@ -18,6 +18,8 @@ Route::middleware(['auth:sanctum', 'ability:create-inspections,read-inspections'
         Route::patch('/{inspectionSchedule}/{notification}/confirm', 'confirmInspectionSchedule')->name(name: 'confirm');
         Route::post('/', 'createInspection')->name(name: 'create');
         Route::get('{inspection}/show', 'show')->name(name: 'show');
+
+        Route::patch('{inspection}/start', 'start')->name(name: 'start');
     });
 
     Route::controller(InspectionIssueManagementController::class)->group(function (): void {

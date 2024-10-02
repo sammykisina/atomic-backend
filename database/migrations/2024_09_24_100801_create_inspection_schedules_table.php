@@ -20,7 +20,7 @@ return new class () extends Migration {
                 ->name('fk_inspector');
 
             $table->time(column: 'time')->default(value: "08:00");
-            $table->string(column: 'status')->default('AWAITING_CONFIRMATION'); // AWAITING_CONFIRMATION
+            $table->string(column: 'status')->default('ACTIVE');
 
             $table->foreignId(column: 'line_id')
                 ->index()
@@ -36,6 +36,12 @@ return new class () extends Migration {
 
             $table->float(column: 'start_kilometer');
             $table->float(column: 'end_kilometer');
+
+            $table->float(column: 'start_kilometer_latitude');
+            $table->float(column: 'start_kilometer_longitude');
+
+            $table->float(column: 'end_kilometer_latitude');
+            $table->float(column: 'end_kilometer_longitude');
 
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();

@@ -36,6 +36,26 @@ final class CreateInspectionSchedulesRequest extends FormRequest
                 'required',
                 'numeric',
             ],
+
+            'inspection_schedules.*.start_kilometer_latitude' => [
+                'required',
+                'numeric',
+            ],
+
+            'inspection_schedules.*.start_kilometer_longitude' => [
+                'required',
+                'numeric',
+            ],
+
+            'inspection_schedules.*.end_kilometer_latitude' => [
+                'required',
+                'numeric',
+            ],
+
+            'inspection_schedules.*.end_kilometer_longitude' => [
+                'required',
+                'numeric',
+            ],
         ];
     }
 

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Domains\Inspector\Enums\IssueStatuses;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -30,6 +31,8 @@ return new class () extends Migration {
             $table->string(column: 'condition');
             $table->string(column: 'description')->nullable();
             $table->string(column: 'image_url')->nullable();
+
+            $table->string(column : 'status')->default(IssueStatuses::PENDING);
 
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();

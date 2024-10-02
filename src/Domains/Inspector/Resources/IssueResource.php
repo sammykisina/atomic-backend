@@ -16,7 +16,7 @@ final class IssueResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            'name' => new IssueNameResource(
+            'issue_name' => new IssueNameResource(
                 resource: $this->whenLoaded(
                     relationship: 'issueName',
                 ),

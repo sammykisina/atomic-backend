@@ -48,17 +48,21 @@ final class InspectionService
         return Inspection::query()->create([
             'inspection_schedule_id' => $inspection_schedule->id,
             'date' => Carbon::now(),
-            'start_time' => $inspectionData['start_time'],
             'is_active' => true,
         ]);
     }
 
     /**
-     * CREATE INSPECTION ISSUE
-     * @param Inspection $inspection
-     * @param array $inspectionIssueData
-     * @return Issue
+     * START INSPECTION
+     * @return Inspection
      */
+    public function startInspection(Inspection $inspection): bool
+    {
+        return $inspection->update([
+            'start_time' => Carbon::now()->format('H:i'),
+        ]);
+    }
+
     public function createInspectionIssue(Inspection $inspection, array $inspectionIssueData): Issue
     {
         return Issue::query()->create([
@@ -68,6 +72,7 @@ final class InspectionService
             'latitude' => $inspectionIssueData['latitude'],
             'longitude' => $inspectionIssueData['longitude'],
             'image_url' => $inspectionIssueData['image_url'],
+            'issue_name_id' => $inspectionIssueData['issue_name_id'],
         ]);
     }
 }

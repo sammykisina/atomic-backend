@@ -19,7 +19,7 @@ return new class () extends Migration {
                 ->nullOnDelete();
 
             $table->date(column: 'date');
-            $table->time(column: 'start_time');
+            $table->time(column: 'start_time')->nullable();
             $table->time(column: 'end_time')->nullable();
 
             $table->boolean(column: 'is_active');

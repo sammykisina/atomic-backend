@@ -87,7 +87,7 @@ final class InspectionManagementController
         if ($pre_inspection) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
-                message: 'You can only have one inspection a day. Check on the current active inspection actions to continue if you are not done inspecting.',
+                message: 'You can only have one inspection a day. Check on the current active inspection actions to continue with your currently active inspection.',
             );
         }
         $inspection = $this->inspectionService->createInspection(
@@ -106,7 +106,7 @@ final class InspectionManagementController
                 'inspection' => new InspectionResource(
                     resource: $inspection,
                 ),
-                'message' => 'Inspection created. Please start your walk. Be sure to record all the issues noticed on your inspection.',
+                'message' => 'Inspection created successfully.',
             ],
             status: Http::CREATED(),
         );
@@ -128,6 +128,31 @@ final class InspectionManagementController
                 'message' => 'Inspection fetched successfully.',
             ],
             status: Http::OK(),
+        );
+    }
+
+
+    /**
+     * START INSPECTION
+     * @param Inspection $inspection
+     * @return Response|HttpException
+     */
+    public function start(Inspection $inspection): Response| HttpException
+    {
+        if ( ! $this->inspectionService->startInspection(
+            inspection: $inspection,
+        )) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'This inspection is not started. Please try again',
+            );
+        }
+
+        return Response(
+            content: [
+                'message' => 'Inspection started. Please start your walk. Be sure to record all the issues noticed on your inspection.',
+            ],
+            status: Http::ACCEPTED(),
         );
     }
 

@@ -18,6 +18,7 @@ final class InspectionIssueManagementController
     ) {}
     public function create(IssueRequest $request, Inspection $inspection): HttpException | Response
     {
+
         $issue = $this->inspectionService->createInspectionIssue(
             inspection: $inspection,
             inspectionIssueData: [

@@ -25,6 +25,13 @@ final class InspectionSchedule extends Model
         'line_id',
         'start_kilometer',
         'end_kilometer',
+
+        'start_kilometer_latitude',
+        'start_kilometer_longitude',
+
+        'end_kilometer_latitude',
+        'end_kilometer_longitude',
+
         'region_id',
     ];
 
@@ -55,6 +62,8 @@ final class InspectionSchedule extends Model
             foreignKey: 'inspection_schedule_id',
         );
     }
+
+
 
     /** @return array<string, mixed> */
     protected function casts(): array

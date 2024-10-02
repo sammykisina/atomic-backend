@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Domains\Inspector\Resources;
 
-use Domains\ReginalCivilEngineer\Models\Inspection;
+use Domains\Inspector\Models\Inspection;
+use Domains\PermanentWayInspector\Resources\InspectionScheduleResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,6 +24,12 @@ final class InspectionResource extends JsonResource
             'issues' => IssueResource::collection(
                 resource: $this->whenLoaded(
                     relationship: 'issues',
+                ),
+            ),
+            // 'issues_count' => $this->resource->issues_count,
+            'inspection_schedule' => new InspectionScheduleResource(
+                resource: $this->whenLoaded(
+                    relationship: 'inspectionSchedule',
                 ),
             ),
         ];

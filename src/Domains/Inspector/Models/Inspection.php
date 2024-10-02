@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Domains\Inspector\Models;
 
+use Carbon\Carbon;
+use Domains\PermanentWayInspector\Models\InspectionSchedule;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Inspection extends Model
@@ -29,6 +33,26 @@ final class Inspection extends Model
             related: Issue::class,
             foreignKey: 'inspection_id',
         );
+    }
+
+    /** @return BelongsTo<InspectionSchedule>*/
+    public function inspectionSchedule(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: InspectionSchedule::class,
+            foreignKey: 'inspection_schedule_id',
+        );
+    }
+
+    /**
+     * SCOPE INSPECTIONS BASED ON DATE
+     * @param Builder $query
+     * @param mixed $date
+     * @return Builder
+     */
+    public function scopeCreatedAt(Builder $query, $date): Builder
+    {
+        return $query->whereDate('created_at', Carbon::parse($date));
     }
 
     /** @return array<string, mixed> */
