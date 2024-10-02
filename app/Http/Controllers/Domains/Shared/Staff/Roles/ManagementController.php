@@ -203,7 +203,7 @@ final class ManagementController
     public function show(Role $role): Response
     {
         $role = $role->with('permissions')->first();
-        
+
         return response(
             content: [
                 'message' => 'Role fetched successfully.',
