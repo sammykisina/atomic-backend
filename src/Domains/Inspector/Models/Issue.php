@@ -34,6 +34,16 @@ final class Issue extends Model
         );
     }
 
+
+    /** @return BelongsTo<Inspection>*/
+    public function inspection(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: Inspection::class,
+            foreignKey: 'inspection_id',
+        );
+    }
+
     public function casts(): array
     {
         return [

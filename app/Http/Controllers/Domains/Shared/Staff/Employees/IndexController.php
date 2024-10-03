@@ -18,7 +18,7 @@ final class IndexController
     {
         $staff  = QueryBuilder::for(User::class)
             ->allowedFilters([
-                AllowedFilter::scope('type'),
+                AllowedFilter::exact('type'),
             ])
             ->allowedIncludes('department', 'region', 'role.permissions')
             ->get();

@@ -19,7 +19,7 @@ final class PWADashboardController
     {
         $completed_inspections = Inspection::query()
             ->whereNotNull('end_time')
-            ->where('created_at', Carbon::today())
+            ->whereDate('created_at', Carbon::today())
             ->count();
 
         $total_reported_issues = Issue::query()

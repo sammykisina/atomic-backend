@@ -48,6 +48,7 @@ final class InspectionService
         return Inspection::query()->create([
             'inspection_schedule_id' => $inspection_schedule->id,
             'date' => Carbon::now(),
+            'start_time' => Carbon::now()->format('H:i'),
             'is_active' => true,
         ]);
     }
@@ -56,13 +57,20 @@ final class InspectionService
      * START INSPECTION
      * @return Inspection
      */
-    public function startInspection(Inspection $inspection): bool
+    public function stopInspection(Inspection $inspection): bool
     {
         return $inspection->update([
-            'start_time' => Carbon::now()->format('H:i'),
+            'end_time' => Carbon::now()->format('H:i'),
+            'is_active' => false,
         ]);
     }
 
+    /**
+     * CREATE INSPECTION ISSUE
+     * @param Inspection $inspection
+     * @param array $inspectionIssueData
+     * @return Issue
+     */
     public function createInspectionIssue(Inspection $inspection, array $inspectionIssueData): Issue
     {
         return Issue::query()->create([

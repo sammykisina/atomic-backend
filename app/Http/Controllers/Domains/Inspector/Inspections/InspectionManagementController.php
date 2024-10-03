@@ -131,29 +131,28 @@ final class InspectionManagementController
         );
     }
 
-
     /**
-     * START INSPECTION
+     * STOP INSPECTION
+     * @param Request $request
      * @param Inspection $inspection
-     * @return Response|HttpException
+     * @return Response | HttpException
      */
-    public function start(Inspection $inspection): Response| HttpException
+    public function stop(Request $request, Inspection $inspection): Response | HttpException
     {
-        if ( ! $this->inspectionService->startInspection(
+        if ( ! $this->inspectionService->stopInspection(
             inspection: $inspection,
         )) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
-                message: 'This inspection is not started. Please try again',
+                message: "Inspection not stopped. Please try again",
             );
         }
 
         return Response(
             content: [
-                'message' => 'Inspection started. Please start your walk. Be sure to record all the issues noticed on your inspection.',
+                'message' => 'Inspection stopped successfully.',
             ],
             status: Http::ACCEPTED(),
         );
     }
-
 }

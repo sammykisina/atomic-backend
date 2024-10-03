@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Inspector\Resources;
 
 use Domains\Inspector\Models\Issue;
+use Domains\Shared\Resources\DateResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -26,6 +27,14 @@ final class IssueResource extends JsonResource
             'latitude' => $this->resource->latitude,
             'longitude' => $this->resource->longitude,
             'image_url' => $this->resource->image_url,
+            'created_at' => new DateResource(
+                resource: $this->resource->created_at,
+            ),
+            'inspection' => new InspectionResource(
+                resource: $this->whenLoaded(
+                    relationship: 'inspection',
+                ),
+            ),
         ];
     }
 }

@@ -108,6 +108,7 @@ Route::prefix('/permanent-way-inspector')->as('permanent-way-inspector:')->group
     [
         base_path('routes/api_v1/permanent_way_inspector/inspection_schedules.php'),
         base_path('routes/api_v1/permanent_way_inspector/inspections.php'),
+        base_path('routes/api_v1/permanent_way_inspector/issues.php'),
     ],
 );
 
