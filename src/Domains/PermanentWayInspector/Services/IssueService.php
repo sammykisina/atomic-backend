@@ -20,7 +20,7 @@ final class IssueService
         return Assignment::query()->updateOrCreate(
             ['issue_id' => $issue->id],
             [
-                'gang_men' => $gang_men
+                'gang_men' => $gang_men,
             ],
         );
     }

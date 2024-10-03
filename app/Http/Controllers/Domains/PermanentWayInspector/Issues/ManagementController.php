@@ -32,7 +32,7 @@ final class ManagementController
 
         if ( ! $this->issueService->assignIssueToGangMen(
             issue: $issue,
-            gang_men: $assignment ?  array_unique(array_merge($request->validated('gang_men'), $assignment->gang_men)) : $request->validated('gang_men'),
+            gang_men: $assignment ? array_unique(array_merge($request->validated('gang_men'), $assignment->gang_men)) : $request->validated('gang_men'),
         )) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
