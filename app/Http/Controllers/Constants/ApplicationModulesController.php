@@ -133,6 +133,10 @@ final class ApplicationModulesController
                 'edit-rpwi-assignment',
                 'delete-rpwi-assignment',
             ],
+            'assignments' => [
+                'read-assignments',
+                'resolve-assignment',
+            ],
         ];
 
         return response(

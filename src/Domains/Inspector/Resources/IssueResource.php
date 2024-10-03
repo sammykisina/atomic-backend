@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Inspector\Resources;
 
 use Domains\Inspector\Models\Issue;
+use Domains\PermanentWayInspector\Resources\AssignmentResource;
 use Domains\Shared\Resources\DateResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -33,6 +34,12 @@ final class IssueResource extends JsonResource
             'inspection' => new InspectionResource(
                 resource: $this->whenLoaded(
                     relationship: 'inspection',
+                ),
+            ),
+            'status' => $this->resource->status,
+            'assignment' => new AssignmentResource(
+                resource: $this->whenLoaded(
+                    relationship: 'assignment',
                 ),
             ),
         ];

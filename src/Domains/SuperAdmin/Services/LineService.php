@@ -63,5 +63,4 @@ final class LineService
     {
         return $line->counties()->sync($counties);
     }
-
 }

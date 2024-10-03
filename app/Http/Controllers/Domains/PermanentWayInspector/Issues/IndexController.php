@@ -20,6 +20,7 @@ final class IndexController
                 'issueName',
                 'inspection.inspectionSchedule.inspector',
                 'inspection.inspectionSchedule.line',
+                'assignment',
             ])
             ->allowedFilters([
             ])

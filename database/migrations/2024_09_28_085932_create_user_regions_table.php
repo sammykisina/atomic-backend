@@ -24,8 +24,6 @@ return new class () extends Migration {
                 ->constrained()
                 ->nullOnDelete();
 
-
-
             $table->foreignId(column: 'line_id')
                 ->index()
                 ->nullable()

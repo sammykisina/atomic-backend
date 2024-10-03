@@ -88,8 +88,8 @@ final class ManagementController
             ->pluck('id')->toArray();
 
         $shift = $this->shiftService->createShift(
-            shiftData: $validatedData,
             stations: $stations,
+            shiftData: $validatedData,
         );
 
         if ( ! $shift) {

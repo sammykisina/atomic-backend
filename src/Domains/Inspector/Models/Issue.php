@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Domains\Inspector\Models;
 
 use Domains\Inspector\Enums\IssueStatuses;
+use Domains\PermanentWayInspector\Models\Assignment;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 final class Issue extends Model
 {
@@ -41,6 +43,16 @@ final class Issue extends Model
         return $this->belongsTo(
             related: Inspection::class,
             foreignKey: 'inspection_id',
+        );
+    }
+
+
+    /** @return HasOne<Assignment>*/
+    public function assignment(): HasOne
+    {
+        return $this->hasOne(
+            related: Assignment::class,
+            foreignKey: 'issue_id',
         );
     }
 
