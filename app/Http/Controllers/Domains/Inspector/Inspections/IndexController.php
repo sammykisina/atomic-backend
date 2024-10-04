@@ -30,6 +30,7 @@ final class IndexController
 
         $inspections  = QueryBuilder::for(subject: Inspection::class)
             ->where('inspection_schedule_id', $inspection_schedule->id)
+            ->orderBy('created_at', 'desc')
             ->allowedIncludes(includes: [
                 'issues.issueName',
             ])->get();
