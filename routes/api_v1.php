@@ -119,3 +119,11 @@ Route::prefix('/inspector')->as('inspector:')->group(
         base_path('routes/api_v1/inspector/inspection.php'),
     ],
 );
+
+// GANG MAN
+Route::prefix('/gang-man')->as('gang-man:')->group(
+    [
+        // ISSUES MANAGEMENT
+        base_path('routes/api_v1/gang_man/issues.php'),
+    ],
+);

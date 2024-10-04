@@ -29,6 +29,8 @@ return new class () extends Migration {
                 ->nullOnDelete()
                 ->name('fk_issue_resolver');
 
+            $table->string('image_url')->nullable();
+
 
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();

@@ -16,12 +16,14 @@ final class IndexController
     public function __invoke(Request $request): Response
     {
         $issues  = QueryBuilder::for(subject: Issue::class)
+
             ->allowedIncludes(includes: [
                 'issueName',
                 'inspection.inspectionSchedule.inspector',
                 'inspection.inspectionSchedule.line',
                 'assignment',
             ])
+            ->orderBy('created_at', 'desc')
             ->allowedFilters([
             ])
             ->get();

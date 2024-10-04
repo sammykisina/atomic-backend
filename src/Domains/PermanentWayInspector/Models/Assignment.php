@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\PermanentWayInspector\Models;
 
+use Domains\Inspector\Models\Issue;
 use Domains\Shared\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,6 +19,7 @@ final class Assignment extends Model
         'issue_id',
         'gang_men',
         'resolver_id',
+        'image_url',
     ];
 
     /** @return array<string, mixed> */
@@ -34,6 +36,16 @@ final class Assignment extends Model
         return $this->belongsTo(
             related: User::class,
             foreignKey: 'resolver_id',
+        );
+    }
+
+
+    /** @return BelongsTo<Issue>*/
+    public function issue(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: Issue::class,
+            foreignKey: 'issue_id',
         );
     }
 }

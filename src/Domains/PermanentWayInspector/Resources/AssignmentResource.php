@@ -7,6 +7,7 @@ namespace Domains\PermanentWayInspector\Resources;
 use Domains\Inspector\Resources\IssueResource;
 use Domains\PermanentWayInspector\Models\Assignment;
 use Domains\Shared\Models\User;
+use Domains\Shared\Resources\DateResource;
 use Domains\Shared\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -32,6 +33,10 @@ final class AssignmentResource extends JsonResource
                     relationship: 'resolver',
                 ),
             ),
+            'created_at' => new DateResource(
+                resource: $this->resource->created_at,
+            ),
+            'image_url' => $this->resource->image_url
 
         ];
     }

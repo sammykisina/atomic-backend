@@ -137,6 +137,10 @@ final class ApplicationModulesController
                 'read-assignments',
                 'resolve-assignment',
             ],
+            'issues-history' => [
+                'read-issues-history',
+                'delete-issues-history'
+            ],
         ];
 
         return response(
