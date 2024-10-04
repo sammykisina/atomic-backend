@@ -18,8 +18,7 @@ final class ManagementController
 {
     public function __construct(
         protected IssueService $issueService,
-    ) {
-    }
+    ) {}
 
     /**
      * ISSUE ASSIGNMENT
@@ -33,7 +32,7 @@ final class ManagementController
         $assignment = Assignment::query()->where('issue_id', $issue->id)->first();
 
         if (
-            !$this->issueService->assignIssueToGangMen(
+            ! $this->issueService->assignIssueToGangMen(
                 issue: $issue,
                 gang_men: $assignment ? array_unique(array_merge($request->validated('gang_men'), $assignment->gang_men)) : $request->validated('gang_men'),
             )
@@ -61,7 +60,7 @@ final class ManagementController
     public function removeAssignment(Request $request, Assignment $assignment): Response|HttpException
     {
         if (
-            !$assignment->update([
+            ! $assignment->update([
                 'gang_men' => $request['gang_men'],
             ])
         ) {
@@ -87,7 +86,7 @@ final class ManagementController
     public function acceptResolution(Request $request, Issue $issue): Response|HttpException
     {
         if (
-            !$issue->update([
+            ! $issue->update([
                 'status' => IssueStatuses::RESOLVED->value,
             ])
         ) {
@@ -105,7 +104,7 @@ final class ManagementController
         );
     }
 
-     /**
+    /**
      * CONFIRM RESOLUTION
      * @param Issue $issue
      * @return Response|HttpException
@@ -113,7 +112,7 @@ final class ManagementController
     public function rejectResolution(Request $request, Issue $issue): Response|HttpException
     {
         if (
-            !$issue->update([
+            ! $issue->update([
                 'status' => IssueStatuses::PENDING->value,
             ])
         ) {
