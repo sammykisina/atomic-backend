@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\PermanentWayInspector\Issues;
 
+use Domains\Inspector\Enums\IssueStatuses;
 use Domains\Inspector\Models\Issue;
 use Domains\PermanentWayInspector\Models\Assignment;
 use Domains\PermanentWayInspector\Requests\IssueAssignmentRequest;
@@ -17,7 +18,8 @@ final class ManagementController
 {
     public function __construct(
         protected IssueService $issueService,
-    ) {}
+    ) {
+    }
 
     /**
      * ISSUE ASSIGNMENT
@@ -25,15 +27,17 @@ final class ManagementController
      * @param Issue $issue
      * @return void
      */
-    public function assignIssue(IssueAssignmentRequest $request, Issue $issue): Response | HttpException
+    public function assignIssue(IssueAssignmentRequest $request, Issue $issue): Response|HttpException
     {
 
         $assignment = Assignment::query()->where('issue_id', $issue->id)->first();
 
-        if ( ! $this->issueService->assignIssueToGangMen(
-            issue: $issue,
-            gang_men: $assignment ? array_unique(array_merge($request->validated('gang_men'), $assignment->gang_men)) : $request->validated('gang_men'),
-        )) {
+        if (
+            !$this->issueService->assignIssueToGangMen(
+                issue: $issue,
+                gang_men: $assignment ? array_unique(array_merge($request->validated('gang_men'), $assignment->gang_men)) : $request->validated('gang_men'),
+            )
+        ) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: "Sorry, something went wrong. Please try again.",
@@ -54,11 +58,13 @@ final class ManagementController
      * @param IssueAssignmentRequest $request
      * @return Response|HttpException
      */
-    public function removeAssignment(Request $request, Assignment $assignment): Response | HttpException
+    public function removeAssignment(Request $request, Assignment $assignment): Response|HttpException
     {
-        if ( ! $assignment->update([
-            'gang_men' => $request['gang_men'],
-        ])) {
+        if (
+            !$assignment->update([
+                'gang_men' => $request['gang_men'],
+            ])
+        ) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: "Sorry, something went wrong. Please try again.",
@@ -68,6 +74,58 @@ final class ManagementController
         return response(
             content: [
                 'message' => 'Gang man  removed successfully.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
+
+    /**
+     * CONFIRM RESOLUTION
+     * @param Issue $issue
+     * @return Response|HttpException
+     */
+    public function acceptResolution(Request $request, Issue $issue): Response|HttpException
+    {
+        if (
+            !$issue->update([
+                'status' => IssueStatuses::RESOLVED->value,
+            ])
+        ) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: "Sorry, something went wrong. Please try again.",
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'Resolution confirmed successfully.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
+
+     /**
+     * CONFIRM RESOLUTION
+     * @param Issue $issue
+     * @return Response|HttpException
+     */
+    public function rejectResolution(Request $request, Issue $issue): Response|HttpException
+    {
+        if (
+            !$issue->update([
+                'status' => IssueStatuses::PENDING->value,
+            ])
+        ) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: "Sorry, something went wrong. Please try again.",
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'Resolution rejected successfully.',
             ],
             status: Http::ACCEPTED(),
         );

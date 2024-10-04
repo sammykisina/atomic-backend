@@ -28,7 +28,7 @@ final class IssueManagementController
     {
         $resolved = DB::transaction(function () use ($request, $issue, $assignment): bool {
             $issue->update([
-                'status' => IssueStatuses::RESOLVED->value,
+                'status' => IssueStatuses::DRAFT->value,
             ]);
 
             $assignment->update([

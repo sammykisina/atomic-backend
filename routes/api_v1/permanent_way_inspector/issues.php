@@ -12,5 +12,7 @@ Route::middleware(['auth:sanctum', 'ability:read-inspections'])->prefix('issues'
     Route::controller(ManagementController::class)->group(function (): void {
         Route::post('{issue}/assignments', 'assignIssue')->name(name: 'assignIssue');
         Route::patch('/{assignment}/remove', 'removeAssignment')->name(name: 'delete');
+        Route::patch('/{issue}/accept/resolution', 'acceptResolution')->name(name: 'accept-resolution');
+        Route::patch('/{issue}/reject/resolution', 'rejectResolution')->name(name: 'reject-resolution');
     });
 });

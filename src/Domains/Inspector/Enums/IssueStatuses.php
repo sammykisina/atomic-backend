@@ -8,5 +8,7 @@ enum IssueStatuses: string
 {
     case PENDING = 'PENDING';
 
+    case DRAFT = 'DRAFT';
+
     case RESOLVED = 'RESOLVED';
 }
