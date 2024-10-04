@@ -73,8 +73,8 @@ final class IssueManagementController
             content: [
                 'message' => 'Issues history fetched successfully.',
                 'issues_history' => AssignmentResource::collection(
-                        resource: $issues_history,
-                    ),
+                    resource: $issues_history,
+                ),
             ],
             status: Http::OK(),
         );

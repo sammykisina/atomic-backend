@@ -36,7 +36,7 @@ final class AssignmentResource extends JsonResource
             'created_at' => new DateResource(
                 resource: $this->resource->created_at,
             ),
-            'image_url' => $this->resource->image_url
+            'image_url' => $this->resource->image_url,
 
         ];
     }

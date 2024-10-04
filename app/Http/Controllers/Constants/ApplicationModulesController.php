@@ -139,7 +139,7 @@ final class ApplicationModulesController
             ],
             'issues-history' => [
                 'read-issues-history',
-                'delete-issues-history'
+                'delete-issues-history',
             ],
         ];
 
