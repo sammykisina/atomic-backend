@@ -76,6 +76,10 @@ final class InspectionScheduleService
             'status' => $updatedInspectionScheduleData['status'],
             'start_kilometer' => $updatedInspectionScheduleData['start_kilometer'],
             'end_kilometer' => $updatedInspectionScheduleData['end_kilometer'],
+            'start_kilometer_latitude' => $updatedInspectionScheduleData['start_kilometer_latitude'],
+            'start_kilometer_longitude' => $updatedInspectionScheduleData['start_kilometer_longitude'],
+            'end_kilometer_latitude' => $updatedInspectionScheduleData['end_kilometer_latitude'],
+            'end_kilometer_longitude' => $updatedInspectionScheduleData['end_kilometer_longitude'],
         ]);
 
     }

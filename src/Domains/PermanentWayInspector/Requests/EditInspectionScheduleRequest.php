@@ -30,6 +30,25 @@ final class EditInspectionScheduleRequest extends FormRequest
                 'required',
                 Rule::enum(InspectionScheduleStatuses::class),
             ],
+             'start_kilometer_latitude' => [
+                'required',
+                'numeric',
+            ],
+
+            'start_kilometer_longitude' => [
+                'required',
+                'numeric',
+            ],
+
+            'end_kilometer_latitude' => [
+                'required',
+                'numeric',
+            ],
+
+            'end_kilometer_longitude' => [
+                'required',
+                'numeric',
+            ],
         ];
     }
 }
