@@ -202,7 +202,7 @@ final class ManagementController
      */
     public function show(Role $role): Response
     {
-        $role = $role->with('permissions')->first();
+        $role = $role->where('id', $role->id)->with('permissions')->first();
 
         return response(
             content: [
