@@ -50,6 +50,8 @@ final class InspectionService
             'date' => Carbon::now(),
             'start_time' => Carbon::now()->format('H:i'),
             'is_active' => true,
+            'inspector_reached_origin' => false,
+            'inspector_reached_destination' => false,
         ]);
     }
 
@@ -57,11 +59,13 @@ final class InspectionService
      * START INSPECTION
      * @return Inspection
      */
-    public function stopInspection(Inspection $inspection): bool
+    public function stopInspection(Inspection $inspection, array $inspectionData): bool
     {
         return $inspection->update([
             'end_time' => Carbon::now()->format('H:i'),
             'is_active' => false,
+            'inspector_reached_origin' => $inspectionData['inspector_reached_origin'],
+            'inspector_reached_destination' => true,
         ]);
     }
 
@@ -81,6 +85,7 @@ final class InspectionService
             'longitude' => $inspectionIssueData['longitude'],
             'image_url' => $inspectionIssueData['image_url'],
             'issue_name_id' => $inspectionIssueData['issue_name_id'],
+            'issue_kilometer' => $inspectionIssueData['issue_kilometer'],
         ]);
     }
 }

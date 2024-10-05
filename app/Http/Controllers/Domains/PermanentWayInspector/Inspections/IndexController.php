@@ -8,6 +8,7 @@ use Domains\Inspector\Models\Inspection;
 use Domains\Inspector\Resources\InspectionResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedInclude;
@@ -21,13 +22,16 @@ final class IndexController
             ->allowedIncludes(includes: [
                 'inspectionSchedule.line',
                 'inspectionSchedule.inspector',
-                'inspectionSchedule.inspectionsCount',
                 AllowedInclude::count(name: 'issuesCount'),
             ])
             ->allowedFilters([
                 AllowedFilter::scope('created_at'),
             ])
+            ->whereHas('inspectionSchedule', function ($query): void {
+                $query->where('owner_id', Auth::id());
+            })
             ->get();
+
 
         return response(
             content: [

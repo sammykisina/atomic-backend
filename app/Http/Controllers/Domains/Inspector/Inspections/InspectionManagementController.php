@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Domains\Inspector\Inspections;
 
 use Domains\Inspector\Models\Inspection;
 use Domains\Inspector\Requests\InspectionRequest;
+use Domains\Inspector\Requests\StopInspectionRequest;
 use Domains\Inspector\Resources\InspectionResource;
 use Domains\Inspector\Services\InspectionService;
 use Domains\PermanentWayInspector\Enums\InspectionScheduleStatuses;
@@ -133,14 +134,16 @@ final class InspectionManagementController
 
     /**
      * STOP INSPECTION
-     * @param Request $request
+     * @param StopInspectionRequest $request
      * @param Inspection $inspection
      * @return Response | HttpException
      */
-    public function stop(Request $request, Inspection $inspection): Response | HttpException
+    public function stop(StopInspectionRequest $request, Inspection $inspection): Response | HttpException
     {
+
         if ( ! $this->inspectionService->stopInspection(
             inspection: $inspection,
+            inspectionData: $request->validated(),
         )) {
             abort(
                 code: Http::EXPECTATION_FAILED(),

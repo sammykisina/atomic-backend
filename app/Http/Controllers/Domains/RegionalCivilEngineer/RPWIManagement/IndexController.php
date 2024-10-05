@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
-use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 final class IndexController
@@ -18,7 +17,7 @@ final class IndexController
     public function __invoke(Request $request): Response
     {
         $rpwi_assignments  = QueryBuilder::for(subject: UserRegion::class)
-           ->where('type', 'RPWI')
+            ->where('type', 'RPWI')
             ->allowedIncludes('user', 'line', 'startStation', 'endStation', 'region')
             ->where('owner_id', Auth::id())
             ->get();

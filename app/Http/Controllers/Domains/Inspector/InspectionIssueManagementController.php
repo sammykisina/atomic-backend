@@ -28,6 +28,7 @@ final class InspectionIssueManagementController
                 'longitude' => $request->validated('longitude'),
                 'image_url' => $request->validated('image_url') ?? null,
                 'issue_name_id' => $request->validated('issue_name_id'),
+                'issue_kilometer' => $request->validated('issue_kilometer'),
             ],
         );
 

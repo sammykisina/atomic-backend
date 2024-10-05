@@ -14,6 +14,7 @@ use Domains\Shared\Models\User;
 use Domains\Shared\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
 
 final class PWADashboardController
@@ -83,8 +84,15 @@ final class PWADashboardController
             ->take(10)
             ->get();
 
-        $your_gang_man = User::query()->where('type', UserTypes::GANG_MAN)->get();
-        $your_inspectors = User::query()->where('type', UserTypes::INSPECTOR)->get();
+        $your_gang_man = User::query()
+            ->where('type', UserTypes::GANG_MAN)
+            ->where('region_id', Auth::user()->region_id)
+            ->get();
+
+        $your_inspectors = User::query()
+            ->where('type', UserTypes::INSPECTOR)
+            ->where('region_id', Auth::user()->region_id)
+            ->get();
 
         return response(
             content: [

@@ -24,6 +24,9 @@ return new class () extends Migration {
 
             $table->boolean(column: 'is_active');
 
+            $table->boolean(column: 'inspector_reached_origin');
+            $table->boolean(column: 'inspector_reached_destination');
+
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();
         });

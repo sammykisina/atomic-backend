@@ -23,6 +23,8 @@ final class Inspection extends Model
         'start_time',
         'end_time',
         'is_active',
+        'inspector_reached_origin',
+        'inspector_reached_destination',
     ];
 
 
@@ -60,6 +62,8 @@ final class Inspection extends Model
     {
         return [
             'is_active' => 'boolean',
+            'inspector_reached_origin' => 'boolean',
+            'inspector_reached_destination' => 'boolean',
         ];
     }
 }

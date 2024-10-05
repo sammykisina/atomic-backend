@@ -40,6 +40,9 @@ final class IssueRequest extends FormRequest
                 'required',
                 'exists:issue_names,id',
             ],
+            'issue_kilometer' => [
+                'required',
+            ],
         ];
     }
 }

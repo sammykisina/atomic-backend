@@ -16,7 +16,6 @@ final class IndexController
     public function __invoke(Request $request): Response
     {
         $issues  = QueryBuilder::for(subject: Issue::class)
-
             ->allowedIncludes(includes: [
                 'issueName',
                 'inspection.inspectionSchedule.inspector',
@@ -24,6 +23,7 @@ final class IndexController
                 'assignment',
             ])
             ->orderBy('created_at', 'desc')
+            ->orderByRaw("FIELD(status, 'DRAFT', 'PENDING', 'RESOLVED')")
             ->allowedFilters([
             ])
             ->get();

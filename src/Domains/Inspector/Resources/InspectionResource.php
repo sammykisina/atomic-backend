@@ -26,12 +26,13 @@ final class InspectionResource extends JsonResource
                     relationship: 'issues',
                 ),
             ),
-            // 'issues_count' => $this->resource->issues_count,
             'inspection_schedule' => new InspectionScheduleResource(
                 resource: $this->whenLoaded(
                     relationship: 'inspectionSchedule',
                 ),
             ),
+            'inspector_reached_origin' => $this->resource->inspector_reached_origin,
+            'inspector_reached_destination' => $this->resource->inspector_reached_destination,
         ];
     }
 }

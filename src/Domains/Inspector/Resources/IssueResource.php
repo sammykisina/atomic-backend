@@ -42,6 +42,7 @@ final class IssueResource extends JsonResource
                     relationship: 'assignment',
                 ),
             ),
+            'issue_kilometer' => $this->resource->issue_kilometer,
         ];
     }
 }
