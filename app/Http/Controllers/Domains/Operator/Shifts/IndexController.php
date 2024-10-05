@@ -29,7 +29,7 @@ final class IndexController
                 $shift->endStation->id,
             ])
             ->with('section', 'loops')
-            ->orderBy('id', 'asc') 
+            ->orderBy('id', 'asc')
             ->get();
 
         return response(
