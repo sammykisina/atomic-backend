@@ -11,7 +11,5 @@ Route::middleware(['auth:sanctum', 'ability:read-pwi-assignment,create-pwi-assig
 
     Route::controller(ManagementController::class)->group(function (): void {
         Route::post('/assign', action: 'assign')->name(name: 'assign');
-        // Route::patch('/{inspectionSchedule}/edit', 'edit')->name(name: 'edit');
-        // Route::delete('/{inspectionSchedule}/delete', 'delete')->name(name: 'delete');
     });
 });

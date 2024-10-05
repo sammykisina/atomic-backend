@@ -30,6 +30,15 @@ return new class () extends Migration {
                 ->constrained()
                 ->nullOnDelete();
 
+            $table->foreignId(column: 'owner_id')
+                ->nullable()
+                ->references(column: 'id')
+                ->on(table: 'users')
+                ->index()
+                ->constrained()
+                ->nullOnDelete()
+                ->name('fk_owner');
+
             $table->string(column: 'type');
 
 

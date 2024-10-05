@@ -93,6 +93,7 @@ Route::prefix('/chief-civil-engineer')->as('chief-civil-engineer:')->group(
 Route::prefix('/regional-civil-engineer')->as('regional-civil-engineer:')->group(
     [
         base_path('routes/api_v1/regional_civil_engineer/rpwi_management.php'),
+        base_path('routes/api_v1/regional_civil_engineer/rce.php'),
     ],
 );
 
@@ -100,6 +101,7 @@ Route::prefix('/regional-civil-engineer')->as('regional-civil-engineer:')->group
 Route::prefix('/regional-permanent-way-inspector')->as('regional-permanent-way-inspector:')->group(
     [
         base_path('routes/api_v1/regional_permanent_way_inspector/pwi_management.php'),
+        base_path('routes/api_v1/regional_permanent_way_inspector/rpwi.php'),
     ],
 );
 
@@ -109,6 +111,7 @@ Route::prefix('/permanent-way-inspector')->as('permanent-way-inspector:')->group
         base_path('routes/api_v1/permanent_way_inspector/inspection_schedules.php'),
         base_path('routes/api_v1/permanent_way_inspector/inspections.php'),
         base_path('routes/api_v1/permanent_way_inspector/issues.php'),
+        base_path('routes/api_v1/permanent_way_inspector/pwi.php'),
     ],
 );
 

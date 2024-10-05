@@ -43,6 +43,13 @@ return new class () extends Migration {
             $table->float(column: 'end_kilometer_latitude');
             $table->float(column: 'end_kilometer_longitude');
 
+            $table->foreignId(column: 'owner_id')
+                ->references(column: 'id')
+                ->on(table: 'users')
+                ->index()
+                ->constrained()
+                ->name('fk_inspection_schedule_owner');
+
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();
         });

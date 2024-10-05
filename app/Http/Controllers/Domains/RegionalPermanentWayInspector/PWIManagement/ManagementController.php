@@ -27,6 +27,7 @@ final class ManagementController
             ->where('start_kilometer', $request->validated('start_kilometer'))
             ->where('end_kilometer', $request->validated('end_kilometer'))
             ->where('is_active', true)
+            ->where('type', 'PWI')
             ->first();
 
         if ($prev_pwi_assignment) {
@@ -44,6 +45,7 @@ final class ManagementController
             'start_kilometer' => $request->validated('start_kilometer'),
             'end_kilometer' => $request->validated('end_kilometer'),
             'type' => 'PWI',
+            'owner_id' => $user->id,
         ]);
 
         if ( ! $assignment) {

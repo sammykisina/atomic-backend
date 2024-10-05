@@ -25,6 +25,7 @@ final class Issue extends Model
         'description',
         'image_url',
         'status',
+        'issue_kilometer'
     ];
 
     /** @return BelongsTo<IssueName>*/

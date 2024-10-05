@@ -16,6 +16,8 @@ return new class () extends Migration {
             $table->float(column: 'latitude');
             $table->float(column: 'longitude');
 
+            $table->float(column: 'issue_kilometer');
+
             $table->foreignId(column: 'inspection_id')
                 ->index()
                 ->nullable()

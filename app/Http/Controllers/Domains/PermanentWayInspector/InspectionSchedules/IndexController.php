@@ -8,6 +8,7 @@ use Domains\PermanentWayInspector\Models\InspectionSchedule;
 use Domains\PermanentWayInspector\Resources\InspectionScheduleResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedInclude;
@@ -23,6 +24,7 @@ final class IndexController
                 'inspector',
                 AllowedInclude::count(name: 'inspectionsCount'),
             ])
+            ->where('owner_id', Auth::id())
             ->allowedSorts('start_kilometer')
             ->allowedFilters([
                 AllowedFilter::exact('line_id'),

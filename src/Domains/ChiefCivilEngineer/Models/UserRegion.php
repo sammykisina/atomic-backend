@@ -27,6 +27,7 @@ final class UserRegion extends Model
         'is_active',
         'start_kilometer',
         'end_kilometer',
+        'owner_id',
     ];
 
 

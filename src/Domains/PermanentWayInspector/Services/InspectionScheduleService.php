@@ -10,6 +10,7 @@ use Domains\Shared\Models\User;
 use Domains\SuperAdmin\Models\Line;
 use Domains\SuperAdmin\Models\Region;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 
 final class InspectionScheduleService
 {
@@ -44,6 +45,7 @@ final class InspectionScheduleService
             'start_kilometer_longitude' => $inspectionScheduleData['start_kilometer_longitude'],
             'end_kilometer_latitude' => $inspectionScheduleData['end_kilometer_latitude'],
             'end_kilometer_longitude' => $inspectionScheduleData['end_kilometer_longitude'],
+            'owner_id' => Auth::id(),
         ]);
 
     }

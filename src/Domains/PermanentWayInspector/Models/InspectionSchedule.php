@@ -33,6 +33,7 @@ final class InspectionSchedule extends Model
         'end_kilometer_longitude',
 
         'region_id',
+        'owner_id'
     ];
 
     /**  @return BelongsTo<Line>*/

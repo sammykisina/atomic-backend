@@ -24,6 +24,7 @@ final class ManagementController
             ->where('line_id', $request->validated('line_id'))
             ->where('region_id', $request->validated('region_id'))
             ->where('is_active', true)
+            ->where('type', 'RCE')
             ->first();
 
         if ($prev_rce_assignment) {

@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Domains\RegionalCivilEngineer\RPWIManagement;
 use Domains\ChiefCivilEngineer\Models\UserRegion;
 use Domains\PermanentWayInspector\Requests\RPWIKilometerAssignmentRequest;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -17,14 +18,15 @@ final class ManagementController
      * @param RPWIKilometerAssignmentRequest $request
      * @return HttpException|Response
      */
-    public function assign(RPWIKilometerAssignmentRequest $request): HttpException | Response
+    public function assign(RPWIKilometerAssignmentRequest $request)
     {
         $prev_rpwi_assignment = UserRegion::query()
             ->where('line_id', $request->validated('line_id'))
             ->where('region_id', $request->validated('region_id'))
             ->where('start_kilometer', $request->validated('start_kilometer'))
             ->where('end_kilometer', $request->validated('end_kilometer'))
-            ->where('is_active', true)
+            ->where('is_active', operator: true)
+            ->where('type', 'RPWI')
             ->first();
 
         if ($prev_rpwi_assignment) {
@@ -41,6 +43,7 @@ final class ManagementController
             'start_kilometer' => $request->validated('start_kilometer'),
             'end_kilometer' => $request->validated('end_kilometer'),
             'type' => $request->validated('type'),
+            'owner_id' => Auth::id(),
         ]);
 
         if ( ! $user_region) {

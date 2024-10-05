@@ -17,9 +17,7 @@ final class IndexController
     public function __invoke(Request $request): Response
     {
         $userRegions  = QueryBuilder::for(subject: UserRegion::class)
-            ->allowedFilters([
-                AllowedFilter::exact('type'),
-            ])
+           ->where('type', 'RCE')
             ->allowedIncludes('user', 'line', 'startStation', 'endStation', 'region')
             ->get();
 
