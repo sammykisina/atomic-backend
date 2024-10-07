@@ -37,6 +37,7 @@ final class AssignmentResource extends JsonResource
                 resource: $this->resource->created_at,
             ),
             'image_url' => $this->resource->image_url,
+            'comment' => $this->resource->comment,
 
         ];
     }

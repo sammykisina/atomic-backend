@@ -20,7 +20,7 @@ final class IndexController
                 'issueName',
                 'inspection.inspectionSchedule.inspector',
                 'inspection.inspectionSchedule.line',
-                'assignment',
+                'assignment.resolver',
             ])
             ->orderBy('created_at', 'desc')
             ->orderByRaw("FIELD(status, 'DRAFT', 'PENDING', 'RESOLVED')")

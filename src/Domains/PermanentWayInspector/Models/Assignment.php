@@ -20,6 +20,7 @@ final class Assignment extends Model
         'gang_men',
         'resolver_id',
         'image_url',
+        'comment',
     ];
 
     /** @return array<string, mixed> */

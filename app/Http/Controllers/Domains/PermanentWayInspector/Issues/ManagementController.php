@@ -96,6 +96,8 @@ final class ManagementController
             );
         }
 
+        
+
         return response(
             content: [
                 'message' => 'Resolution confirmed successfully.',

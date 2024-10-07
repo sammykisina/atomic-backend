@@ -34,6 +34,7 @@ final class IssueManagementController
             $assignment->update([
                 'image_url' => $request->get(key: 'image_url'),
                 'resolver_id' => Auth::id(),
+                'comment' => $request->get(key: 'comment'),
             ]);
 
             return true;
@@ -63,9 +64,17 @@ final class IssueManagementController
         $issues_history = Assignment::query()
             ->whereJsonContains('gang_men', Auth::id())
             ->whereHas('issue', function ($query): void {
-                $query->where('status', IssueStatuses::RESOLVED->value);
+                $query->whereIn('status', [
+                    IssueStatuses::RESOLVED->value,
+                    IssueStatuses::DRAFT->value,
+                ]);
             })
-            ->with(relations: ['issue.issueName','issue.inspection.inspectionSchedule.line', 'issue.inspection.inspectionSchedule.inspector', 'resolver'])
+            ->with(relations: [
+                'issue.issueName',
+                'issue.inspection.inspectionSchedule.line',
+                'issue.inspection.inspectionSchedule.inspector',
+                'resolver',
+            ])
             ->orderBy('created_at', 'desc')
             ->get();
 

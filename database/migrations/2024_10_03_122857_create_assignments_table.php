@@ -30,6 +30,7 @@ return new class () extends Migration {
                 ->name('fk_issue_resolver');
 
             $table->string('image_url')->nullable();
+            $table->string('comment')->nullable();
 
 
             $table->timestamp(column: 'created_at')->useCurrent();
