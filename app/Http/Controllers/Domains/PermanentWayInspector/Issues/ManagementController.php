@@ -96,7 +96,7 @@ final class ManagementController
             );
         }
 
-        
+
 
         return response(
             content: [
