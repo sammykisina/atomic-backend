@@ -86,6 +86,7 @@ Route::prefix('/notifications')->as('notifications:')->group(
 Route::prefix('/chief-civil-engineer')->as('chief-civil-engineer:')->group(
     [
         base_path('routes/api_v1/chief_civil_engineer/rce_management.php'),
+        base_path('routes/api_v1/chief_civil_engineer/cce.php'),
     ],
 );
 

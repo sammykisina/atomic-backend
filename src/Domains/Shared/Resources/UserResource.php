@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\Shared\Resources;
 
+use Domains\ChiefCivilEngineer\Resources\UserRegionResource;
 use Domains\Shared\Models\User;
 use Domains\SuperAdmin\Resources\RegionResource;
 use Illuminate\Http\Request;
@@ -45,6 +46,11 @@ final class UserResource extends JsonResource
             'role' => new RoleResource(
                 resource: $this->whenLoaded(
                     relationship: 'role',
+                ),
+            ),
+            'user_region' => new UserRegionResource(
+                resource: $this->whenLoaded(
+                    relationship: 'userRegion',
                 ),
             ),
         ];

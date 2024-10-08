@@ -31,23 +31,25 @@ final class JourneyNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'origin' => new StationResource(
-                resource: $this->journey->origin,
-            ),
-            'destination' => new StationResource(
-                resource: $this->journey->destination,
-            ),
-            'driver' => new UserResource(
-                resource: $this->journey->driver,
-            ),
-            'current_location' => new LocationResource(
-                resource: $this->journey->activeLocation,
-            ),
-            'journey_id' => $this->journey->id,
-            'train_info' => [
-                'train_number' => $this->journey->train,
-                'service_order' => $this->journey->service_order,
-                'number_of_wagons' => $this->journey->number_of_wagons,
+            'driver' => [
+                'origin' => new StationResource(
+                    resource: $this->journey->origin,
+                ),
+                'destination' => new StationResource(
+                    resource: $this->journey->destination,
+                ),
+                'driver' => new UserResource(
+                    resource: $this->journey->driver,
+                ),
+                'current_location' => new LocationResource(
+                    resource: $this->journey->activeLocation,
+                ),
+                'journey_id' => $this->journey->id,
+                'train_info' => [
+                    'train_number' => $this->journey->train,
+                    'service_order' => $this->journey->service_order,
+                    'number_of_wagons' => $this->journey->number_of_wagons,
+                ],
             ],
             'type' => $this->type,
         ];

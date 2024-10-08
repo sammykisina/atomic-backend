@@ -30,6 +30,11 @@ final class InspectionScheduleResource extends JsonResource
                     relationship: 'inspector',
                 ),
             ),
+            'owner' => new UserResource(
+                resource: $this->whenLoaded(
+                    relationship: 'owner',
+                ),
+            ),
             'start_kilometer' => $this->resource->start_kilometer,
             'end_kilometer' => $this->resource->end_kilometer,
             'start_kilometer_latitude' => $this->resource->start_kilometer_latitude,

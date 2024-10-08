@@ -64,6 +64,14 @@ final class InspectionSchedule extends Model
         );
     }
 
+    /**  @return BelongsTo<User>*/
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: User::class,
+            foreignKey: 'owner_id',
+        );
+    }
 
 
     /** @return array<string, mixed> */

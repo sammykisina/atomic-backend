@@ -48,6 +48,11 @@ final class UserRegionResource extends JsonResource
 
             'start_kilometer' => $this->resource->start_kilometer,
             'end_kilometer' => $this->resource->end_kilometer,
+            'owner' => new UserResource(
+                resource: $this->whenLoaded(
+                    relationship: 'owner',
+                ),
+            ),
         ];
     }
 }

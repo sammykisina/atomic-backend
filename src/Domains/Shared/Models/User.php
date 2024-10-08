@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Shared\Models;
 
 use Database\Factories\UserFactory;
+use Domains\ChiefCivilEngineer\Models\UserRegion;
 use Domains\Shared\Enums\ModelStatuses;
 use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Enums\WorkStatuses;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -78,6 +80,15 @@ final class User extends Authenticatable
         return $this->belongsTo(
             related: Role::class,
             foreignKey: 'role_id',
+        );
+    }
+
+    /** @return HasOne<UserRegion> */
+    public function userRegion(): HasOne
+    {
+        return $this->hasOne(
+            related: UserRegion::class,
+            foreignKey: 'user_id',
         );
     }
 

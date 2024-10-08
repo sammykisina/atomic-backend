@@ -11,7 +11,5 @@ Route::middleware(['auth:sanctum', 'ability:read-rce-assignment,create-rce-assig
 
     Route::controller(ManagementController::class)->group(function (): void {
         Route::post('/assign', 'assign')->name(name: 'assign');
-        // Route::patch('/{inspectionSchedule}/edit', 'edit')->name(name: 'edit');
-        // Route::delete('/{inspectionSchedule}/delete', 'delete')->name(name: 'delete');
     });
 });

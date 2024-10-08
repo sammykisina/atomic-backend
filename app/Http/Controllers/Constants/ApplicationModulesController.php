@@ -141,6 +141,18 @@ final class ApplicationModulesController
                 'read-issues-history',
                 'delete-issues-history',
             ],
+            'rpwi-inspections' => [
+                'read-rpwi-inspections',
+                'show-rpwi-inspections',
+            ],
+            'rce-inspections' => [
+                'read-rce-inspections',
+                'show-rce-inspections',
+            ],
+            'cce-inspections' => [
+                'read-cce-inspections',
+                'show-cce-inspections',
+            ],
         ];
 
         return response(

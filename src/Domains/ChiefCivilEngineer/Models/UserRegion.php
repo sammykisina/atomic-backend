@@ -40,6 +40,15 @@ final class UserRegion extends Model
         );
     }
 
+    /** @return BelongsTo<User> */
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: User::class,
+            foreignKey: 'owner_id',
+        );
+    }
+
     /** @return BelongsTo<Line> */
     public function line(): BelongsTo
     {
