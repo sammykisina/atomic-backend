@@ -23,24 +23,27 @@ final class IndexController
             ->allowedIncludes('user', 'startStation', 'endStation')
             ->first();
 
-        $stations = Station::where('line_id', $shift->line_id)
-            ->whereBetween('id', [
-                $shift->startStation->id,
-                $shift->endStation->id,
-            ])
-            ->with('section', 'loops')
-            ->orderBy('id', 'asc')
-            ->get();
+        $stations = null;
+        if ($shift) {
+            $stations = Station::where('line_id', $shift->line_id)
+                ->whereBetween('id', [
+                    $shift->startStation->id,
+                    $shift->endStation->id,
+                ])
+                ->with('section', 'loops')
+                ->orderBy('id', 'asc')
+                ->get();
+        }
 
         return response(
             content: [
                 'message' => 'Shift fetched successfully.',
-                'shift' => new ShiftResource(
-                    resource: $shift ?? null,
-                ),
-                'stations' => StationResource::collection(
+                'shift' => $shift ? new ShiftResource(
+                    resource: $shift,
+                ) : null,
+                'stations' => $stations ? StationResource::collection(
                     resource: $stations,
-                ),
+                ) : [],
             ],
             status: Http::OK(),
         );

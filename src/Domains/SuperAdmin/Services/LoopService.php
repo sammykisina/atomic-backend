@@ -11,6 +11,15 @@ use Domains\SuperAdmin\Models\Station;
 final class LoopService
 {
     /**
+     * GET LOOP BY ID
+     * @param int $loop_id
+     * @return Loop
+     */
+    public static function getLoopById(int $loop_id): Loop
+    {
+        return Loop::query()->where('id', $loop_id)->first();
+    }
+    /**
      * CREATE LOOP
      * @param array $loopData
      * @return Loop

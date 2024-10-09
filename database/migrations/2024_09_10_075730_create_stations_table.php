@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -30,6 +31,10 @@ return new class () extends Migration {
 
             $table->boolean(column: 'is_yard')->default(
                 value: false,
+            );
+
+            $table->string(column: 'status')->default(
+                value: StationSectionLoopStatuses::GOOD,
             );
 
             $table->foreignId(column: 'line_id')

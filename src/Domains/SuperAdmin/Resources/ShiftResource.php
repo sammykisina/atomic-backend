@@ -49,6 +49,7 @@ final class ShiftResource extends JsonResource
                     relationship: 'user',
                 ),
             ),
+            'stations' => $this->resource->stations,
         ];
     }
 }

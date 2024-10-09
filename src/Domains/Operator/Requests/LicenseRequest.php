@@ -13,23 +13,39 @@ final class LicenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'origin_station_id' => [
+            'path' => [
+                'required',
+                'array',
+            ],
+
+            'path.*.origin_station_id' => [
                 'required',
                 'exists:stations,id',
             ],
-            'destination_station_id' => [
-                'required',
-                'exists:stations,id',
-            ],
-            // 'section_id' => [
-            //     'required',
-            //     'exists:sections,id',
-            // ],
-            'stop_at_main_line' => [
+            'path.*.originate_from_main_line' => [
                 'required',
                 'boolean',
             ],
-            'loop_id' => [
+            'path.*.origin_loop_id' => [
+                'required_if:originate_from_main_line,false',
+                'exists:loops,id',
+            ],
+
+            'path.*.section_id' => [
+                'nullable',
+                'exists:sections,id',
+            ],
+
+
+            'path.*.destination_station_id' => [
+                'required',
+                'exists:stations,id',
+            ],
+            'path.*.stop_at_main_line' => [
+                'required',
+                'boolean',
+            ],
+            'path.*.destination_loop_id' => [
                 'required_if:stop_at_main_line,false',
                 'exists:loops,id',
             ],

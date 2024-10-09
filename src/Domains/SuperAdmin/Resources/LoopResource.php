@@ -29,6 +29,8 @@ final class LoopResource extends JsonResource
             'end_longitude_top' => $this->resource->end_longitude_top,
             'end_latitude_bottom' => $this->resource->end_latitude_bottom,
             'end_longitude_bottom' => $this->resource->end_longitude_bottom,
+
+            'status' => $this->resource->status,
         ];
     }
 }

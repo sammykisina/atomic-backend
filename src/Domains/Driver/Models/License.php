@@ -13,6 +13,7 @@ use Domains\SuperAdmin\Models\Station;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 final class License extends Model
@@ -24,11 +25,6 @@ final class License extends Model
     protected $fillable = [
         'license_number',
         'journey_id',
-        'origin_station_id',
-        'destination_station_id',
-        'main_id',
-        'section_id',
-        'loop_id',
         'status',
         'direction',
         'issuer_id',
@@ -120,6 +116,14 @@ final class License extends Model
         return $this->belongsTo(
             related: Loop::class,
             foreignKey: 'loop_id',
+        );
+    }
+
+    public function paths(): HasMany
+    {
+        return $this->hasMany(
+            related: Path::class,
+            foreignKey: 'license_id',
         );
     }
 }

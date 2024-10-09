@@ -14,12 +14,10 @@ use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\NotificationTypes;
 use Domains\SuperAdmin\Models\Shift;
 use Domains\SuperAdmin\Services\StationService;
-use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use JustSteveKing\StatusCode\Http;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class ManagementController
 {
@@ -32,8 +30,10 @@ final class ManagementController
      * @param Journey $journey
      * @return mixed
      */
-    public function acceptRequest(LicenseRequest $request, Journey $journey, DatabaseNotification $notification): Response | HttpException
+    public function acceptRequest(LicenseRequest $request, Journey $journey, DatabaseNotification $notification)
     {
+        // return $request->validated();
+
         $license = DB::transaction(function () use ($request, $journey, $notification) {
             $currentShift = Shift::query()
                 ->where("status", ShiftStatuses::CONFIRMED)
@@ -48,12 +48,15 @@ final class ManagementController
                 );
             }
 
-            if ( ! in_array($request->validated('destination_station_id'), $currentShift->stations)) {
-                abort(
-                    code: Http::EXPECTATION_FAILED(),
-                    message: 'Destination station is outside of the current shift\'s control.',
-                );
+            foreach ($request->validated('path') as $key => $path) {
+                if ( ! in_array($path['destination_station_id'], $currentShift->stations)) {
+                    abort(
+                        code: Http::EXPECTATION_FAILED(),
+                        message: "Destination station as position " . $key + 1 . " is outside of the current shift\'s control.",
+                    );
+                }
             }
+
 
             if (null !== $notification->read_at) {
                 abort(
@@ -62,30 +65,50 @@ final class ManagementController
                 );
             }
 
+
             $journey_direction = JourneyService::getJourneyDirection(
                 origin: $journey->origin->start_kilometer,
                 destination: $journey->destination->end_kilometer,
             );
 
-            $license_origin_station = StationService::getStation(
-                id: $request->validated(key: 'origin_station_id'),
-            );
-
-            $license_destination_station = StationService::getStation(
-                id: $request->validated(key: 'destination_station_id'),
-            );
-
-            $license_direction =  JourneyService::getJourneyDirection(
-                origin: $license_origin_station->start_kilometer,
-                destination: $license_destination_station->start_kilometer,
-            );
-
-
-            if ($license_direction !== $journey_direction) {
-                abort(
-                    code: Http::EXPECTATION_FAILED(),
-                    message: 'License direction does not match journey direction',
+            foreach ($request->validated('path') as $key => $path) {
+                $license_origin_station = StationService::getStation(
+                    id: $path['origin_station_id'],
                 );
+
+                $license_destination_station = StationService::getStation(
+                    id: $path['destination_station_id'],
+                );
+
+                $license_direction =  JourneyService::getJourneyDirection(
+                    origin: $license_origin_station->start_kilometer,
+                    destination: $license_destination_station->start_kilometer,
+                );
+
+
+                if ($license_direction !== $journey_direction) {
+                    abort(
+                        code: Http::EXPECTATION_FAILED(),
+                        message: "License path direction at position " . $key + 1 . " does not match journey direction",
+                    );
+                }
+            }
+
+            $path_data = [];
+            foreach ($request->validated('path') as $path) {
+                $path_data[] =  [
+                    'origin_station_id' => $path['origin_station_id'],
+                    'originate_from_main_line' => $path['originate_from_main_line'],
+                    'origin_main_id' =>  $path['originate_from_main_line'] ? $path['origin_station_id'] : null,
+                    'origin_loop_id' => $path['originate_from_main_line'] ? null : $path['origin_loop_id'],
+
+                    'section_id' => $path['section_id'] ?? null,
+
+                    'destination_station_id' => $path['destination_station_id'],
+                    'stop_at_main_line' => $path['stop_at_main_line'],
+                    'destination_main_id' => $path['stop_at_main_line'] ? $path['destination_station_id'] : null,
+                    'destination_loop_id' => $path['stop_at_main_line'] ? null : $path['destination_loop_id'],
+                ];
             }
 
             $uniqueLicenseNumber = $this->licenseService->getLicense();
@@ -94,11 +117,7 @@ final class ManagementController
                 licenseData: [
                     'license_number' => $uniqueLicenseNumber,
                     'journey_id' => $journey->id,
-                    'origin_station_id' => $request->validated(key: 'origin_station_id'),
-                    'destination_station_id' => $request->validated(key: 'destination_station_id'),
-                    'main_id' => $request->validated(key: 'stop_at_main_line') ? $request->validated(key: 'origin_station_id') : null,
-                    'loop_id' => ! $request->validated(key: 'stop_at_main_line') ? $request->validated(key: 'loop_id') : null,
-                    'section_id' => $request->validated(key: 'section_id'),
+                    'path' => $path_data,
                     'direction' =>  $license_direction,
                 ],
             );
@@ -121,6 +140,8 @@ final class ManagementController
             return $license;
 
         });
+
+
 
         return response(
             content: [

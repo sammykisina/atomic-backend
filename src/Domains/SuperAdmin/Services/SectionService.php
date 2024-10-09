@@ -9,6 +9,15 @@ use Domains\SuperAdmin\Models\Section;
 final class SectionService
 {
     /**
+     * GET SECTION BY ID
+     * @param int $section_id
+     * @return Section|null
+     */
+    public static function getSectionById(int $section_id): ?Section
+    {
+        return Section::query()->where('id', $section_id)->first();
+    }
+    /**
      * CREATE SECTION
      * @param array $sectionData
      * @return Section

@@ -63,6 +63,12 @@ final class ApplicationModulesController
             'counties' => [
                 'read-counties',
             ],
+            'journeys' => [
+                'read-journeys',
+                'request-journeys',
+                'edit-journeys',
+                'delete-journeys',
+            ],
             'licenses' => [
                 'read-licenses',
                 'request-licenses',
@@ -70,12 +76,6 @@ final class ApplicationModulesController
                 'delete-licenses',
                 'confirm-licenses',
                 'reject-licenses',
-            ],
-            'journeys' => [
-                'read-journeys',
-                'request-journeys',
-                'edit-journeys',
-                'delete-journeys',
             ],
             'journeys-management' => [
                 'read-journeys',

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Domains\Operator\Notifications;
 
 use Domains\Driver\Models\License;
+use Domains\Driver\Models\Path;
+use Domains\Driver\Resources\PathResource;
 use Domains\Shared\Enums\NotificationTypes;
-use Domains\SuperAdmin\Resources\LoopResource;
-use Domains\SuperAdmin\Resources\StationResource;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -29,22 +29,20 @@ final class LicenseNotification extends Notification
     /** @return array<string, mixed> */
     public function toArray(object $notifiable): array
     {
+        $paths = Path::query()->where('license_id', $this->license->id)->with(['originStation', 'fromMainLine', 'fromLoop', 'section', 'destinationStation', 'toMainLine', 'toLoop'])
+            ->get();
+
         return [
             'license' => [
                 'id' => $this->license->id,
                 'journey_id' => $this->license->journey_id,
                 'license_number' => $this->license->license_number,
-                'from' => new StationResource(
-                    resource: $this->license->originStation,
-                ),
-                'to' => new StationResource(
-                    resource: $this->license->destinationStation,
-                ),
-                'to_stop_in' => $this->license->main_id ? 'main line' : new LoopResource(
-                    $this->license->loop,
+                'path' => PathResource::collection(
+                    resource: $paths,
                 ),
             ],
             'type' => $this->type,
         ];
+
     }
 }

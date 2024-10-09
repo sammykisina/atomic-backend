@@ -40,6 +40,7 @@ final class SectionResource extends JsonResource
                     relationship: 'station',
                 ),
             ),
+            'status' => $this->resource->status,
         ];
     }
 }

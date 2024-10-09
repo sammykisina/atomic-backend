@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\SuperAdmin\Models;
 
 use Domains\SuperAdmin\Enums\StationPositions;
+use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -33,6 +34,8 @@ final class Station extends Model
         "line_id",
         'is_yard',
         'position_from_line',
+
+        'status',
     ];
 
     /** @return BelongsTo<Line>  */
@@ -69,6 +72,7 @@ final class Station extends Model
         return [
             'position_from_line' => StationPositions::class,
             'is_yard' => 'boolean',
+            'status' => StationSectionLoopStatuses::class,
         ];
     }
 }

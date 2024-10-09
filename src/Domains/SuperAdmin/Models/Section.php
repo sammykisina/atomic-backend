@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Models;
 
+use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,8 +26,10 @@ final class Section extends Model
         'number_of_kilometers_to_divide_section_to_subsection',
         'line_id',
         'station_id',
+        'status',
     ];
 
+    /** @return BelongsTo<Station>*/
     public function station(): BelongsTo
     {
         return $this->belongsTo(
@@ -34,4 +37,13 @@ final class Section extends Model
             foreignKey: 'station_id',
         );
     }
+
+    /** @return array<string, mixed> */
+    protected function casts(): array
+    {
+        return [
+            'status' => StationSectionLoopStatuses::class,
+        ];
+    }
+
 }

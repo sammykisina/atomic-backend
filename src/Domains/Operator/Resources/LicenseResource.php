@@ -7,8 +7,6 @@ namespace Domains\Operator\Resources;
 use Domains\Driver\Models\License;
 use Domains\Shared\Resources\DateResource;
 use Domains\Shared\Resources\UserResource;
-use Domains\SuperAdmin\Resources\LoopResource;
-use Domains\SuperAdmin\Resources\SectionResource;
 use Domains\SuperAdmin\Resources\StationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -23,31 +21,6 @@ final class LicenseResource extends JsonResource
             'id' => $this->resource->id,
             'license_number' => $this->resource->license_number,
             'status' => $this->resource->status,
-            'origin_station' => new StationResource(
-                resource: $this->whenLoaded(
-                    relationship: 'originStation',
-                ),
-            ),
-            'destination_station' => new StationResource(
-                resource: $this->whenLoaded(
-                    relationship: 'destinationStation',
-                ),
-            ),
-            'main' => new StationResource(
-                resource: $this->whenLoaded(
-                    relationship: 'main',
-                ),
-            ),
-            'loop' => new LoopResource(
-                resource: $this->whenLoaded(
-                    relationship: 'loop',
-                ),
-            ),
-            'though_section' => new SectionResource(
-                resource: $this->whenLoaded(
-                    relationship: 'section',
-                ),
-            ),
             'direction' => $this->resource->direction,
             'issuer' => new UserResource(
                 resource: $this->whenLoaded(
@@ -68,7 +41,9 @@ final class LicenseResource extends JsonResource
             'confirmed_at' => new DateResource(
                 resource: $this->resource->confirmed_at,
             ),
-
+            'path' => StationResource::collection(
+                resource: $this->resource->stations,
+            ),
         ];
     }
 }
