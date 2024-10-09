@@ -42,7 +42,7 @@ final class CCEDashboardController
                 })
                 ->count();
 
-                $aborted_inspections = Inspection::query()
+            $aborted_inspections = Inspection::query()
                 ->whereNotNull('aborted_time')
                 ->whereDate('created_at', $date)
                 ->whereHas('inspectionSchedule.inspector', function ($query) use ($request): void {
@@ -86,7 +86,7 @@ final class CCEDashboardController
                 })
                 ->count();
 
-                $aborted_inspections = Inspection::query()
+            $aborted_inspections = Inspection::query()
                 ->whereNotNull('aborted_time')
                 ->whereBetween('created_at', [$startDate, Carbon::now()])
                 ->whereHas('inspectionSchedule', function ($query) use ($request): void {
