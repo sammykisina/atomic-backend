@@ -270,97 +270,98 @@ final class ManagementController
     public function requestLicense(Journey $journey): Response | HttpException
     {
         // ensure that the current license destination is not equal to the journey destination
-        $latest_journey_license = $journey->licenses()->latest()->first();
-        if ($latest_journey_license->destination_station_id === $journey->destination_station_id) {
-            abort(
-                code: Http::EXPECTATION_FAILED(),
-                message: 'You are at your destination according to the journey information.If you wish to continue please end this journey and create a new one.',
-            );
-        }
+        // $latest_journey_license = $journey->licenses()->latest()->first();
+        // if ($latest_journey_license->destination_station_id === $journey->destination_station_id) {
+        //     abort(
+        //         code: Http::EXPECTATION_FAILED(),
+        //         message: 'You are at your destination according to the journey information.If you wish to continue please end this journey and create a new one.',
+        //     );
+        // }
 
-        // check if the next license should be handled by the previous license issuer
-        $last_license_shift = $latest_journey_license->issuer->shifts()->latest()->first();
+        // // check if the next license should be handled by the previous license issuer
+        // $last_license_shift = $latest_journey_license->issuer->shifts()->latest()->first();
 
-        $journey_direction = JourneyService::getJourneyDirection(
-            origin: $journey->origin->start_kilometer,
-            destination: $journey->destination->end_kilometer,
-        );
+        // $journey_direction = JourneyService::getJourneyDirection(
+        //     origin: $journey->origin->start_kilometer,
+        //     destination: $journey->destination->end_kilometer,
+        // );
 
-        // up train
-        if (LicenseDirections::UP_TRAIN === $journey_direction) {
-            if ($latest_journey_license->destination_station_id === max($last_license_shift->stations)) {
-                // look for the next station
-                $next_shift = Shift::query()
-                    ->where("status", ShiftStatuses::CONFIRMED)
-                    ->where("active", operator: true)
-                    ->whereJsonContains("stations", max($last_license_shift->stations) + 1)
-                    ->first();
+        // // up train
+        // if (LicenseDirections::UP_TRAIN === $journey_direction) {
+        //     if ($latest_journey_license->destination_station_id === max($last_license_shift->stations)) {
+        //         // look for the next station
+        //         $next_shift = Shift::query()
+        //             ->where("status", ShiftStatuses::CONFIRMED)
+        //             ->where("active", operator: true)
+        //             ->whereJsonContains("stations", max($last_license_shift->stations) + 1)
+        //             ->first();
 
-                if ( ! $next_shift) {
-                    abort(
-                        code: Http::EXPECTATION_FAILED(),
-                        message: 'Opps! You don`t have an active shift to accept this request. Please contact your system administrator.',
-                    );
-                }
+        //         if ( ! $next_shift) {
+        //             abort(
+        //                 code: Http::EXPECTATION_FAILED(),
+        //                 message: 'Opps! You don`t have an active shift to accept this request. Please contact your system administrator.',
+        //             );
+        //         }
 
 
 
-                $next_shift->user->notify(new LicenseRequestNotification(
-                    journey: $journey,
-                    lastLicense: $latest_journey_license,
-                    type: NotificationTypes::LICENSE_REQUEST,
-                ));
-            } else {
-                $last_license_shift->user->notify(new LicenseRequestNotification(
-                    journey: $journey,
-                    lastLicense: $latest_journey_license,
-                    type: NotificationTypes::LICENSE_REQUEST,
-                ));
-            }
+        //         $next_shift->user->notify(new LicenseRequestNotification(
+        //             journey: $journey,
+        //             lastLicense: $latest_journey_license,
+        //             type: NotificationTypes::LICENSE_REQUEST,
+        //         ));
+        //     } else {
+        //         $last_license_shift->user->notify(new LicenseRequestNotification(
+        //             journey: $journey,
+        //             lastLicense: $latest_journey_license,
+        //             type: NotificationTypes::LICENSE_REQUEST,
+        //         ));
+        //     }
 
-            $latest_journey_license->update([
-                'status' => LicenseStatuses::USED,
-            ]);
-        }
+        //     $latest_journey_license->update([
+        //         'status' => LicenseStatuses::USED,
+        //     ]);
+        // }
 
-        // down train
-        if (LicenseDirections::DOWN_TRAIN === $journey_direction) {
-            if ($latest_journey_license->destination_station_id === min($last_license_shift->stations)) {
-                // look for the next station
-                $next_shift = Shift::query()
-                    ->where("status", ShiftStatuses::CONFIRMED)
-                    ->where("active", operator: true)
-                    ->whereJsonContains("stations", min($last_license_shift->stations) - 1)
-                    ->first();
+        // // down train
+        // if (LicenseDirections::DOWN_TRAIN === $journey_direction) {
+        //     if ($latest_journey_license->destination_station_id === min($last_license_shift->stations)) {
+        //         // look for the next station
+        //         $next_shift = Shift::query()
+        //             ->where("status", ShiftStatuses::CONFIRMED)
+        //             ->where("active", operator: true)
+        //             ->whereJsonContains("stations", min($last_license_shift->stations) - 1)
+        //             ->first();
 
-                if ( ! $next_shift) {
-                    abort(
-                        code: Http::EXPECTATION_FAILED(),
-                        message: 'Opps! You don`t have an active shift to accept this request. Please contact your system administrator.',
-                    );
-                }
+        //         if ( ! $next_shift) {
+        //             abort(
+        //                 code: Http::EXPECTATION_FAILED(),
+        //                 message: 'Opps! You don`t have an active shift to accept this request. Please contact your system administrator.',
+        //             );
+        //         }
 
-                $next_shift->user->notify(new LicenseRequestNotification(
-                    journey: $journey,
-                    lastLicense: $latest_journey_license,
-                    type: NotificationTypes::LICENSE_REQUEST,
-                ));
-            } else {
-                $last_license_shift->user->notify(new LicenseRequestNotification(
-                    journey: $journey,
-                    lastLicense: $latest_journey_license,
-                    type: NotificationTypes::LICENSE_REQUEST,
-                ));
-            }
+        //         $next_shift->user->notify(new LicenseRequestNotification(
+        //             journey: $journey,
+        //             lastLicense: $latest_journey_license,
+        //             type: NotificationTypes::LICENSE_REQUEST,
+        //         ));
+        //     } else {
+        //         $last_license_shift->user->notify(new LicenseRequestNotification(
+        //             journey: $journey,
+        //             lastLicense: $latest_journey_license,
+        //             type: NotificationTypes::LICENSE_REQUEST,
+        //         ));
+        //     }
 
-            $latest_journey_license->update([
-                'status' => LicenseStatuses::USED,
-            ]);
-        }
+        //     $latest_journey_license->update([
+        //         'status' => LicenseStatuses::USED,
+        //     ]);
+        // }
 
         return response(
             content: [
-                'message' => 'Your license request has been sent successfully.Please be patient while your license is being assigned.',
+                // 'message' => 'Your license request has been sent successfully.Please be patient while your license is being assigned.',
+                 'message' => 'Feature under adjustment due to change of trip structure.',
             ],
             status: Http::ACCEPTED(),
         );
