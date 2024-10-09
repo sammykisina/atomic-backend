@@ -20,6 +20,8 @@ Route::middleware(['auth:sanctum', 'ability:create-inspections,read-inspections'
         Route::get('{inspection}/show', 'show')->name(name: 'show');
 
         Route::patch('{inspection}/stop', 'stop')->name(name: 'stop');
+
+        Route::patch('{inspection}/abortJourney', 'abortJourney')->name(name: 'abort-journey');
     });
 
     Route::controller(InspectionIssueManagementController::class)->group(function (): void {

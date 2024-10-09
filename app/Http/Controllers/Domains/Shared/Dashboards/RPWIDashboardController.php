@@ -45,6 +45,14 @@ final class RPWIDashboardController
                 })
                 ->count();
 
+            $aborted_inspections = Inspection::query()
+                ->whereNotNull('aborted_time')
+                ->whereDate('created_at', $date)
+                ->whereHas('inspectionSchedule', function ($query) use ($pwi_ids): void {
+                    $query->whereIn('owner_id', $pwi_ids);
+                })
+                ->count();
+
             $total_reported_issues = Issue::query()
                 ->whereHas('inspection.inspectionSchedule', function ($query) use ($pwi_ids): void {
                     $query->whereIn('owner_id', $pwi_ids);
@@ -77,6 +85,14 @@ final class RPWIDashboardController
             $startDate = Carbon::now()->subDays(30);
             $completed_inspections = Inspection::query()
                 ->whereNotNull('end_time')
+                ->whereBetween('created_at', [$startDate, Carbon::now()])
+                ->whereHas('inspectionSchedule', function ($query) use ($pwi_ids): void {
+                    $query->whereIn('owner_id', $pwi_ids);
+                })
+                ->count();
+
+            $aborted_inspections = Inspection::query()
+                ->whereNotNull('aborted_time')
                 ->whereBetween('created_at', [$startDate, Carbon::now()])
                 ->whereHas('inspectionSchedule', function ($query) use ($pwi_ids): void {
                     $query->whereIn('owner_id', $pwi_ids);
@@ -131,6 +147,7 @@ final class RPWIDashboardController
                     'critical_issues' => IssueResource::collection(
                         resource: $critical_issues,
                     ),
+                    'aborted_inspections' => $aborted_inspections,
                 ],
 
             ],

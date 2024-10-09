@@ -386,14 +386,19 @@ final class ManagementController
         DB::transaction(function () use ($journey, $latest_journey_license): void {
             if ( ! $journey->update([
                 'status' => false,
-            ]) || ! $latest_journey_license->update([
-                'status' => LicenseStatuses::USED,
             ])) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
                     message: 'Journey not ended.Please try again.',
                 );
             }
+
+            if ($latest_journey_license) {
+                $latest_journey_license->update([
+                    'status' => LicenseStatuses::USED,
+                ]);
+            }
+
         });
 
         return response(

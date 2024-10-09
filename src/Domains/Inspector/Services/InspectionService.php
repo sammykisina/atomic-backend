@@ -56,7 +56,7 @@ final class InspectionService
     }
 
     /**
-     * START INSPECTION
+     * STOP INSPECTION
      * @return Inspection
      */
     public function stopInspection(Inspection $inspection, array $inspectionData): bool
@@ -66,6 +66,21 @@ final class InspectionService
             'is_active' => false,
             'inspector_reached_origin' => $inspectionData['inspector_reached_origin'],
             'inspector_reached_destination' => true,
+        ]);
+    }
+
+    /**
+     * ABORT INSPECTION
+     * @return Inspection
+     */
+    public function abortInspection(Inspection $inspection, array $inspectionData): bool
+    {
+        return $inspection->update([
+            'aborted_time' => Carbon::now()->format('H:i'),
+            'is_active' => false,
+            'inspector_reached_origin' => $inspectionData['inspector_reached_origin'],
+            'inspector_reached_destination' => $inspectionData['inspector_reached_destination'],
+            'reason_for_abortion' => $inspectionData['reason_for_abortion'],
         ]);
     }
 

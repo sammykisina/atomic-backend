@@ -23,6 +23,8 @@ final class Inspection extends Model
         'start_time',
         'end_time',
         'is_active',
+        'aborted_time',
+        'reason_for_abortion',
         'inspector_reached_origin',
         'inspector_reached_destination',
     ];

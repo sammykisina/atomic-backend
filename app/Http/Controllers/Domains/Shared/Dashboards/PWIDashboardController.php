@@ -17,11 +17,12 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
 
-final class PWADashboardController
+final class PWIDashboardController
 {
     public function __invoke(Request $request): Response
     {
         $completed_inspections = null;
+        $aborted_inspections = null;
         $total_reported_issues = null;
         $total_resolved_issues = null;
         $total_pending_issues = null;
@@ -34,6 +35,14 @@ final class PWADashboardController
                     $query->where('owner_id', Auth::id());
                 })
                 ->whereNotNull('end_time')
+                ->whereDate('created_at', $date)
+                ->count();
+
+            $aborted_inspections = Inspection::query()
+                ->whereHas('inspectionSchedule', function ($query): void {
+                    $query->where('owner_id', Auth::id());
+                })
+                ->whereNotNull('aborted_time')
                 ->whereDate('created_at', $date)
                 ->count();
 
@@ -68,6 +77,14 @@ final class PWADashboardController
 
             $completed_inspections = Inspection::query()
                 ->whereNotNull('end_time')
+                ->whereBetween('created_at', [$startDate, Carbon::now()])
+                ->whereHas('inspectionSchedule', function ($query): void {
+                    $query->where('owner_id', Auth::id());
+                })
+                ->count();
+
+            $aborted_inspections = Inspection::query()
+                ->whereNotNull('aborted_time')
                 ->whereBetween('created_at', [$startDate, Carbon::now()])
                 ->whereHas('inspectionSchedule', function ($query): void {
                     $query->where('owner_id', Auth::id());
@@ -126,6 +143,7 @@ final class PWADashboardController
                 'message' => 'PWA dashboard fetched successfully.',
                 'pwa_dashboard' => [
                     'completed_inspections' => $completed_inspections,
+                    'aborted_inspections' => $aborted_inspections,
                     'total_reported_issues' => $total_reported_issues,
                     'total_resolved_issues' => $total_resolved_issues,
                     'total_pending_issues' => $total_pending_issues,

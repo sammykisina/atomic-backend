@@ -21,7 +21,7 @@ final class InspectionsIndexController
             ->pluck('user_id');
 
         $inspections = Inspection::query()
-            ->with(['inspectionSchedule.inspector','inspectionSchedule.line', 'inspectionSchedule.owner', 'issues.issueName'])
+            ->with(['inspectionSchedule.inspector','inspectionSchedule.line', 'inspectionSchedule.owner.userRegion', 'issues.issueName', 'issues.assignment'])
             ->whereHas('inspectionSchedule', function ($query) use ($pwi_ids): void {
                 $query->whereIn('owner_id', $pwi_ids);
             })

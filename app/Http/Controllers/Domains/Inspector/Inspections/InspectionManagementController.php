@@ -158,4 +158,30 @@ final class InspectionManagementController
             status: Http::ACCEPTED(),
         );
     }
+
+    /**
+     * ABORT INSPECTION
+     * @param StopInspectionRequest $request
+     * @param Inspection $inspection
+     * @return Response | HttpException
+     */
+    public function abortJourney(StopInspectionRequest $request, Inspection $inspection): Response | HttpException
+    {
+        if ( ! $this->inspectionService->abortInspection(
+            inspection: $inspection,
+            inspectionData: $request->validated(),
+        )) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: "Inspection not aborted. Please try again",
+            );
+        }
+
+        return Response(
+            content: [
+                'message' => 'Inspection aborted successfully.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
 }

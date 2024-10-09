@@ -22,6 +22,9 @@ return new class () extends Migration {
             $table->time(column: 'start_time')->nullable();
             $table->time(column: 'end_time')->nullable();
 
+            $table->time(column: 'aborted_time')->nullable();
+            $table->string(column: 'reason_for_abortion')->nullable();
+
             $table->boolean(column: 'is_active');
 
             $table->boolean(column: 'inspector_reached_origin');

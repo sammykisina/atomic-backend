@@ -18,7 +18,7 @@ final class InspectionsIndexController
             ->whereHas('inspectionSchedule.inspector', function ($query): void {
                 $query->where('region_id', Auth::user()->region_id);
             })
-            ->with(['inspectionSchedule.owner.userRegion.owner','inspectionSchedule.inspector','inspectionSchedule.line','issues.issueName'])
+            ->with(['inspectionSchedule.owner.userRegion.owner.userRegion','inspectionSchedule.inspector','inspectionSchedule.line','issues.issueName'])
             ->get();
 
         return response(

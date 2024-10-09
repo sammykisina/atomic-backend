@@ -22,6 +22,7 @@ final class RCEDashboardController
     public function __invoke(Request $request): Response
     {
         $completed_inspections = null;
+        $aborted_inspections = null;
         $total_reported_issues = null;
         $total_resolved_issues = null;
         $total_pending_issues = null;
@@ -37,6 +38,14 @@ final class RCEDashboardController
 
             $completed_inspections = Inspection::query()
                 ->whereNotNull('end_time')
+                ->whereDate('created_at', $date)
+                ->whereHas('inspectionSchedule.inspector', function ($query): void {
+                    $query->where('region_id', Auth::user()->region_id);
+                })
+                ->count();
+
+            $aborted_inspections = Inspection::query()
+                ->whereNotNull('aborted_time')
                 ->whereDate('created_at', $date)
                 ->whereHas('inspectionSchedule.inspector', function ($query): void {
                     $query->where('region_id', Auth::user()->region_id);
@@ -73,6 +82,14 @@ final class RCEDashboardController
             $startDate = Carbon::now()->subDays(30);
             $completed_inspections = Inspection::query()
                 ->whereNotNull('end_time')
+                ->whereBetween('created_at', [$startDate, Carbon::now()])
+                ->whereHas('inspectionSchedule', function ($query): void {
+                    $query->where('region_id', Auth::user()->region_id);
+                })
+                ->count();
+
+            $aborted_inspections = Inspection::query()
+                ->whereNotNull('aborted_time')
                 ->whereBetween('created_at', [$startDate, Carbon::now()])
                 ->whereHas('inspectionSchedule', function ($query): void {
                     $query->where('region_id', Auth::user()->region_id);
@@ -121,6 +138,7 @@ final class RCEDashboardController
                         resource: $your_rpwis,
                     ),
                     'completed_inspections' => $completed_inspections,
+                    'aborted_inspections' => $aborted_inspections,
                     'total_reported_issues' => $total_reported_issues,
                     'total_resolved_issues' => $total_resolved_issues,
                     'total_pending_issues' => $total_pending_issues,

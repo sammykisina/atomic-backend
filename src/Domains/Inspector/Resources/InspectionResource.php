@@ -33,6 +33,9 @@ final class InspectionResource extends JsonResource
             ),
             'inspector_reached_origin' => $this->resource->inspector_reached_origin,
             'inspector_reached_destination' => $this->resource->inspector_reached_destination,
+
+            'reason_for_abortion' => $this->resource->reason_for_abortion,
+            'aborted_time' => $this->resource->aborted_time,
         ];
     }
 }

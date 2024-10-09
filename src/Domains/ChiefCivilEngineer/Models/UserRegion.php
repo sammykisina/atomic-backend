@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Domains\ChiefCivilEngineer\Models;
 
+use Domains\Inspector\Models\Inspection;
+use Domains\PermanentWayInspector\Models\InspectionSchedule;
 use Domains\Shared\Models\User;
 use Domains\SuperAdmin\Models\Line;
 use Domains\SuperAdmin\Models\Region;
@@ -83,5 +85,15 @@ final class UserRegion extends Model
             related: Station::class,
             foreignKey: 'end_station_id',
         );
+    }
+
+    public function inspectionSchedules()
+    {
+        return $this->hasMany(InspectionSchedule::class, 'owner_id');
+    }
+
+    public function inspections()
+    {
+        return $this->hasManyThrough(Inspection::class, InspectionSchedule::class, 'owner_id', 'inspection_schedule_id');
     }
 }

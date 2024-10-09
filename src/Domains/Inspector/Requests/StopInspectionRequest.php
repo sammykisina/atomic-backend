@@ -19,6 +19,10 @@ final class StopInspectionRequest extends FormRequest
             'inspector_reached_destination' => [
                 'required',
             ],
+            'reason_for_abortion' => [
+                'nullable',
+                'string',
+            ],
         ];
     }
 }
