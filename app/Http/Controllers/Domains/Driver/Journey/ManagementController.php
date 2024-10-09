@@ -361,7 +361,7 @@ final class ManagementController
         return response(
             content: [
                 // 'message' => 'Your license request has been sent successfully.Please be patient while your license is being assigned.',
-                 'message' => 'Feature under adjustment due to change of trip structure.',
+                'message' => 'Feature under adjustment due to change of trip structure.',
             ],
             status: Http::ACCEPTED(),
         );
