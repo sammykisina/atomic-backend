@@ -9,7 +9,6 @@ use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Operator\Notifications\LicenseNotification;
 use Domains\Operator\Requests\LicenseRequest;
-use Domains\Operator\Resources\LicenseResource;
 use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\NotificationTypes;
 use Domains\SuperAdmin\Models\Shift;
