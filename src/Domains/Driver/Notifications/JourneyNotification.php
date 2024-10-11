@@ -31,7 +31,7 @@ final class JourneyNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'driver' => [
+            'journey' => [
                 'origin' => new StationResource(
                     resource: $this->journey->origin,
                 ),

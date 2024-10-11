@@ -10,6 +10,7 @@ use Domains\SuperAdmin\Models\Station;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 final class IndexController
@@ -20,7 +21,9 @@ final class IndexController
             ->with([
                 'licenses.paths.originStation',
                 'licenses.paths.destinationStation',
+                'driver'
             ])
+            ->allowedFilters([AllowedFilter::exact('status')])
             ->get();
 
         $updatedJourneys = $journeys->map(function ($journey) {
@@ -60,7 +63,7 @@ final class IndexController
             content: [
                 'message' => 'Journeys fetched successfully.',
                 'journeys' => JourneyResource::collection(
-                    resource: $journeys,
+                    resource: $updatedJourneys,
                 ),
             ],
             status: Http::OK(),

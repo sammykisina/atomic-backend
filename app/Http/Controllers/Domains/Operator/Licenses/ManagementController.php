@@ -32,9 +32,7 @@ final class ManagementController
      */
     public function acceptRequest(LicenseRequest $request, Journey $journey, DatabaseNotification $notification)
     {
-        // return $request->validated();
-
-        $license = DB::transaction(function () use ($request, $journey, $notification) {
+        DB::transaction(function () use ($request, $journey, $notification) {
             $currentShift = Shift::query()
                 ->where("status", ShiftStatuses::CONFIRMED)
                 ->where("active", true)
@@ -111,6 +109,8 @@ final class ManagementController
                 ];
             }
 
+            // dd($path_data);
+
             $uniqueLicenseNumber = $this->licenseService->getLicense();
 
             $license = $this->licenseService->acceptJourneyRequest(
@@ -145,9 +145,6 @@ final class ManagementController
 
         return response(
             content: [
-                'license' => new LicenseResource(
-                    resource: $license,
-                ),
                 'message' => 'Request accepted and license assigned successfully.',
             ],
             status: Http::CREATED(),

@@ -30,7 +30,6 @@ final class Journey extends Model
         "destination_station_id",
         'line_id',
         'status',
-
     ];
 
 
