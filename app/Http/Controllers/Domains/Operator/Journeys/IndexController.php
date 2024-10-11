@@ -23,7 +23,7 @@ final class IndexController
                 'licenses.paths.destinationStation',
                 'driver',
                 'origin',
-                'destination'
+                'destination',
             ])
             ->allowedFilters([AllowedFilter::exact('status')])
             ->get();
