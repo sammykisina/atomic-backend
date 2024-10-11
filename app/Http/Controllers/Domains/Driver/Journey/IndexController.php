@@ -22,6 +22,8 @@ final class IndexController
             ->with([
                 'licenses.paths.originStation',
                 'licenses.paths.destinationStation',
+                'origin',
+                'destination',
             ])
             ->get();
 

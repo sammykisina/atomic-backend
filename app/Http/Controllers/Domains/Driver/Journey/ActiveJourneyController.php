@@ -23,6 +23,8 @@ final class ActiveJourneyController
             ->with([
                 'licenses.paths.originStation',
                 'licenses.paths.destinationStation',
+                'origin',
+                'destination',
             ])
             ->first();
 
