@@ -25,10 +25,12 @@ final class IndexController
             ])
             ->get();
 
-        $stationIds = [];
+        $updatedJourneys = $journeys->map(function ($journey) {
+            // Map each license individually
+            $journey->licenses = $journey->licenses->map(function ($license) {
+                $stationIds = [];
 
-        foreach ($journeys as $journey) {
-            foreach ($journey->licenses as $license) {
+                // Collect station IDs from the license paths
                 foreach ($license->paths as $path) {
                     if (isset($path['originStation']['id'])) {
                         $stationIds[] = $path['originStation']['id'];
@@ -38,23 +40,23 @@ final class IndexController
                         $stationIds[] = $path['destinationStation']['id'];
                     }
                 }
-            }
-        }
 
-        $stationIds = array_unique($stationIds);
-        sort($stationIds);
+                // Get unique station IDs for this license
+                $stationIds = array_unique($stationIds);
+                sort($stationIds);
 
-        $stations = Station::whereIn('id', $stationIds)->with(['loops', 'section'])->get();
+                // Fetch stations for this specific license
+                $license->stations = Station::whereIn('id', $stationIds)->with(['loops', 'section'])->get();
 
-        $updatedJourneys = $journeys->map(function ($journey) use ($stations) {
-            $journey->licenses = $journey->licenses->map(function ($license) use ($stations) {
-                $license->stations = $stations;
+                // Optionally remove paths from the license object if not needed
                 unset($license->paths);
+
                 return $license;
             });
 
             return $journey;
         });
+
 
 
         return response(

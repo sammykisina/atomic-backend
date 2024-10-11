@@ -17,7 +17,7 @@ final class ActiveJourneyController
 {
     public function __invoke(Request $request): Response
     {
-        $journey  = QueryBuilder::for(subject: Journey::class)
+        $journey = QueryBuilder::for(subject: Journey::class)
             ->where('driver_id', Auth::id())
             ->where('status', true)
             ->with([
@@ -26,31 +26,34 @@ final class ActiveJourneyController
             ])
             ->first();
 
-        $stationIds = [];
+        if ($journey) {
+            $journey->licenses = $journey->licenses->map(function ($license) {
+                $stationIds = [];
 
-        foreach ($journey->licenses as $license) {
-            foreach ($license->paths as $path) {
-                if (isset($path['originStation']['id'])) {
-                    $stationIds[] = $path['originStation']['id'];
+                // Collect station IDs from the license's paths
+                foreach ($license->paths as $path) {
+                    if (isset($path['originStation']['id'])) {
+                        $stationIds[] = $path['originStation']['id'];
+                    }
+                    if (isset($path['destinationStation']['id'])) {
+                        $stationIds[] = $path['destinationStation']['id'];
+                    }
                 }
-                if (isset($path['destinationStation']['id'])) {
-                    $stationIds[] = $path['destinationStation']['id'];
-                }
-            }
+
+                // Get unique station IDs for this license
+                $stationIds = array_unique($stationIds);
+                sort($stationIds);
+
+                // Fetch stations for this specific license
+                $license->stations = Station::whereIn('id', $stationIds)->with(['loops', 'section'])->get();
+
+                // Optionally remove paths if no longer needed
+                unset($license->paths);
+
+                return $license;
+            });
         }
 
-        $stationIds = array_unique($stationIds);
-        sort($stationIds);
-
-
-        $stations = Station::whereIn('id', $stationIds)->with(['loops', 'section'])->get();
-
-        $journey->licenses = $journey->licenses->map(function ($license) use ($stations) {
-            $license->stations = $stations;
-            unset($license->paths);
-
-            return $license;
-        });
 
         return response(
             content: [
