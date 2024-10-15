@@ -33,6 +33,8 @@ return new class () extends Migration {
                 value: false,
             );
 
+            $table->integer(column: 'speed')->default(value: 40);
+
             $table->string(column: 'status')->default(
                 value: StationSectionLoopStatuses::GOOD,
             );

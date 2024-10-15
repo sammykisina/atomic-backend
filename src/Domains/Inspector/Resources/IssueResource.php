@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Inspector\Resources;
 
 use Domains\Inspector\Models\Issue;
+use Domains\Inspector\Resources\Resources\IssueAreaResource;
 use Domains\PermanentWayInspector\Resources\AssignmentResource;
 use Domains\Shared\Resources\DateResource;
 use Illuminate\Http\Request;
@@ -43,6 +44,11 @@ final class IssueResource extends JsonResource
                 ),
             ),
             'issue_kilometer' => $this->resource->issue_kilometer,
+            'issue_area' => new IssueAreaResource(
+                $this->whenLoaded(
+                    relationship: 'issueArea',
+                ),
+            ),
         ];
     }
 }

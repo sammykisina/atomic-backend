@@ -8,6 +8,7 @@ use Domains\Inspector\Models\Issue;
 use Domains\Inspector\Resources\IssueResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -21,7 +22,13 @@ final class IndexController
                 'inspection.inspectionSchedule.inspector',
                 'inspection.inspectionSchedule.line',
                 'assignment.resolver',
+                'issueArea.line',
+                'issueArea.station',
+                'issueArea.section',
             ])
+            ->whereHas('inspection.inspectionSchedule', function ($query): void {
+                $query->where('owner_id', Auth::id());
+            })
             ->orderBy('created_at', 'desc')
             ->orderByRaw("FIELD(status, 'DRAFT', 'PENDING', 'RESOLVED')")
             ->allowedFilters([

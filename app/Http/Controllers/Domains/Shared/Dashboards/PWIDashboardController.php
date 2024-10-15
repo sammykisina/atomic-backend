@@ -22,10 +22,12 @@ final class PWIDashboardController
     public function __invoke(Request $request): Response
     {
         $completed_inspections = null;
-        $aborted_inspections = null;
+        $incomplete_inspections = null;
+
         $total_reported_issues = null;
-        $total_resolved_issues = null;
+        $total_unassigned_issues = null;
         $total_pending_issues = null;
+        $total_resolved_issues = null;
 
         if ($request->query('date')) {
             $date = Carbon::parse($request->query('date'));
@@ -38,11 +40,11 @@ final class PWIDashboardController
                 ->whereDate('created_at', $date)
                 ->count();
 
-            $aborted_inspections = Inspection::query()
+            $incomplete_inspections = Inspection::query()
                 ->whereHas('inspectionSchedule', function ($query): void {
                     $query->where('owner_id', Auth::id());
                 })
-                ->whereNotNull('aborted_time')
+                ->whereNull('end_time')
                 ->whereDate('created_at', $date)
                 ->count();
 
@@ -52,15 +54,15 @@ final class PWIDashboardController
                 })
                 ->whereDate('created_at', $date)
                 ->where('status', IssueStatuses::PENDING->value)
-                ->doesntHave(relation: 'assignment')
                 ->count();
 
-            $total_resolved_issues = Issue::query()
+            $total_unassigned_issues = Issue::query()
                 ->whereHas('inspection.inspectionSchedule', function ($query): void {
                     $query->where('owner_id', Auth::id());
                 })
-                ->where('status', IssueStatuses::RESOLVED->value)
                 ->whereDate('created_at', $date)
+                ->where('status', IssueStatuses::PENDING->value)
+                ->doesntHave(relation: 'assignment')
                 ->count();
 
             $total_pending_issues = Issue::query()
@@ -71,6 +73,16 @@ final class PWIDashboardController
                 ->has(relation: 'assignment')
                 ->whereDate('created_at', $date)
                 ->count();
+
+            $total_resolved_issues = Issue::query()
+                ->whereHas('inspection.inspectionSchedule', function ($query): void {
+                    $query->where('owner_id', Auth::id());
+                })
+                ->where('status', IssueStatuses::RESOLVED->value)
+                ->whereDate('created_at', $date)
+                ->count();
+
+
         } else {
             // Get data for the last 30 days
             $startDate = Carbon::now()->subDays(30);
@@ -83,8 +95,8 @@ final class PWIDashboardController
                 })
                 ->count();
 
-            $aborted_inspections = Inspection::query()
-                ->whereNotNull('aborted_time')
+            $incomplete_inspections = Inspection::query()
+                ->whereNull('end_time')
                 ->whereBetween('created_at', [$startDate, Carbon::now()])
                 ->whereHas('inspectionSchedule', function ($query): void {
                     $query->where('owner_id', Auth::id());
@@ -95,16 +107,17 @@ final class PWIDashboardController
                 ->whereHas('inspection.inspectionSchedule', function ($query): void {
                     $query->where('owner_id', Auth::id());
                 })
-                ->doesntHave(relation: 'assignment')
+                ->where('status', IssueStatuses::PENDING->value)
                 ->whereBetween('created_at', [$startDate, Carbon::now()])
                 ->count();
 
-            $total_resolved_issues = Issue::query()
+            $total_unassigned_issues = Issue::query()
                 ->whereHas('inspection.inspectionSchedule', function ($query): void {
                     $query->where('owner_id', Auth::id());
                 })
-                ->where('status', IssueStatuses::RESOLVED->value)
+                ->where('status', IssueStatuses::PENDING->value)
                 ->whereBetween('created_at', [$startDate, Carbon::now()])
+                ->doesntHave(relation: 'assignment')
                 ->count();
 
             $total_pending_issues = Issue::query()
@@ -114,6 +127,14 @@ final class PWIDashboardController
                 ->where('status', IssueStatuses::PENDING->value)
                 ->whereBetween('created_at', [$startDate, Carbon::now()])
                 ->has(relation: 'assignment')
+                ->count();
+
+            $total_resolved_issues = Issue::query()
+                ->whereHas('inspection.inspectionSchedule', function ($query): void {
+                    $query->where('owner_id', Auth::id());
+                })
+                ->where('status', IssueStatuses::RESOLVED->value)
+                ->whereBetween('created_at', [$startDate, Carbon::now()])
                 ->count();
         }
 
@@ -143,10 +164,11 @@ final class PWIDashboardController
                 'message' => 'PWA dashboard fetched successfully.',
                 'pwa_dashboard' => [
                     'completed_inspections' => $completed_inspections,
-                    'aborted_inspections' => $aborted_inspections,
+                    'incomplete_inspections' => $incomplete_inspections,
                     'total_reported_issues' => $total_reported_issues,
-                    'total_resolved_issues' => $total_resolved_issues,
+                    'total_unassigned_issues' => $total_unassigned_issues,
                     'total_pending_issues' => $total_pending_issues,
+                    'total_resolved_issues' => $total_resolved_issues,
                     'recent_inspections' =>  InspectionResource::collection(
                         resource: $recent_inspections,
                     ),

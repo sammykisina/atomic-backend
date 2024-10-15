@@ -37,6 +37,19 @@ final class ManagementController
             );
         }
 
+        $user_region = UserRegion::query()
+            ->where('user_id', $request->validated('user_id'))
+            ->where('line_id', $request->validated('line_id'))
+            ->where('is_active', true)
+            ->first();
+
+        if ($user_region) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'The selected PWI is already assigned to another section block within this line',
+            );
+        }
+
         $user = Auth::user();
         $assignment = UserRegion::query()->create([
             'user_id' => $request->validated('user_id'),

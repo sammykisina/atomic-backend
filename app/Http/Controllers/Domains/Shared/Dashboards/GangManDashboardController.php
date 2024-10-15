@@ -20,7 +20,7 @@ final class GangManDashboardController
             ->whereHas('issue', function ($query): void {
                 $query->where('status', IssueStatuses::PENDING->value);
             })
-            ->with('issue.issueName')
+            ->with('issue.issueName', 'issue.issueArea')
             ->orderBy('created_at', 'desc')
             ->get();
 

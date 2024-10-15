@@ -116,18 +116,14 @@ final class ApplicationModulesController
                 'read-inspections',
                 'create-inspections',
                 'confirm-inspection-schedules',
-                'create-issues',
-                'read-issues',
-                'delete-issues',
-                'edit-issues',
             ],
-            'rce-management' => [
+            'RCE-management' => [
                 'read-rce-assignment',
                 'create-rce-assignment',
                 'edit-rce-assignment',
                 'delete-rce-assignment',
             ],
-            'rpwi-management' => [
+            'RPWI-management' => [
                 'read-rpwi-assignment',
                 'create-rpwi-assignment',
                 'edit-rpwi-assignment',
@@ -141,17 +137,31 @@ final class ApplicationModulesController
                 'read-issues-history',
                 'delete-issues-history',
             ],
-            'rpwi-inspections' => [
+            'PWI-inspections' => [
+                'read-pwi-inspections',
+                'show-pwi-inspections',
+            ],
+            'PWI-management' => [
+                'read-pwi-assignment',
+                'create-pwi-assignment',
+                'edit-pwi-assignment',
+                'delete-pwi-assignment',
+            ],
+            'RPWI-inspections' => [
                 'read-rpwi-inspections',
                 'show-rpwi-inspections',
             ],
-            'rce-inspections' => [
+            'RCE-inspections' => [
                 'read-rce-inspections',
                 'show-rce-inspections',
             ],
-            'cce-inspections' => [
-                'read-cce-inspections',
-                'show-cce-inspections',
+            'issues' => [
+                'read-issues',
+                'assign-issues',
+            ],
+            'RPWI-issues' => [
+                'read-rpwi-issues',
+                'approve-speed-restriction',
             ],
         ];
 

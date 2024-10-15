@@ -10,6 +10,6 @@ Route::middleware(['auth:sanctum', 'ability:read-pwi-assignment'])->group(functi
     Route::get('/assignments', ShowMyRPWIAssignmentController::class)->name(name: "show-rpwi-assignments");
 });
 
-Route::middleware(['auth:sanctum', 'ability:read-rpwi-inspections'])->group(function (): void {
-    Route::get('/inspections', InspectionsIndexController::class)->name(name: "show-rpwi-assignments");
+Route::middleware(['auth:sanctum', 'ability:read-pwi-inspections'])->group(function (): void {
+    Route::get('/inspections', InspectionsIndexController::class)->name(name: "show-pwi-assignments");
 });

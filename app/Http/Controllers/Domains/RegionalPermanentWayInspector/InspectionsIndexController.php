@@ -29,8 +29,8 @@ final class InspectionsIndexController
 
         return response(
             content: [
-                'message' => 'RPWI Inspections fetched successfully.',
-                'rpwi_inspections' => InspectionResource::collection(
+                'message' => 'PWI Inspections fetched successfully.',
+                'pwi_inspections' => InspectionResource::collection(
                     resource: $inspections,
                 ),
 

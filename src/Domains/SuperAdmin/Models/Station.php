@@ -36,6 +36,7 @@ final class Station extends Model
         'position_from_line',
 
         'status',
+        'speed',
     ];
 
     /** @return BelongsTo<Line>  */

@@ -18,13 +18,20 @@ final class InspectionsIndexController
             ->whereHas('inspectionSchedule', function ($query) use ($request): void {
                 $query->where('region_id', $request->query('region_id'));
             })
-            ->with(['inspectionSchedule.owner.userRegion.owner','inspectionSchedule.inspector','inspectionSchedule.line','issues.issueName','inspectionSchedule.owner.userRegion.owner.userRegion.owner.region'])
+            ->with([
+                'inspectionSchedule.owner.userRegion.owner',
+                'inspectionSchedule.inspector',
+                'inspectionSchedule.line',
+                'issues.issueName',
+                'issues.assignment',
+                'inspectionSchedule.owner.userRegion.owner.userRegion.owner.region',
+            ])
             ->get();
 
         return response(
             content: [
-                'message' => 'CCE Inspections fetched successfully.',
-                'cce_inspections' => InspectionResource::collection(
+                'message' => 'RCE Inspections fetched successfully.',
+                'rce_inspections' => InspectionResource::collection(
                     resource: $inspections,
                 ),
 

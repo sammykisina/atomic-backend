@@ -20,6 +20,7 @@ final class SectionResource extends JsonResource
                 'start' => $this->resource->start_name,
                 'end' => $this->resource->end_name,
             ],
+            'fullname' => $this->resource->fullname,
             'kilometers' => [
                 'start' => $this->resource->start_kilometer,
                 'end' => $this->resource->end_kilometer,

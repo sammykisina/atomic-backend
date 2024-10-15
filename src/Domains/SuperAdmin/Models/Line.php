@@ -50,6 +50,15 @@ final class Line extends Model
         );
     }
 
+    /** @return  HasMany<Section> */
+    public function sections(): HasMany
+    {
+        return $this->hasMany(
+            related: Section::class,
+            foreignKey: "line_id",
+        );
+    }
+
     /** @return HasMany<Loop> */
     public function loops(): HasMany
     {

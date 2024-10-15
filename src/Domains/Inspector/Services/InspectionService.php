@@ -9,6 +9,10 @@ use Domains\Inspector\Models\Inspection;
 use Domains\Inspector\Models\Issue;
 use Domains\PermanentWayInspector\Enums\InspectionScheduleStatuses;
 use Domains\PermanentWayInspector\Models\InspectionSchedule;
+use Domains\PermanentWayInspector\Models\IssueArea;
+use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
+use Domains\SuperAdmin\Models\Section;
+use Domains\SuperAdmin\Models\Station;
 use Illuminate\Support\Facades\Auth;
 
 final class InspectionService
@@ -102,5 +106,39 @@ final class InspectionService
             'issue_name_id' => $inspectionIssueData['issue_name_id'],
             'issue_kilometer' => $inspectionIssueData['issue_kilometer'],
         ]);
+    }
+
+
+    /**
+     * CLOSE SECTION OR STATION DUE TO A CRITICAL ISSUE
+     * @param IssueArea $issueArea
+     * @return bool
+     */
+    public function closeSectionOrStation(IssueArea $issueArea): bool
+    {
+        $section = null;
+        $station = null;
+
+        if ($issueArea->section_id) {
+            $section = Section::query()->where('id', $issueArea->section_id)->first();
+        }
+
+        if ($issueArea->station_id) {
+            $station = Station::query()->where('id', $issueArea->station_id)->first();
+        }
+
+        if ($section) {
+            return $section->update([
+                'status' => StationSectionLoopStatuses::INTERDICTION->value,
+            ]);
+        }
+
+        if ($station) {
+            return $station->update([
+                'status' => StationSectionLoopStatuses::INTERDICTION->value,
+            ]);
+        }
+
+        return false;
     }
 }

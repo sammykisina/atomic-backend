@@ -6,6 +6,7 @@ namespace Domains\Inspector\Models;
 
 use Domains\Inspector\Enums\IssueStatuses;
 use Domains\PermanentWayInspector\Models\Assignment;
+use Domains\PermanentWayInspector\Models\IssueArea;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,6 +35,15 @@ final class Issue extends Model
         return $this->belongsTo(
             related: IssueName::class,
             foreignKey: 'issue_name_id',
+        );
+    }
+
+    /** @return HasOne<IssueArea>*/
+    public function issueArea(): HasOne
+    {
+        return $this->hasOne(
+            related: IssueArea::class,
+            foreignKey: 'issue_id',
         );
     }
 

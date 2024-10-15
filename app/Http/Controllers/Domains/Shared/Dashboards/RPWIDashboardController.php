@@ -12,6 +12,8 @@ use Domains\Inspector\Enums\IssueStatuses;
 use Domains\Inspector\Models\Inspection;
 use Domains\Inspector\Models\Issue;
 use Domains\Inspector\Resources\IssueResource;
+use Domains\Shared\Enums\UserTypes;
+use Domains\Shared\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -22,14 +24,23 @@ final class RPWIDashboardController
     public function __invoke(Request $request): Response
     {
         $completed_inspections = null;
+        $incomplete_inspections = null;
+
         $total_reported_issues = null;
-        $total_resolved_issues = null;
+        $total_unassigned_issues = null;
         $total_pending_issues = null;
+        $total_resolved_issues = null;
 
         $your_pwis = UserRegion::query()
             ->where('type', 'PWI')
             ->where('owner_id', Auth::id())
-            ->with(['line','region','user'])
+            ->when(request('start_kilometer'), function ($query, $startKilometer): void {
+                $query->where('start_kilometer', '=', $startKilometer);
+            })
+            ->when(request('end_kilometer'), function ($query, $endKilometer): void {
+                $query->where('end_kilometer', '=', $endKilometer);
+            })
+            ->with(['line', 'region', 'user'])
             ->get();
 
         $pwi_ids = $your_pwis->pluck('user_id');
@@ -45,8 +56,8 @@ final class RPWIDashboardController
                 })
                 ->count();
 
-            $aborted_inspections = Inspection::query()
-                ->whereNotNull('aborted_time')
+            $incomplete_inspections = Inspection::query()
+                ->whereNull('end_time')
                 ->whereDate('created_at', $date)
                 ->whereHas('inspectionSchedule', function ($query) use ($pwi_ids): void {
                     $query->whereIn('owner_id', $pwi_ids);
@@ -54,6 +65,14 @@ final class RPWIDashboardController
                 ->count();
 
             $total_reported_issues = Issue::query()
+                ->whereHas('inspection.inspectionSchedule', function ($query) use ($pwi_ids): void {
+                    $query->whereIn('owner_id', $pwi_ids);
+                })
+                ->whereDate('created_at', $date)
+                ->where('status', IssueStatuses::PENDING->value)
+                ->count();
+
+            $total_unassigned_issues = Issue::query()
                 ->whereHas('inspection.inspectionSchedule', function ($query) use ($pwi_ids): void {
                     $query->whereIn('owner_id', $pwi_ids);
                 })
@@ -91,8 +110,8 @@ final class RPWIDashboardController
                 })
                 ->count();
 
-            $aborted_inspections = Inspection::query()
-                ->whereNotNull('aborted_time')
+            $incomplete_inspections = Inspection::query()
+                ->whereNull('end_time')
                 ->whereBetween('created_at', [$startDate, Carbon::now()])
                 ->whereHas('inspectionSchedule', function ($query) use ($pwi_ids): void {
                     $query->whereIn('owner_id', $pwi_ids);
@@ -100,6 +119,13 @@ final class RPWIDashboardController
                 ->count();
 
             $total_reported_issues = Issue::query()
+                ->whereHas('inspection.inspectionSchedule', function ($query) use ($pwi_ids): void {
+                    $query->whereIn('owner_id', $pwi_ids);
+                })
+                ->whereBetween('created_at', [$startDate, Carbon::now()])
+                ->count();
+
+            $total_unassigned_issues = Issue::query()
                 ->whereHas('inspection.inspectionSchedule', function ($query) use ($pwi_ids): void {
                     $query->whereIn('owner_id', $pwi_ids);
                 })
@@ -125,13 +151,40 @@ final class RPWIDashboardController
                 ->count();
         }
 
+        $start_kilometer = request('start_kilometer');
+        $end_kilometer = request('end_kilometer');
+
         $critical_issues = Issue::query()
-            ->whereHas('inspection.inspectionSchedule', function ($query) use ($pwi_ids): void {
-                $query->whereIn('owner_id', $pwi_ids);
+            ->whereHas('inspection.inspectionSchedule', function ($query) use ($pwi_ids, $start_kilometer, $end_kilometer): void {
+                $query->whereIn('owner_id', $pwi_ids)
+                    ->whereHas('owner.userRegion', function ($query) use ($start_kilometer, $end_kilometer): void {
+                        if ($start_kilometer) {
+                            $query->where('start_kilometer', '=', $start_kilometer);
+                        }
+                        if ($end_kilometer) {
+                            $query->where('end_kilometer', '=', $end_kilometer);
+                        }
+                    });
             })
             ->where('condition', IssueConditions::CRITICAL->value)
-            ->with(['issueName','inspection.inspectionSchedule.inspector','inspection.inspectionSchedule.owner.userRegion.owner','inspection.inspectionSchedule.line'])
+            ->with([
+                'issueName',
+                'inspection.inspectionSchedule.inspector',
+                'inspection.inspectionSchedule.owner.userRegion.owner',
+                'inspection.inspectionSchedule.line',
+            ])
             ->get();
+
+        $number_of_gang_persons = User::query()
+            ->where('type', UserTypes::GANG_MAN)
+            ->where('region_id', Auth::user()->region_id)
+            ->count();
+
+        $number_of_inspectors = User::query()
+            ->where('type', UserTypes::INSPECTOR)
+            ->where('region_id', Auth::user()->region_id)
+            ->count();
+
 
         return response(
             content: [
@@ -142,12 +195,15 @@ final class RPWIDashboardController
                     ),
                     'completed_inspections' => $completed_inspections,
                     'total_reported_issues' => $total_reported_issues,
+                    'total_unassigned_issues' => $total_unassigned_issues,
                     'total_resolved_issues' => $total_resolved_issues,
                     'total_pending_issues' => $total_pending_issues,
                     'critical_issues' => IssueResource::collection(
                         resource: $critical_issues,
                     ),
-                    'aborted_inspections' => $aborted_inspections,
+                    'incomplete_inspections' => $incomplete_inspections,
+                    'number_of_gang_persons' => $number_of_gang_persons,
+                    'number_of_inspectors' => $number_of_inspectors,
                 ],
 
             ],

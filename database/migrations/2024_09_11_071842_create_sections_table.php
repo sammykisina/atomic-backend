@@ -25,6 +25,8 @@ return new class () extends Migration {
             $table->float(column: 'end_latitude');
             $table->float(column: 'end_longitude');
 
+            $table->integer(column: 'speed')->default(value: 40);
+
             $table->float(column: 'number_of_kilometers_to_divide_section_to_subsection');
 
             $table->foreignId(column: 'line_id')

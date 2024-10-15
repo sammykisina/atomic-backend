@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\SuperAdmin\Models;
 
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,6 +28,7 @@ final class Section extends Model
         'line_id',
         'station_id',
         'status',
+        'speed',
     ];
 
     /** @return BelongsTo<Station>*/
@@ -44,6 +46,17 @@ final class Section extends Model
         return [
             'status' => StationSectionLoopStatuses::class,
         ];
+    }
+
+    /**
+     * GENERATE FULL NAME
+     * @return Attribute
+     */
+    protected function fullname(): Attribute
+    {
+        return Attribute::make(
+            get: fn(mixed $value, array $attributes) => $attributes['start_name'] . ' - ' . $attributes['end_name'],
+        );
     }
 
 }
