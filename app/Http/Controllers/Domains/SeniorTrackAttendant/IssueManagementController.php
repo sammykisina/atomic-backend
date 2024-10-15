@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\SeniorTrackAttendant;
 
-
 use Domains\SeniorTrackInspector\Models\Assignment;
 use Domains\SeniorTrackInspector\Resources\AssignmentResource;
 use Domains\TrackAttendant\Enums\IssueStatuses;

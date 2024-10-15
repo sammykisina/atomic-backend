@@ -118,7 +118,7 @@ final class ApplicationModulesController
                 'assign-issues',
             ],
 
-            
+
             'journeys' => [
                 'read-journeys',
                 'request-journeys',
