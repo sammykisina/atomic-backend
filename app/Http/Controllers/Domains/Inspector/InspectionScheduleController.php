@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Inspector;
 
-use Domains\PermanentWayInspector\Models\InspectionSchedule;
-use Domains\PermanentWayInspector\Resources\InspectionScheduleResource;
+use Domains\SeniorTrackInspector\Models\InspectionSchedule;
+use Domains\SeniorTrackInspector\Resources\InspectionScheduleResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;

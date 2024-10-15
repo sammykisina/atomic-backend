@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Resources;
 
+use Domains\Driver\Enums\AreaTypes;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -31,6 +32,7 @@ final class LoopResource extends JsonResource
             'end_longitude_bottom' => $this->resource->end_longitude_bottom,
 
             'status' => $this->resource->status,
+            'type' =>  AreaTypes::LOOP->value,
         ];
     }
 }

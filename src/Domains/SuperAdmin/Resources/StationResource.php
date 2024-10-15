@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Resources;
 
+use Domains\Driver\Enums\AreaTypes;
 use Domains\SuperAdmin\Models\Station;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -50,6 +51,8 @@ final class StationResource extends JsonResource
                 ),
             ),
             'status' => $this->resource->status,
+            'speed' => $this->resource->speed,
+            'type' =>  AreaTypes::STATION->value,
         ];
     }
 }

@@ -82,52 +82,52 @@ Route::prefix('/notifications')->as('notifications:')->group(
     base_path('routes/api_v1/shared/notifications.php'),
 );
 
-// CHIEF_CIVIL_ENGINEER
-Route::prefix('/chief-civil-engineer')->as('chief-civil-engineer:')->group(
+// PRINCIPLE_ENGINEER (CHIEF_CIVIL_ENGINEER)
+Route::prefix('/principle-engineer')->as('principle-engineer:')->group(
     [
-        base_path('routes/api_v1/chief_civil_engineer/rce_management.php'),
-        base_path('routes/api_v1/chief_civil_engineer/cce.php'),
+        base_path('routes/api_v1/principle_engineer/se_management.php'),
+        base_path('routes/api_v1/principle_engineer/pe.php'),
     ],
 );
 
-// REGIONAL_CIVIL_ENGINEER
-Route::prefix('/regional-civil-engineer')->as('regional-civil-engineer:')->group(
+// SENIOR ENGINEER  (REGIONAL_CIVIL_ENGINEER)
+Route::prefix('/senior-engineer')->as('senior-engineer:')->group(
     [
-        base_path('routes/api_v1/regional_civil_engineer/rpwi_management.php'),
-        base_path('routes/api_v1/regional_civil_engineer/rce.php'),
+        base_path('routes/api_v1/senior_engineer/rsti_management.php'),
+        base_path('routes/api_v1/senior_engineer/se.php'),
     ],
 );
 
-// REGIONAL_PERMANENT_WAY_INSPECTOR
-Route::prefix('/regional-permanent-way-inspector')->as('regional-permanent-way-inspector:')->group(
+// REGIONAL_SENIOR_TRACT_INSPECTOR
+Route::prefix('/regional-senior-track-inspector')->as('regional-senior-track-inspector:')->group(
     [
-        base_path('routes/api_v1/regional_permanent_way_inspector/pwi_management.php'),
-        base_path('routes/api_v1/regional_permanent_way_inspector/rpwi.php'),
+        base_path('routes/api_v1/regional_senior_track_inspector/sti_management.php'),
+        base_path('routes/api_v1/regional_senior_track_inspector/rsti.php'),
     ],
 );
 
 // PERMANENT_WAY_INSPECTOR
-Route::prefix('/permanent-way-inspector')->as('permanent-way-inspector:')->group(
+Route::prefix('/senior-track-inspector')->as('senior-track-inspector:')->group(
     [
-        base_path('routes/api_v1/permanent_way_inspector/inspection_schedules.php'),
-        base_path('routes/api_v1/permanent_way_inspector/inspections.php'),
-        base_path('routes/api_v1/permanent_way_inspector/issues.php'),
-        base_path('routes/api_v1/permanent_way_inspector/pwi.php'),
+        base_path('routes/api_v1/senior_track_inspector/inspection_schedules.php'),
+        base_path('routes/api_v1/senior_track_inspector/inspections.php'),
+        base_path('routes/api_v1/senior_track_inspector/issues.php'),
+        base_path('routes/api_v1/senior_track_inspector/sti.php'),
     ],
 );
 
-// INSPECTOR
-Route::prefix('/inspector')->as('inspector:')->group(
+// TRACK ATTENDANT
+Route::prefix('/track-attendant')->as('track-attendant:')->group(
     [
         // INSPECTION SCHEDULES
-        base_path('routes/api_v1/inspector/inspection.php'),
+        base_path('routes/api_v1/track_attendant/inspection.php'),
     ],
 );
 
-// GANG MAN
-Route::prefix('/gang-man')->as('gang-man:')->group(
+// SENIOR TRACK ATTENDANT
+Route::prefix('/senior-track-attendant')->as('senior-track-attendant:')->group(
     [
         // ISSUES MANAGEMENT
-        base_path('routes/api_v1/gang_man/issues.php'),
+        base_path('routes/api_v1/senior_track_attendant/issues.php'),
     ],
 );

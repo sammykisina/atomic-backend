@@ -63,6 +63,62 @@ final class ApplicationModulesController
             'counties' => [
                 'read-counties',
             ],
+            // PE
+            'SE-management' => [
+                'read-se-assignments',
+                'create-se-assignments',
+                'edit-se-assignments',
+                'delete-se-assignments',
+            ],
+            'SE-inspections' => [
+                'read-se-inspections',
+                'show-se-inspections',
+            ],
+
+            // SE
+            'RSTI-management' => [
+                'read-rsti-assignments',
+                'create-rsti-assignments',
+                'edit-rsti-assignments',
+                'delete-rsti-assignments',
+            ],
+            'RSTI-issues' => [
+                'read-rsti-issues',
+                'approve-speed-restriction',
+            ],
+            'RSTI-inspections' => [
+                'read-rsti-inspections',
+                'show-rsti-inspections',
+            ],
+
+            // RSTI
+            'STI-management' => [
+                'read-sti-assignments',
+                'create-sti-assignments',
+                'edit-sti-assignments',
+                'delete-sti-assignments',
+            ],
+
+            'STI-inspections' => [
+                'read-sti-inspections',
+                'show-sti-inspections',
+            ],
+
+            // STI
+            'inspections-management' => [
+                'read-inspection-schedules',
+                'create-inspection-schedules',
+                'edit-inspection-schedules',
+                'delete-inspection-schedules',
+            ],
+
+
+            'issues' => [
+                'read-issues',
+                'assign-issues',
+            ],
+
+            
             'journeys' => [
                 'read-journeys',
                 'request-journeys',
@@ -106,28 +162,11 @@ final class ApplicationModulesController
                 'delete-regions',
                 'line-regions-divisions',
             ],
-            'inspections-management' => [
-                'read-inspection-schedules',
-                'create-inspection-schedules',
-                'edit-inspection-schedules',
-                'delete-inspection-schedules',
-            ],
-            'inspections' => [
+
+            'TA-inspections' => [
                 'read-inspections',
                 'create-inspections',
                 'confirm-inspection-schedules',
-            ],
-            'RCE-management' => [
-                'read-rce-assignment',
-                'create-rce-assignment',
-                'edit-rce-assignment',
-                'delete-rce-assignment',
-            ],
-            'RPWI-management' => [
-                'read-rpwi-assignment',
-                'create-rpwi-assignment',
-                'edit-rpwi-assignment',
-                'delete-rpwi-assignment',
             ],
             'assignments' => [
                 'read-assignments',
@@ -137,32 +176,9 @@ final class ApplicationModulesController
                 'read-issues-history',
                 'delete-issues-history',
             ],
-            'PWI-inspections' => [
-                'read-pwi-inspections',
-                'show-pwi-inspections',
-            ],
-            'PWI-management' => [
-                'read-pwi-assignment',
-                'create-pwi-assignment',
-                'edit-pwi-assignment',
-                'delete-pwi-assignment',
-            ],
-            'RPWI-inspections' => [
-                'read-rpwi-inspections',
-                'show-rpwi-inspections',
-            ],
-            'RCE-inspections' => [
-                'read-rce-inspections',
-                'show-rce-inspections',
-            ],
-            'issues' => [
-                'read-issues',
-                'assign-issues',
-            ],
-            'RPWI-issues' => [
-                'read-rpwi-issues',
-                'approve-speed-restriction',
-            ],
+
+
+
         ];
 
         return response(

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\Shared\Resources;
 
-use Domains\ChiefCivilEngineer\Resources\UserRegionResource;
+use Domains\PrincipleEngineer\Resources\UserRegionResource;
 use Domains\Shared\Models\User;
 use Domains\SuperAdmin\Resources\RegionResource;
 use Illuminate\Http\Request;

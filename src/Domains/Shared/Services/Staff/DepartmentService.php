@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Shared\Services\Staff;
 
 use Domains\Shared\Models\Department;
+use Illuminate\Support\Facades\Auth;
 
 final class DepartmentService
 {
@@ -18,7 +19,7 @@ final class DepartmentService
         return Department::query()->create([
             'name' => $departmentData['name'],
             'description' => $departmentData['description'],
-            'creator_id' => auth()->id(),
+            'creator_id' => Auth::id(),
         ]);
     }
 
@@ -33,7 +34,7 @@ final class DepartmentService
         return $department->update([
             'name' => $updatedDepartmentData['name'],
             'description' => $updatedDepartmentData['description'],
-            'updater_id' => auth()->id(),
+            'updater_id' => Auth::id(),
         ]);
     }
 }

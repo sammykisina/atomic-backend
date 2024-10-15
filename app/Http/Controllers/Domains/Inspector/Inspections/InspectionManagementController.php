@@ -9,8 +9,8 @@ use Domains\Inspector\Requests\InspectionRequest;
 use Domains\Inspector\Requests\StopInspectionRequest;
 use Domains\Inspector\Resources\InspectionResource;
 use Domains\Inspector\Services\InspectionService;
-use Domains\PermanentWayInspector\Enums\InspectionScheduleStatuses;
-use Domains\PermanentWayInspector\Models\InspectionSchedule;
+use Domains\SeniorTrackInspector\Enums\InspectionScheduleStatuses;
+use Domains\SeniorTrackInspector\Models\InspectionSchedule;
 use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Services\Staff\EmployeeService;
 use Illuminate\Http\Request;
@@ -63,7 +63,7 @@ final class InspectionManagementController
     {
         // check if the current user is an inspector
         $inspector = EmployeeService::getEmployee(
-            type: UserTypes::INSPECTOR,
+            type: UserTypes::TRACK_ATTENDANT,
             employee_id: Auth::id(),
         );
 

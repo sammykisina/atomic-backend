@@ -9,7 +9,7 @@ use Domains\Inspector\Models\Inspection;
 use Domains\Inspector\Models\Issue;
 use Domains\Inspector\Requests\IssueRequest;
 use Domains\Inspector\Services\InspectionService;
-use Domains\PermanentWayInspector\Services\IssueService;
+use Domains\SeniorTrackInspector\Services\IssueService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use JustSteveKing\StatusCode\Http;
