@@ -41,7 +41,6 @@ final class LicenseRequest extends FormRequest
                 'required',
                 'exists:stations,id',
             ],
-
             'path.*.stop_at_main_line' => [
                 'required',
                 'boolean',
