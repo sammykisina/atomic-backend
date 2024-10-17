@@ -27,8 +27,8 @@ final class JourneyResource extends JsonResource
                 'locomotive_number' => new LocomotiveNumberResource(
                     $this->whenLoaded(
                         relationship: 'locomotiveNumber',
-                    )
-                )
+                    ),
+                ),
             ],
             'origin' => new StationResource(
                 resource: $this->whenLoaded(
@@ -51,7 +51,7 @@ final class JourneyResource extends JsonResource
                     relationship: 'licenses',
                 ),
             ),
-            
+
         ];
     }
 }
