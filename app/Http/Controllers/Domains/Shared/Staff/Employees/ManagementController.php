@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Shared\Staff\Employees;
 
+use Domains\Shared\Export\EmployeesExport;
+use Domains\Shared\Import\EmployeesImport;
 use Domains\Shared\Models\User;
 use Domains\Shared\Requests\Staff\CreateOrEditEmployeeRequest;
 use Domains\Shared\Resources\UserResource;
 use Domains\Shared\Services\Staff\EmployeeService;
 use Domains\Shared\Services\Staff\RoleService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use JustSteveKing\StatusCode\Http;
+use Maatwebsite\Excel\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class ManagementController
@@ -112,6 +117,45 @@ final class ManagementController
                 ),
             ],
             status: Http::OK(),
+        );
+    }
+
+
+    /**
+     * @param Excel $excel
+     * @return BinaryFileResponse
+     */
+    public function exportEmployees(Excel $excel): BinaryFileResponse
+    {
+        return $excel->download(export: new EmployeesExport(), fileName: 'employees.xlsx');
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function importEmployees(Request $request)
+    {
+        $import = new EmployeesImport(
+            employeeService: $this->employeeService,
+        );
+
+        $import->import($request->file('employees'));
+
+        if ($import->errors()->isNotEmpty()) {
+            return response(
+                content: [
+                    'message' => 'Please check the following issues in your spread sheet',
+                    'errors' => $import->errors(),
+                ],
+                status: Http::NOT_IMPLEMENTED(),
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'Employees uploaded successfully',
+            ],
+            status: Http::CREATED(),
         );
     }
 }

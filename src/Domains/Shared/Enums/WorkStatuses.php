@@ -6,6 +6,6 @@ namespace Domains\Shared\Enums;
 
 enum WorkStatuses: string
 {
-    case ON_THE_JOB = 'on_the_job';
-    case ON_LEAVE = 'on_leave';
+    case ON_THE_JOB = 'ON_THE_JOB';
+    case ON_LEAVE = 'ON_LEAVE';
 }

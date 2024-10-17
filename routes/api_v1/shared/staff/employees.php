@@ -13,7 +13,9 @@ Route::middleware(['auth:sanctum', 'ability:read-staff,create-staff,edit-staff,d
         Route::post('/', 'create')->name(name: 'create');
         Route::get('{employee}/show', 'show')->name(name: 'show');
         Route::patch('/{employee}/edit', 'edit')->name(name: 'edit');
-        Route::patch('/{employee}/desks/{desk}', 'moveEmployeeToDesk')->name(name: 'move-employee-to-desk');
-        Route::patch('/{employee}/desks/{desk}/remove', 'removeEmployeeFromDesk')->name(name: 'remove-employee-from-desk');
+
+
+        Route::get('/download/employees-spreadsheet', 'exportEmployees')->name(name: 'download-employees-spreadsheet');
+        Route::post('/upload/', 'importEmployees')->name(name: 'upload-employees');
     });
 });

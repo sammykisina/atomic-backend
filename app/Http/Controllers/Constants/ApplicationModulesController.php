@@ -168,6 +168,8 @@ final class ApplicationModulesController
                 'read-inspections',
                 'create-inspections',
                 'confirm-inspection-schedules',
+                'create-issues',
+
             ],
 
 
