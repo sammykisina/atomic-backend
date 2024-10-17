@@ -60,12 +60,12 @@ final class AuthService
             'user_id' => $user->id,
         ]);
 
-        Mail::to($user)->send(
+        defer(fn() => Mail::to($user)->send(
             new OtpMail(
                 user: $user,
                 otp: $otp,
             ),
-        );
+        ));
     }
 
     // RESET PASSWORD

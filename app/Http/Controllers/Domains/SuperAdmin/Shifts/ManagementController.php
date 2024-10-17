@@ -99,14 +99,17 @@ final class ManagementController
             );
         }
 
-        Mail::to(
-            $shift->user,
-        )->send(
-            new ShiftMail(
-                type: ShiftActivities::CREATED,
-                shift: $shift,
+        defer(
+            callback: fn() => Mail::to(
+                $shift->user,
+            )->send(
+                new ShiftMail(
+                    type: ShiftActivities::CREATED,
+                    shift: $shift,
+                ),
             ),
         );
+
 
         $shift->user->notify(new ShiftNotification(
             shift: $shift,
@@ -138,14 +141,15 @@ final class ManagementController
             );
         }
 
-        Mail::to(
+        defer(callback: fn() => Mail::to(
             $shift->user,
         )->send(
             new ShiftMail(
                 type: ShiftActivities::DELETED,
                 shift: $shift,
             ),
-        );
+        ));
+
 
         return response(
             content: [

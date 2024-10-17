@@ -286,26 +286,29 @@ final class ManagementController
      * @param Journey $journey
      * @return void
      */
-    public function requestLicense(Journey $journey): Response | HttpException
+    public function requestLicense(Journey $journey)
     {
         // ensure that the current license destination is not equal to the journey destination
-        // $latest_journey_license = $journey->licenses()->latest()->first();
-        // if ($latest_journey_license->destination_station_id === $journey->destination_station_id) {
-        //     abort(
-        //         code: Http::EXPECTATION_FAILED(),
-        //         message: 'You are at your destination according to the journey information.If you wish to continue please end this journey and create a new one.',
-        //     );
-        // }
+        $latest_journey_license = $journey->licenses()->with('paths')->latest()->first();
 
-        // // check if the next license should be handled by the previous license issuer
-        // $last_license_shift = $latest_journey_license->issuer->shifts()->latest()->first();
+        return $latest_journey_license;
 
-        // $journey_direction = JourneyService::getJourneyDirection(
-        //     origin: $journey->origin->start_kilometer,
-        //     destination: $journey->destination->end_kilometer,
-        // );
+        if ($latest_journey_license->destination_station_id === $journey->destination_station_id) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'You are at your destination according to the journey information.If you wish to continue please end this journey and create a new one.',
+            );
+        }
 
-        // // up train
+        // check if the next license should be handled by the previous license issuer
+        $last_license_shift = $latest_journey_license->issuer->shifts()->latest()->first();
+
+        $journey_direction = JourneyService::getJourneyDirection(
+            origin: $journey->origin->start_kilometer,
+            destination: $journey->destination->end_kilometer,
+        );
+
+        // up train
         // if (LicenseDirections::UP_TRAIN === $journey_direction) {
         //     if ($latest_journey_license->destination_station_id === max($last_license_shift->stations)) {
         //         // look for the next station
@@ -342,7 +345,7 @@ final class ManagementController
         //     ]);
         // }
 
-        // // down train
+        // down train
         // if (LicenseDirections::DOWN_TRAIN === $journey_direction) {
         //     if ($latest_journey_license->destination_station_id === min($last_license_shift->stations)) {
         //         // look for the next station
