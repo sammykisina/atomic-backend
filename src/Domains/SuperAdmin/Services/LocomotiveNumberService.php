@@ -13,7 +13,7 @@ final class LocomotiveNumberService
      * @param string $number
      * @return LocomotiveNumber|null
      */
-    public static function getLocomotiveNumberWithNumber(int $number): ?LocomotiveNumber
+    public static function getLocomotiveNumberWithNumber(string $number): ?LocomotiveNumber
     {
         return LocomotiveNumber::query()->where('number', $number)->first();
     }

@@ -53,7 +53,7 @@ final class ManagementController
             }
 
             $locomotive_number = LocomotiveNumberService::getLocomotiveNumberWithNumber(
-                $request->validated('locomotive_number'),
+                number: $request->validated('locomotive_number'),
             );
 
             if ( ! $locomotive_number) {
