@@ -25,7 +25,6 @@ final class CreateOrEditEmployeeRequest extends FormRequest
                 'string',
             ],
             'email' => [
-                'required',
                 'email',
                 Rule::unique('users', 'email')->ignore($this->employee ? $this->employee->id : ''),
             ],

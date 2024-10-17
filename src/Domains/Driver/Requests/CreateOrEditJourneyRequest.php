@@ -29,7 +29,8 @@ final class CreateOrEditJourneyRequest extends FormRequest
             'locomotive_number' => [
                 'required',
                 'string',
-            ],'tail_number' => [
+            ],
+            'tail_number' => [
                 'required',
                 'string',
             ],

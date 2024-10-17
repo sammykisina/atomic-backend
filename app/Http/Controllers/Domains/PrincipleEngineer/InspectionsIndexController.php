@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\PrincipleEngineer;
 
-use Domains\Inspector\Models\Inspection;
-use Domains\Inspector\Resources\InspectionResource;
+use Domains\TrackAttendant\Models\Inspection;
+use Domains\TrackAttendant\Resources\InspectionResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
@@ -30,8 +30,8 @@ final class InspectionsIndexController
 
         return response(
             content: [
-                'message' => 'RCE Inspections fetched successfully.',
-                'rce_inspections' => InspectionResource::collection(
+                'message' => 'SE Inspections fetched successfully.',
+                'se_inspections' => InspectionResource::collection(
                     resource: $inspections,
                 ),
 

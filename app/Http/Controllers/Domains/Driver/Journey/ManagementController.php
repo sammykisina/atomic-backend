@@ -22,6 +22,7 @@ use Domains\SuperAdmin\Models\Loop;
 use Domains\SuperAdmin\Models\Section;
 use Domains\SuperAdmin\Models\Shift;
 use Domains\SuperAdmin\Models\Station;
+use Domains\SuperAdmin\Services\LocomotiveNumberService;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
@@ -51,6 +52,17 @@ final class ManagementController
                 );
             }
 
+            $locomotive_number = LocomotiveNumberService::getLocomotiveNumberWithNumber(
+                $request->validated('locomotive_number'),
+            );
+
+            if ( ! $locomotive_number) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'Please double check your locomotive number. We cannot find the one your entered with our records.',
+                );
+            }
+
             $shift = Shift::query()
                 ->where("line_id", $request->validated(key: "line_id"))
                 ->where("status", ShiftStatuses::CONFIRMED)
@@ -65,9 +77,12 @@ final class ManagementController
                 );
             }
 
+
             $journey = $this->journeyService->createJourney(
                 journeyData: $request->validated(),
+                locomotive_number: $locomotive_number,
             );
+
 
             if ( ! $journey) {
                 abort(

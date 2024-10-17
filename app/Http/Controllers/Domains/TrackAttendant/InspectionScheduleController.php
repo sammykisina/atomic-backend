@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\Inspector;
+namespace App\Http\Controllers\Domains\TrackAttendant;
 
 use Domains\SeniorTrackInspector\Models\InspectionSchedule;
 use Domains\SeniorTrackInspector\Resources\InspectionScheduleResource;

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Domains\Inspector\Services;
+namespace Domains\TrackAttendant\Services;
 
 use Carbon\Carbon;
-use Domains\Inspector\Models\Inspection;
-use Domains\Inspector\Models\Issue;
 use Domains\SeniorTrackInspector\Enums\InspectionScheduleStatuses;
 use Domains\SeniorTrackInspector\Models\InspectionSchedule;
 use Domains\SeniorTrackInspector\Models\IssueArea;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Domains\SuperAdmin\Models\Section;
 use Domains\SuperAdmin\Models\Station;
+use Domains\TrackAttendant\Models\Inspection;
+use Domains\TrackAttendant\Models\Issue;
 use Illuminate\Support\Facades\Auth;
 
 final class InspectionService

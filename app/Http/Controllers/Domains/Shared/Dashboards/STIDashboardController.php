@@ -149,20 +149,20 @@ final class STIDashboardController
             ->take(10)
             ->get();
 
-        $number_of_senior_track_attendant = User::query()
+        $senior_track_attendant = User::query()
             ->where('type', UserTypes::SENIOR_TRACK_ATTENDANT)
             ->where('region_id', Auth::user()->region_id)
             ->get();
 
-        $number_of_track_attendant = User::query()
+        $track_attendant = User::query()
             ->where('type', UserTypes::TRACK_ATTENDANT)
             ->where('region_id', Auth::user()->region_id)
             ->get();
 
         return response(
             content: [
-                'message' => 'PWA dashboard fetched successfully.',
-                'pwa_dashboard' => [
+                'message' => 'STI dashboard fetched successfully.',
+                'sti_dashboard' => [
                     'completed_inspections' => $completed_inspections,
                     'incomplete_inspections' => $incomplete_inspections,
                     'total_reported_issues' => $total_reported_issues,
@@ -172,11 +172,11 @@ final class STIDashboardController
                     'recent_inspections' =>  InspectionResource::collection(
                         resource: $recent_inspections,
                     ),
-                    'number_of_senior_track_attendant' => UserResource::collection(
-                        resource: $number_of_senior_track_attendant,
+                    'senior_track_attendant' => UserResource::collection(
+                        resource: $senior_track_attendant,
                     ),
-                    'number_of_track_attendant' => UserResource::collection(
-                        resource: $number_of_track_attendant,
+                    'track_attendant' => UserResource::collection(
+                        resource: $track_attendant,
                     ),
                 ],
             ],

@@ -20,7 +20,12 @@ final class STADashboardController
             ->whereHas('issue', function ($query): void {
                 $query->where('status', IssueStatuses::PENDING->value);
             })
-            ->with('issue.issueName', 'issue.issueArea')
+            ->with([
+                'issue.issueName',
+                'issue.issueArea.line',
+                'issue.issueArea.station',
+                'issue.issueArea.section',
+            ])
             ->orderBy('created_at', 'desc')
             ->get();
 

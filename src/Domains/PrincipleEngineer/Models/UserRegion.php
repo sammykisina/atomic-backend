@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Domains\PrincipleEngineer\Models;
 
-use Domains\Inspector\Models\Inspection;
 use Domains\SeniorTrackInspector\Models\InspectionSchedule;
 use Domains\Shared\Models\User;
 use Domains\SuperAdmin\Models\Line;
 use Domains\SuperAdmin\Models\Region;
 use Domains\SuperAdmin\Models\Station;
+use Domains\TrackAttendant\Models\Inspection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

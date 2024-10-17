@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\Inspector;
+namespace App\Http\Controllers\Domains\TrackAttendant;
 
-use Domains\Inspector\Enums\IssueConditions;
-use Domains\Inspector\Models\Inspection;
-use Domains\Inspector\Models\Issue;
-use Domains\Inspector\Requests\IssueRequest;
-use Domains\Inspector\Services\InspectionService;
 use Domains\SeniorTrackInspector\Services\IssueService;
+use Domains\TrackAttendant\Enums\IssueConditions;
+use Domains\TrackAttendant\Models\Inspection;
+use Domains\TrackAttendant\Models\Issue;
+use Domains\TrackAttendant\Requests\IssueRequest;
+use Domains\TrackAttendant\Services\InspectionService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use JustSteveKing\StatusCode\Http;

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Driver\Models;
 
 use Domains\Shared\Models\User;
+use Domains\SuperAdmin\Models\LocomotiveNumber;
 use Domains\SuperAdmin\Models\Station;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,7 @@ final class Journey extends Model
         "destination_station_id",
         'line_id',
         'status',
+        'locomotive_number_id',
     ];
 
 
@@ -81,6 +83,15 @@ final class Journey extends Model
                 'section',
                 'station',
             ]);
+    }
+
+    /** @return BelongsTo<LocomotiveNumber> */
+    public function locomotiveNumber(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: LocomotiveNumber::class,
+            foreignKey: 'locomotive_number_id',
+        );
     }
 
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\SeniorEngineer;
 
 use Domains\SeniorEngineer\Enums\SpeedSuggestionStatuses;
+use Domains\SeniorEngineer\Requests\RevertSpeedRestrictionRequest;
 use Domains\SeniorEngineer\Requests\SpeedRestrictionRequest;
 use Domains\SeniorTrackInspector\Models\IssueArea;
 use Domains\SuperAdmin\Models\Section;
@@ -127,6 +128,72 @@ final class RSTIIssuesManagement
             return response(
                 content: [
                     'message' => 'Speed restriction added successfully.',
+                ],
+                status: Http::ACCEPTED(),
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'Something went wrong. Speed restriction was not added',
+            ],
+            status: Http::NOT_ACCEPTABLE(),
+        );
+
+    }
+
+
+    /**
+     * REVERT SPEED RESTRICTION
+     * @param IssueArea $issueArea
+     * @return  HttpException|Response
+     */
+    public function revertSpeedRestriction(RevertSpeedRestrictionRequest $request, IssueArea $issueArea): Response | HttpException
+    {
+        $section = null;
+        $station = null;
+
+        if ($issueArea->section_id) {
+            $section = Section::query()->where('id', $issueArea->section_id)->first();
+        }
+
+        if ($issueArea->station_id) {
+            $station = Station::query()->where('id', $issueArea->station_id)->first();
+        }
+
+        if ($section) {
+            $section->update([
+                'speed' => $request->validated('reverted_speed'),
+            ]);
+
+            $issueArea->update([
+                'speed_suggestion_status' => SpeedSuggestionStatuses::REVERTED,
+                'reverted_speed_comment' => $request->validated('reverted_speed_comment'),
+                'reverted_speed' => $request->validated('reverted_speed'),
+            ]);
+
+            return response(
+                content: [
+                    'message' => 'Speed restriction reverted successfully.',
+                ],
+                status: Http::ACCEPTED(),
+            );
+        }
+
+        if ($station) {
+            $station->update([
+                'speed' => $request->validated('reverted_speed'),
+            ]);
+
+            $issueArea->update([
+                'speed_suggestion_status' => SpeedSuggestionStatuses::REVERTED,
+                'reverted_speed_comment' => $request->validated('reverted_speed_comment'),
+                'reverted_speed' => $request->validated('reverted_speed'),
+            ]);
+
+            return response(
+                content: [
+                    'message' => 'Speed restriction reverted successfully.',
                 ],
                 status: Http::ACCEPTED(),
             );

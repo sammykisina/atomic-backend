@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Domains\Inspector\InspectionIssueManagementController;
-use App\Http\Controllers\Domains\Inspector\Inspections\IndexController;
-use App\Http\Controllers\Domains\Inspector\Inspections\InspectionManagementController;
-use App\Http\Controllers\Domains\Inspector\InspectionScheduleController;
-use App\Http\Controllers\Domains\Inspector\IssueNames\IssueNamesManagement;
+use App\Http\Controllers\Domains\TrackAttendant\InspectionIssueManagementController;
+use App\Http\Controllers\Domains\TrackAttendant\Inspections\IndexController;
+use App\Http\Controllers\Domains\TrackAttendant\Inspections\InspectionManagementController;
+use App\Http\Controllers\Domains\TrackAttendant\InspectionScheduleController;
+use App\Http\Controllers\Domains\TrackAttendant\IssueNames\IssueNamesManagement;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'ability:create-inspections,read-inspections'])->prefix('inspections')->as('inspections:')->group(function (): void {

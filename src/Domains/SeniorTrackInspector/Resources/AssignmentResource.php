@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Domains\SeniorTrackInspector\Resources;
 
-use Domains\Inspector\Resources\IssueResource;
 use Domains\SeniorTrackInspector\Models\Assignment;
 use Domains\Shared\Models\User;
 use Domains\Shared\Resources\DateResource;
 use Domains\Shared\Resources\UserResource;
+use Domains\TrackAttendant\Resources\IssueResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

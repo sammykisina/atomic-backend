@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\Inspector\Inspections;
+namespace App\Http\Controllers\Domains\TrackAttendant\Inspections;
 
-use Domains\Inspector\Models\Inspection;
-use Domains\Inspector\Resources\InspectionResource;
-use Domains\Inspector\Services\InspectionService;
+use Domains\TrackAttendant\Models\Inspection;
+use Domains\TrackAttendant\Resources\InspectionResource;
+use Domains\TrackAttendant\Services\InspectionService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;

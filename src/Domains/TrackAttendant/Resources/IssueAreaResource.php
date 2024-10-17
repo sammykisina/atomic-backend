@@ -39,6 +39,9 @@ final class IssueAreaResource extends JsonResource
             'speed_suggestion_status' => $this->resource->speed_suggestion_status,
             'proposed_speed' => $this->resource->proposed_speed,
             'proposed_speed_comment' => $this->resource->proposed_speed_comment,
+
+            'reverted_speed' => $this->resource->reverted_speed,
+            'reverted_speed_comment' => $this->resource->reverted_speed_comment,
         ];
     }
 }

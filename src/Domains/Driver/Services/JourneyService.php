@@ -8,6 +8,7 @@ use Domains\Driver\Enums\LicenseDirections;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\Driver\Models\Location;
+use Domains\SuperAdmin\Models\LocomotiveNumber;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -39,13 +40,13 @@ final class JourneyService
      * @param array $journeyData
      * @return Journey
      */
-    public function createJourney(array $journeyData): Journey
+    public function createJourney(array $journeyData, LocomotiveNumber $locomotive_number): Journey
     {
         return Journey::query()->create([
             'train' => $journeyData['train'],
             'service_order' => $journeyData['service_order'],
             'number_of_wagons' => $journeyData['number_of_wagons'],
-            'locomotive_number' => $journeyData['locomotive_number'],
+            'locomotive_number_id' => $locomotive_number->id,
             'tail_number' => $journeyData['tail_number'],
             'origin_station_id' => $journeyData['origin_station_id'],
             'destination_station_id' => $journeyData['destination_station_id'],

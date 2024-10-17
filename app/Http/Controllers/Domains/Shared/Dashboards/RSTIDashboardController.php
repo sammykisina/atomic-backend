@@ -123,6 +123,7 @@ final class RSTIDashboardController
                 ->whereHas('inspection.inspectionSchedule', function ($query) use ($pwi_ids): void {
                     $query->whereIn('owner_id', $pwi_ids);
                 })
+                ->where('status', IssueStatuses::PENDING->value)
                 ->whereBetween('created_at', [$startDate, Carbon::now()])
                 ->count();
 

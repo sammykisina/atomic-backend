@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\Inspector\IssueNames;
+namespace App\Http\Controllers\Domains\TrackAttendant\IssueNames;
 
-use Domains\Inspector\Models\IssueName;
-use Domains\Inspector\Requests\CreateOrEditIssueNameRequest;
-use Domains\Inspector\Resources\IssueNameResource;
+use Domains\TrackAttendant\Models\IssueName;
+use Domains\TrackAttendant\Requests\CreateOrEditIssueNameRequest;
+use Domains\TrackAttendant\Resources\IssueNameResource;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
 use Spatie\QueryBuilder\QueryBuilder;

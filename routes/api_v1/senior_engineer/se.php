@@ -21,6 +21,7 @@ Route::middleware(['auth:sanctum', 'ability:read-rsti-issues,approve-speed-restr
         Route::patch('/{issueArea}/approve-speed-restriction-suggestion', action: 'approveSpeedRestrictionSuggestion')->name(name: 'approve-speed-restriction-suggestion');
 
         Route::patch(uri: '/{issueArea}/add-speed-restriction', action: 'addSpeedRestriction')->name(name: 'add-speed-restriction');
+        Route::patch(uri: '/{issueArea}/revert-speed-restriction', action: 'revertSpeedRestriction')->name(name: 'revert-speed-restriction');
     });
 
 });

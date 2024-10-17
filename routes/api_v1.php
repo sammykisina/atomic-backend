@@ -40,6 +40,8 @@ Route::prefix('/super-admin')->as('super-admin:')->group(
         // LINES
         base_path('routes/api_v1/super_admin/lines.php'),
 
+        base_path('routes/api_v1/super_admin/locomotive_numbers.php'),
+
         // STATIONS
         base_path('routes/api_v1/super_admin/stations.php'),
 

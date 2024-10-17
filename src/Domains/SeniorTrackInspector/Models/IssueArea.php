@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Domains\SeniorTrackInspector\Models;
 
-use Domains\Inspector\Models\Issue;
-use Domains\RegionalCivilEngineer\Enums\SpeedSuggestionStatuses;
+use Domains\SeniorEngineer\Enums\SpeedSuggestionStatuses;
 use Domains\SuperAdmin\Models\Line;
 use Domains\SuperAdmin\Models\Section;
 use Domains\SuperAdmin\Models\Station;
+use Domains\TrackAttendant\Models\Issue;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +28,8 @@ final class IssueArea extends Model
         'speed_suggestion_status',
         'proposed_speed',
         'proposed_speed_comment',
+        'reverted_speed',
+        'reverted_speed_comment',
     ];
 
     /** @return BelongsTo<Issue>*/

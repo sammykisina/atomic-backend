@@ -11,4 +11,6 @@ enum SpeedSuggestionStatuses: string
     case APPROVED = 'APPROVED';
 
     case CHANGED = 'CHANGED';
+
+    case REVERTED = 'REVERTED';
 }

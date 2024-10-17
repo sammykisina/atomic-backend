@@ -40,6 +40,10 @@ return new class () extends Migration {
             $table->string(column: 'proposed_speed')->nullable();
             $table->string(column: 'proposed_speed_comment')->nullable();
 
+
+            $table->string(column: 'reverted_speed')->nullable();
+            $table->string(column: 'reverted_speed_comment')->nullable();
+
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();
         });

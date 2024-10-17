@@ -25,6 +25,7 @@ final class ActiveJourneyController
                 'licenses.paths.destinationStation',
                 'origin',
                 'destination',
+                'locomotiveNumber',
             ])
             ->first();
 

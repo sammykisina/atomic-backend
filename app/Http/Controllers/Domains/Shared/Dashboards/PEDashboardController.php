@@ -112,6 +112,7 @@ final class PEDashboardController
                 ->whereHas('inspection.inspectionSchedule.inspector', function ($query) use ($request): void {
                     $query->where('region_id', $request->query('region_id'));
                 })
+                ->where('status', IssueStatuses::PENDING->value)
                 ->whereBetween('created_at', [$startDate, Carbon::now()])
                 ->count();
 

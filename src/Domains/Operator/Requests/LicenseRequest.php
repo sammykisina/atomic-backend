@@ -22,6 +22,7 @@ final class LicenseRequest extends FormRequest
                 'required',
                 'exists:stations,id',
             ],
+
             'path.*.originate_from_main_line' => [
                 'required',
                 'boolean',
@@ -36,11 +37,11 @@ final class LicenseRequest extends FormRequest
                 'exists:sections,id',
             ],
 
-
             'path.*.destination_station_id' => [
                 'required',
                 'exists:stations,id',
             ],
+
             'path.*.stop_at_main_line' => [
                 'required',
                 'boolean',

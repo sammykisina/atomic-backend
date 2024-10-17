@@ -13,6 +13,7 @@ final class ApplicationModulesController
     public function __invoke(Request $request): Response
     {
         $application_modules =  [
+            // ADMIN
             'staff' => [
                 'read-staff',
                 'write-staff',
@@ -63,6 +64,35 @@ final class ApplicationModulesController
             'counties' => [
                 'read-counties',
             ],
+            'desks' => [
+                'read-desks',
+                'edit-desks',
+                'create-desks',
+                'delete-desks',
+            ],
+            'shifts' => [
+                'read-shifts',
+                'edit-shifts',
+                'create-shifts',
+                'delete-shifts',
+                'reject-shifts',
+                'accept-shifts',
+                'manual-shift-activation',
+            ],
+            'regions' => [
+                'read-regions',
+                'create-regions',
+                'edit-regions',
+                'delete-regions',
+                'line-regions-divisions',
+            ],
+            'locomotive-numbers' => [
+                'read-locomotive-numbers',
+                'create-locomotive-numbers',
+                'edit-locomotive-numbers',
+                'delete-locomotive-numbers',
+            ],
+
             // PE
             'SE-management' => [
                 'read-se-assignments',
@@ -112,19 +142,43 @@ final class ApplicationModulesController
                 'delete-inspection-schedules',
             ],
 
+            'TA-inspections' => [
+                'read-inspections',
+                'show-inspections',
+            ],
 
-            'issues' => [
+            'TA-issues' => [
                 'read-issues',
                 'assign-issues',
             ],
 
+            // STA
+            'assignments' => [
+                'read-assignments',
+                'resolve-assignment',
+            ],
 
+            'issues-history' => [
+                'read-issues-history',
+                'delete-issues-history',
+            ],
+
+            // TA
+            'inspections' => [
+                'read-inspections',
+                'create-inspections',
+                'confirm-inspection-schedules',
+            ],
+
+
+            // DRIVER
             'journeys' => [
                 'read-journeys',
                 'request-journeys',
                 'edit-journeys',
                 'delete-journeys',
             ],
+
             'licenses' => [
                 'read-licenses',
                 'request-licenses',
@@ -133,6 +187,8 @@ final class ApplicationModulesController
                 'confirm-licenses',
                 'reject-licenses',
             ],
+
+            // OPERATOR
             'journeys-management' => [
                 'read-journeys',
                 'edit-journeys',
@@ -140,45 +196,6 @@ final class ApplicationModulesController
                 'reject-journeys',
                 'accept-journeys',
             ],
-            'desks' => [
-                'read-desks',
-                'edit-desks',
-                'create-desks',
-                'delete-desks',
-            ],
-            'shifts' => [
-                'read-shifts',
-                'edit-shifts',
-                'create-shifts',
-                'delete-shifts',
-                'reject-shifts',
-                'accept-shifts',
-                'manual-shift-activation',
-            ],
-            'regions' => [
-                'read-regions',
-                'create-regions',
-                'edit-regions',
-                'delete-regions',
-                'line-regions-divisions',
-            ],
-
-            'TA-inspections' => [
-                'read-inspections',
-                'create-inspections',
-                'confirm-inspection-schedules',
-            ],
-            'assignments' => [
-                'read-assignments',
-                'resolve-assignment',
-            ],
-            'issues-history' => [
-                'read-issues-history',
-                'delete-issues-history',
-            ],
-
-
-
         ];
 
         return response(

@@ -18,7 +18,7 @@ final class AuthService
     // LOGIN USER
     public function login(array $data): ?User
     {
-        $user = User::query()->where('email', $data['email'])->first();
+        $user = User::query()->where('phone', $data['phone'])->first();
 
         if ($user && Hash::check(value: $data['password'], hashedValue: $user->password)) {
             return $user;

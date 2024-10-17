@@ -24,6 +24,7 @@ final class IndexController
                 'licenses.paths.destinationStation',
                 'origin',
                 'destination',
+                'locomotiveNumber',
             ])
             ->get();
 

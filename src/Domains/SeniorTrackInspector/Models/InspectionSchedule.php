@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Domains\SeniorTrackInspector\Models;
 
-use Domains\Inspector\Models\Inspection;
 use Domains\SeniorTrackInspector\Enums\InspectionScheduleStatuses;
 use Domains\Shared\Models\User;
 use Domains\SuperAdmin\Models\Line;
+use Domains\TrackAttendant\Models\Inspection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

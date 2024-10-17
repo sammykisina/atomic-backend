@@ -102,7 +102,8 @@ final class ManagementController
      */
     public function show(Line $line): Response | HttpException
     {
-        $line = $line->with(relations: ['regions', 'counties', 'stations.section', 'stations.loops',])->first();
+        $line = $line->where('id', $line->id)
+            ->with(relations: ['regions', 'counties', 'stations.section', 'stations.loops'])->first();
 
         return response(
             content: [

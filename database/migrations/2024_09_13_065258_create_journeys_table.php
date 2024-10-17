@@ -21,7 +21,12 @@ return new class () extends Migration {
 
             $table->string(column: 'train');
             $table->string(column: 'service_order')->unique();
-            $table->string(column: 'locomotive_number');
+            $table->foreignId(column: 'locomotive_number_id')
+                ->references('id')
+                ->on('locomotive_numbers')
+                ->index()
+                ->constrained()
+                ->name('fk_locomotive_numbers');
             $table->string(column: 'tail_number');
 
             $table->integer(column: "number_of_wagons");
