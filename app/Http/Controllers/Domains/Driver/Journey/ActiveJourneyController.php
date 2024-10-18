@@ -55,15 +55,23 @@ final class ActiveJourneyController
 
                 return $license;
             });
+
+            return response(
+                content: [
+                    'message' => 'Active Journey fetched successfully.',
+                    'journey' => new JourneyResource(
+                        resource: $journey,
+                    ),
+                ],
+                status: Http::OK(),
+            );
         }
 
 
         return response(
             content: [
                 'message' => 'Active Journey fetched successfully.',
-                'journeys' => new JourneyResource(
-                    resource: $journey,
-                ),
+                'journey' => null,
             ],
             status: Http::OK(),
         );
