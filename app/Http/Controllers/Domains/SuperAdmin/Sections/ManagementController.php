@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\SuperAdmin\Sections;
 
+use Domains\SuperAdmin\Exports\SectionsExport;
+use Domains\SuperAdmin\Imports\SectionsImport;
 use Domains\SuperAdmin\Models\Section;
 use Domains\SuperAdmin\Requests\CreateOrEditSectionRequest;
 use Domains\SuperAdmin\Resources\SectionResource;
 use Domains\SuperAdmin\Services\SectionService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
+use Maatwebsite\Excel\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class ManagementController
@@ -88,6 +93,50 @@ final class ManagementController
                 ),
             ],
             status: Http::OK(),
+        );
+    }
+
+    /**
+     * EXPORT SECTIONS TEMPLATE
+     * @param Excel $excel
+     * @return BinaryFileResponse
+     */
+    public function exportSections(Request $request, Excel $excel): BinaryFileResponse
+    {
+        return $excel->download(export: new SectionsExport(
+            line_id: (int) $request->get('line_id'),
+        ), fileName: 'sections.xlsx');
+    }
+
+    /**
+     * IMPORT SECTIONS
+     * @param Request $request
+     * @return Response
+     */
+    public function importSections(Request $request): Response
+    {
+        $import = new SectionsImport(
+            sectionService: $this->sectionService,
+            line_id: (int) $request->get('line_id'),
+        );
+
+        $import->import($request->file('sections'));
+
+        if ($import->errors()->isNotEmpty()) {
+            return response(
+                content: [
+                    'message' => 'Please check the following issues in your spread sheet',
+                    'errors' => $import->errors(),
+                ],
+                status: Http::NOT_IMPLEMENTED(),
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'Sections uploaded successfully',
+            ],
+            status: Http::CREATED(),
         );
     }
 }

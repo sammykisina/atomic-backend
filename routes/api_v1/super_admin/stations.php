@@ -13,5 +13,9 @@ Route::middleware(['auth:sanctum', 'ability:read-stations,create-stations,edit-s
         Route::post('/', 'create')->name(name: 'create');
         Route::patch('/{station}/edit', 'edit')->name(name: 'edit');
         Route::get('/{station}/show', 'show')->name(name: 'show');
+
+
+        Route::get('/download/stations-spreadsheet', 'exportStations')->name(name: 'download-stations-spreadsheet');
+        Route::post('/upload/', 'importStations')->name(name: 'upload-stations');
     });
 });

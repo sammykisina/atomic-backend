@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\SuperAdmin\Stations;
 
+use Domains\SuperAdmin\Exports\StationsExport;
+use Domains\SuperAdmin\Imports\StationsImport;
 use Domains\SuperAdmin\Models\Station;
 use Domains\SuperAdmin\Requests\CreateOrEditStationRequest;
 use Domains\SuperAdmin\Resources\StationResource;
 use Domains\SuperAdmin\Services\StationService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
+use Maatwebsite\Excel\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 final class ManagementController
@@ -88,6 +93,48 @@ final class ManagementController
                 ),
             ],
             status: Http::OK(),
+        );
+    }
+
+    /**
+     * EXPORT STATIONS TEMPLATE
+     * @param Excel $excel
+     * @return BinaryFileResponse
+     */
+    public function exportStations(Excel $excel): BinaryFileResponse
+    {
+        return $excel->download(export: new StationsExport(), fileName: 'stations.xlsx');
+    }
+
+    /**
+     * IMPORT STATIONS
+     * @param Request $request
+     * @return void
+     */
+    public function importStations(Request $request): Response
+    {
+        $import = new StationsImport(
+            stationService: $this->stationService,
+            line_id: (int) $request->get('line_id'),
+        );
+
+        $import->import($request->file('stations'));
+
+        if ($import->errors()->isNotEmpty()) {
+            return response(
+                content: [
+                    'message' => 'Please check the following issues in your spread sheet',
+                    'errors' => $import->errors(),
+                ],
+                status: Http::NOT_IMPLEMENTED(),
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'Stations uploaded successfully',
+            ],
+            status: Http::CREATED(),
         );
     }
 }

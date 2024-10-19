@@ -133,7 +133,7 @@ final class ManagementController
     /**
      * @param Request $request
      */
-    public function importEmployees(Request $request)
+    public function importEmployees(Request $request): Response
     {
         $import = new EmployeesImport(
             employeeService: $this->employeeService,

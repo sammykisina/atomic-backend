@@ -17,7 +17,7 @@ final class CreateOrEditStationRequest extends FormRequest
         return [
             'name' => [
                 'required',
-                Rule::unique('stations', 'name')->ignore($this->station ? $this->station->id : ''),
+                'string',
             ],
             'start_kilometer' => [
                 'numeric',

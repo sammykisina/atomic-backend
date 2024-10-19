@@ -15,7 +15,7 @@ final class LineService
      */
     public static function getLineWithId(int $line_id): ?Line
     {
-        return Line::query()->where('id', $line_id)->first();
+        return Line::query()->where('id', $line_id)->with(['stations'])->first();
     }
     /**
      * CREATE LINE
