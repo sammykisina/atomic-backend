@@ -54,6 +54,25 @@ final class IssueService
         return null;
 
     }
+
+    /**
+     * GET ISSUE WITH ID
+     * @param int $issue_id
+     * @return Issue
+     */
+    public static function getIssueWithId(int $issue_id): Issue
+    {
+        return Issue::query()->where('id', $issue_id)->with([
+            'issueName',
+            'inspection.inspectionSchedule.inspector',
+            'inspection.inspectionSchedule.owner',
+            'inspection.inspectionSchedule.line',
+            'assignment.resolver',
+            'issueArea.line',
+            'issueArea.station',
+            'issueArea.section',
+        ])->first();
+    }
     /**
      * ASSIGN GANG MEN TO ISSUE
      * @param Issue $issue

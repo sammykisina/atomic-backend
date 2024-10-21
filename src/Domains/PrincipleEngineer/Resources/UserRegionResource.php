@@ -53,6 +53,7 @@ final class UserRegionResource extends JsonResource
                     relationship: 'owner',
                 ),
             ),
+            'is_active' => $this->resource->is_active,
         ];
     }
 }

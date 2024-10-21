@@ -13,6 +13,8 @@ use Domains\TrackAttendant\Models\Inspection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 final class UserRegion extends Model
 {
@@ -87,13 +89,31 @@ final class UserRegion extends Model
         );
     }
 
-    public function inspectionSchedules()
+    /** @return  HasMany<InspectionSchedule> */
+    public function inspectionSchedules(): HasMany
     {
-        return $this->hasMany(InspectionSchedule::class, 'owner_id');
+        return $this->hasMany(
+            related: InspectionSchedule::class,
+            foreignKey: 'owner_id',
+        );
     }
 
-    public function inspections()
+    /**  @return  HasManyThrough */
+    public function inspections(): HasManyThrough
     {
-        return $this->hasManyThrough(Inspection::class, InspectionSchedule::class, 'owner_id', 'inspection_schedule_id');
+        return $this->hasManyThrough(
+            related: Inspection::class,
+            through: InspectionSchedule::class,
+            firstKey: 'owner_id',
+            secondKey: 'inspection_schedule_id',
+        );
+    }
+
+    /** @return array<string, mixed> */
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+        ];
     }
 }
