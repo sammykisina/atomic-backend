@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Shared\Services;
 
 use Carbon\Carbon;
+use Domains\Shared\Enums\ModelStatuses;
 use Domains\Shared\Enums\OtpTypes;
 use Domains\Shared\Mails\OtpMail;
 use Domains\Shared\Models\Otp;
@@ -18,7 +19,10 @@ final class AuthService
     // LOGIN USER
     public function login(array $data): ?User
     {
-        $user = User::query()->where('phone', $data['phone'])->first();
+        $user = User::query()
+            ->where('status', ModelStatuses::ACTIVE->value)
+            ->where('phone', $data['phone'])
+            ->first();
 
         if ($user && Hash::check(value: $data['password'], hashedValue: $user->password)) {
             return $user;
