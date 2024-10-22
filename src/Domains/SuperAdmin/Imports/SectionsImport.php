@@ -42,7 +42,7 @@ final class SectionsImport implements ToCollection, WithHeadingRow, WithValidati
                     'station_id' => (int) $station_id,
                     'number_of_kilometers_to_divide_section_to_subsection' => 5,
                     'speed' => $row['speed'],
-                 ],
+                ],
             );
         }
     }
