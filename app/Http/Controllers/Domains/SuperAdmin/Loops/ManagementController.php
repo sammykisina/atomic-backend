@@ -57,12 +57,11 @@ final class ManagementController
      * @param Loop $loop
      * @return Response | HttpException
      */
-    public function edit(CreateOrEditLoopRequest $request, Station $station, Loop $loop): Response | HttpException
+    public function edit(CreateOrEditLoopRequest $request, Loop $loop): Response | HttpException
     {
         if ( ! $this->loopService->editLoop(
             loop: $loop,
             updatedLoopData: $request->validated(),
-            station: $station,
         )) {
             abort(
                 code: Http::EXPECTATION_FAILED(),

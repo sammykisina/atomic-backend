@@ -128,11 +128,15 @@ final class InspectionIssueManagementController
             'reported_at' => $issue->created_at->isoFormat('MMM Do YYYY HH:mm'),
         ];
 
+        Log::info('issue_data', $data);
+
+
         $message = str_replace(
-            search: ['{{ issue_id }}', '{{ type }}', '{{ condition }}', '{{ name }}', '{{ description }}', '{{ kilometer }}', '{{ location }}', '{{ sta }}', '{{ ta }}', '{{ reported_at }}'],
+            search: ['{{ issue_id }}', '{{ type }}', '{{ condition }}', '{{ name }}', '{{ description }}', '{{ kilometer }}', '{{ location }}', '{{ sti }}', '{{ ta }}', '{{ reported_at }}'],
             replace: [$data['issue_id'], $data['type'], $data['condition'], $data['name'], $data['description'], $data['kilometer'], $data['location'], $data['sti'], $data['ta'], $data['reported_at']],
             subject: $template,
         );
+
 
         $response = FacadesHttp::withHeaders([
             'Authorization' => 'Bearer ' . config('whatsapp.wassenger.auth_token'),

@@ -51,7 +51,7 @@ final class LoopService
      * @param Loop $loop
      * @return bool
      */
-    public function editLoop(array $updatedLoopData, Loop $loop, Station $station): bool
+    public function editLoop(array $updatedLoopData, Loop $loop): bool
     {
         return $loop->update([
             'position' => $updatedLoopData['position'],
@@ -66,8 +66,6 @@ final class LoopService
             'end_longitude_top' => $updatedLoopData['end_longitude_top'],
             'end_latitude_bottom' => $updatedLoopData['end_latitude_bottom'],
             'end_longitude_bottom' => $updatedLoopData['end_longitude_bottom'],
-
-            'station_id' => $station->id,
         ]);
     }
 }
