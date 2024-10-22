@@ -65,7 +65,7 @@ final class CreateOrEditLoopRequest extends FormRequest
                 )->where(
                     column: 'station_id',
                     value: $this->station->id,
-                )->ignore($this->loop ? $this->loop->id : '')
+                )->ignore($this->loop ? $this->loop->id : ''),
             ],
         ];
     }
