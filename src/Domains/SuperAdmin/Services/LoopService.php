@@ -17,7 +17,7 @@ final class LoopService
      */
     public static function getLoopById(int $loop_id): Loop
     {
-        return Loop::query()->where('id', $loop_id)->first();
+        return Loop::query()->where('id', $loop_id)->with(['station.line'])->first();
     }
     /**
      * CREATE LOOP

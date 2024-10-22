@@ -57,7 +57,7 @@ final class ManagementController
      * @param Loop $loop
      * @return Response | HttpException
      */
-    public function edit(CreateOrEditLoopRequest $request, Loop $loop): Response | HttpException
+    public function edit(CreateOrEditLoopRequest $request,Line $line, Station $station, Loop $loop): Response | HttpException
     {
         if ( ! $this->loopService->editLoop(
             loop: $loop,
@@ -84,11 +84,15 @@ final class ManagementController
      */
     public function show(Loop $loop): Response
     {
+        $loop_with_station = LoopService::getLoopById(
+            loop_id: $loop->id
+        );
+
         return response(
             content: [
                 'message' => 'Loop fetched successfully.',
                 'loop' => new LoopResource(
-                    resource: $loop,
+                    resource: $loop_with_station,
                 ),
             ],
             status: Http::OK(),
