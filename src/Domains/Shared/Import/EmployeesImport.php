@@ -47,8 +47,8 @@ final class EmployeesImport implements ToCollection, WithHeadingRow, WithValidat
                     'work_status' => $row['work_status'],
                     'role_id' => (int) $role_id,
                     'password' => Hash::make(
-                        value: $row['employee_id']
-                    )
+                        value: $row['employee_id'],
+                    ),
                 ],
             );
         }
