@@ -28,7 +28,7 @@ services:
         container_name: atomic-backend-db-container
         restart: unless-stopped
         ports:
-            - 3306:3306
+            - 4000:4000
         environment:
             - MYSQL_ROOT_PASSWORD=atomic
         volumes:
