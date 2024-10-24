@@ -28,6 +28,7 @@ final class ShiftMail extends Mailable
             subject: match ($this->type) {
                 ShiftActivities::CREATED => 'ATOMIC SHIFT CREATED',
                 ShiftActivities::DELETED => 'ATOMIC SHIFT DELETED',
+                ShiftActivities::EDITED => 'ATOMIC SHIFT UPDATED',
             },
         );
     }

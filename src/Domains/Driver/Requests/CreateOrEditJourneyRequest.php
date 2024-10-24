@@ -6,7 +6,6 @@ namespace Domains\Driver\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 final class CreateOrEditJourneyRequest extends FormRequest
 {
@@ -14,46 +13,9 @@ final class CreateOrEditJourneyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'train' => [
+            'train_id' => [
                 'required',
-                'string',
-            ],
-            'service_order' => [
-                'required',
-                Rule::unique(table: 'journeys', column: 'service_order')->ignore(id: $this->journey ? $this->journey->id : ''),
-            ],
-            'number_of_wagons' => [
-                'required',
-                'numeric',
-            ],
-            'locomotive_number' => [
-                'required',
-                'string',
-            ],
-            'tail_number' => [
-                'required',
-                'string',
-            ],
-            'line_id' => [
-                'required',
-                'exists:lines,id',
-            ],
-            'origin_station_id' => [
-                'required',
-                'exists:stations,id',
-            ],
-            'destination_station_id' => [
-                'required',
-                'exists:stations,id',
-            ],
-
-            'current_location_latitude' => [
-                'required',
-                'numeric',
-            ],
-            'current_location_longitude' => [
-                'required',
-                'numeric',
+                'exists:trains,id',
             ],
         ];
     }

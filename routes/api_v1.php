@@ -34,12 +34,11 @@ Route::prefix('/super-admin')->as('super-admin:')->group(
         // COUNTY ROUTES
         base_path('routes/api_v1/super_admin/setup/county.php'),
 
-        // DESK ROUTES
-        base_path('routes/api_v1/super_admin/setup/desks.php'),
 
         // LINES
         base_path('routes/api_v1/super_admin/lines.php'),
 
+        // LOCOMOTIVE NUMBERS
         base_path('routes/api_v1/super_admin/locomotive_numbers.php'),
 
         // STATIONS
@@ -51,12 +50,22 @@ Route::prefix('/super-admin')->as('super-admin:')->group(
         // SECTIONS
         base_path('routes/api_v1/super_admin/sections.php'),
 
-        // SHIFTS
-        base_path('routes/api_v1/super_admin/shifts.php'),
 
         // REGIONS MANAGEMENT
         base_path('routes/api_v1/super_admin/setup/regions.php'),
         base_path('routes/api_v1/super_admin/setup/line_regions_divisions.php'),
+
+        // TRAINS
+        base_path('routes/api_v1/super_admin/trains.php'),
+
+        // GROUPS
+        base_path('routes/api_v1/super_admin/shift_management/groups.php'),
+
+        // DESK ROUTES
+        base_path('routes/api_v1/super_admin/shift_management/desks.php'),
+
+        // SHIFTS
+        base_path('routes/api_v1/super_admin/shift_management/shifts.php'),
     ],
 );
 

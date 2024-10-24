@@ -10,19 +10,6 @@ final class StationService
 {
     /**
      * GET STATION WITH ID
-     * @param int $id
-     * @return Station
-     */
-    public static function getStation(int $id): Station
-    {
-        return Station::query()->where(
-            'id',
-            $id,
-        )->first();
-    }
-
-    /**
-     * GET STATION WITH ID
      * @param int $stationId
      * @return Station
      */

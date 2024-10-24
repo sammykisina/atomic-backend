@@ -21,7 +21,7 @@ final class AuthService
     {
         $user = User::query()
             ->where('status', ModelStatuses::ACTIVE->value)
-            ->where('phone', $data['phone'])
+            ->where('employee_id', $data['employee_id'])
             ->first();
 
         if ($user && Hash::check(value: $data['password'], hashedValue: $user->password)) {

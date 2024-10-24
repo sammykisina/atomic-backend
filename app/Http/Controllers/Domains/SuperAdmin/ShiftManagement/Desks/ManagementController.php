@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\SuperAdmin\Setup\Desks;
+namespace App\Http\Controllers\Domains\SuperAdmin\ShiftManagement\Desks;
 
 use Domains\SuperAdmin\Models\Desk;
-use Domains\SuperAdmin\Requests\Setup\CreateOrEditDeskRequest;
-use Domains\SuperAdmin\Resources\DeskResource;
-use Domains\SuperAdmin\Services\DeskService;
+use Domains\SuperAdmin\Requests\ShiftManagement\CreateOrEditDeskRequest;
+use Domains\SuperAdmin\Resources\ShiftManagement\DeskResource;
+use Domains\SuperAdmin\Services\ShiftManagement\DeskService;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -25,7 +25,6 @@ final class ManagementController
      */
     public function create(CreateOrEditDeskRequest $request): HttpException | Response
     {
-
         $desk = $this->deskService->createDesk(
             deskData: $request->validated(),
         );
@@ -56,7 +55,6 @@ final class ManagementController
      */
     public function edit(CreateOrEditDeskRequest $request, Desk $desk): HttpException | Response
     {
-
         if ( ! $this->deskService->editDesk(
             updatedDeskData: $request->validated(),
             desk: $desk,
@@ -82,6 +80,10 @@ final class ManagementController
      */
     public function show(Desk $desk): Response | HttpException
     {
+        $desk = DeskService::getDeskById(
+            desk_id: $desk->id,
+        );
+
         return response(
             content: [
                 'message' => 'Desk fetched successfully.',
@@ -90,6 +92,30 @@ final class ManagementController
                 ),
             ],
             status: Http::OK(),
+        );
+    }
+
+    /**
+     * DELETE DESK
+     * @param Desk $desk
+     * @return Response
+     */
+    public function delete(Desk $desk): Response
+    {
+        $deleted = $desk->delete();
+
+        if ( ! $deleted) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Desk deletion failed.Please try again.',
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'Desk deleted successfully.',
+            ],
+            status: Http::ACCEPTED(),
         );
     }
 }

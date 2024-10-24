@@ -6,7 +6,8 @@ namespace Domains\SuperAdmin\Notifications;
 
 use Domains\SuperAdmin\Enums\ShiftNotificationTypes;
 use Domains\SuperAdmin\Models\Shift;
-use Domains\SuperAdmin\Resources\ShiftResource;
+use Domains\SuperAdmin\Resources\ShiftManagement\ShiftResource;
+use Domains\SuperAdmin\Services\ShiftManagement\ShiftService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
@@ -28,9 +29,9 @@ final class ShiftNotification extends Notification
     /**  @return array<string, mixed> */
     public function toArray(object $notifiable): array
     {
-        $shift = Shift::query()->where('id', $this->shift->id)
-            ->with(['desk', 'line', 'startStation','endStation','user'])
-            ->first();
+        $shift = ShiftService::getShiftById(
+            shift_id: $this->shift->id,
+        );
 
         return [
             'shift' => new ShiftResource(

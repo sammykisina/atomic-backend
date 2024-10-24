@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\SuperAdmin\Setup\Desks;
+namespace App\Http\Controllers\Domains\SuperAdmin\ShiftManagement\Desks;
 
 use Domains\SuperAdmin\Models\Desk;
-use Domains\SuperAdmin\Resources\DeskResource;
+use Domains\SuperAdmin\Resources\ShiftManagement\DeskResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
@@ -15,7 +15,9 @@ final class IndexController
 {
     public function __invoke(Request $request): Response
     {
-        $desks = QueryBuilder::for(subject: Desk::class)->get();
+        $desks = QueryBuilder::for(subject: Desk::class)
+            ->allowedIncludes(['group'])
+            ->get();
 
         return response(
             content: [

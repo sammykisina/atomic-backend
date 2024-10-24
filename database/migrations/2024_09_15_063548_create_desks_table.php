@@ -12,10 +12,15 @@ return new class () extends Migration {
         Schema::create('desks', function (Blueprint $table): void {
             $table->id();
 
-            $table->string(column: 'name')->unique();
+            $table->string(column: 'name');
+            $table->foreignId(column: 'group_id')
+                ->index()
+                ->constrained();
 
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();
+
+            $table->unique(columns: ['name', 'group_id']);
         });
     }
 

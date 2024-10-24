@@ -7,7 +7,6 @@ namespace Domains\Operator\Resources;
 use Domains\Driver\Models\License;
 use Domains\Shared\Resources\DateResource;
 use Domains\Shared\Resources\UserResource;
-use Domains\SuperAdmin\Resources\StationResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -41,8 +40,11 @@ final class LicenseResource extends JsonResource
             'confirmed_at' => new DateResource(
                 resource: $this->resource->confirmed_at,
             ),
-            'path' => StationResource::collection(
-                resource: $this->resource->stations,
+            'origin' => $this->whenLoaded(
+                relationship: 'originable',
+            ),
+            'destinationable' => $this->whenLoaded(
+                relationship: 'destinationable',
             ),
         ];
     }

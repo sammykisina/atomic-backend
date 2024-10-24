@@ -11,4 +11,6 @@ enum ShiftActivities: string
     case DELETED = 'DELETED';
 
     case FINISHED = 'FINISHED';
+
+    case EDITED = 'EDITED';
 }

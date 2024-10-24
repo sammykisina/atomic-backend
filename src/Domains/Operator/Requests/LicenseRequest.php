@@ -13,42 +13,17 @@ final class LicenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'path' => [
-                'required',
-                'array',
-            ],
+            'origin' => ['required', 'array'],
+            'origin.origin_id' => ['required', 'integer'],
+            'origin.type' => ['required', 'in:STATION,LOOP,SECTION'],
 
-            'path.*.origin_station_id' => [
-                'required',
-                'exists:stations,id',
-            ],
+            'through' => ['array'],
+            'through.*.id' => ['integer'],
+            'through.*.type' => ['in:STATION,LOOP,SECTION'],
 
-            'path.*.originate_from_main_line' => [
-                'required',
-                'boolean',
-            ],
-            'path.*.origin_loop_id' => [
-                'required_if:originate_from_main_line,false',
-                'exists:loops,id',
-            ],
-
-            'path.*.section_id' => [
-                'nullable',
-                'exists:sections,id',
-            ],
-
-            'path.*.destination_station_id' => [
-                'required',
-                'exists:stations,id',
-            ],
-            'path.*.stop_at_main_line' => [
-                'required',
-                'boolean',
-            ],
-            'path.*.destination_loop_id' => [
-                'required_if:stop_at_main_line,false',
-                'exists:loops,id',
-            ],
+            'destination' => ['required', 'array'],
+            'destination.destination_id' => ['required', 'integer'],
+            'destination.type' => ['required', 'in:STATION,LOOP,SECTION'],
         ];
     }
 }

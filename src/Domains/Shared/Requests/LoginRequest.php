@@ -13,7 +13,7 @@ final class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => [
+            'employee_id' => [
                 'required',
                 'string',
             ],

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Domains\SuperAdmin\Requests;
+namespace Domains\SuperAdmin\Requests\ShiftManagement;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -17,21 +17,9 @@ final class CreateOrEditShiftRequest extends FormRequest
                 'required',
                 'exists:desks,id',
             ],
-            'line_id' => [
-                'required',
-                'exists:lines,id',
-            ],
             'user_id' => [
                 'required',
                 'exists:users,id',
-            ],
-            'shift_start_station_id' => [
-                'required',
-                'exists:stations,id',
-            ],
-            'shift_end_station_id' => [
-                'required',
-                'exists:stations,id',
             ],
             'day' => [
                 'required',

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Domains\SuperAdmin\Shifts\IndexController;
-use App\Http\Controllers\Domains\SuperAdmin\Shifts\ManagementController;
+use App\Http\Controllers\Domains\SuperAdmin\ShiftManagement\Shifts\IndexController;
+use App\Http\Controllers\Domains\SuperAdmin\ShiftManagement\Shifts\ManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'ability:read-shifts,create-shifts,edit-shifts,delete-shifts'])->prefix('shifts')->as('shifts:')->group(function (): void {
@@ -13,5 +13,6 @@ Route::middleware(['auth:sanctum', 'ability:read-shifts,create-shifts,edit-shift
         Route::post('/', 'create')->name(name: 'create');
         Route::get('/{shift}/show', 'show')->name(name: 'show');
         Route::delete('/{shift}/delete', 'delete')->name(name: 'delete');
+        Route::patch('/{shift}/edit', 'edit')->name(name: 'edit');
     });
 });

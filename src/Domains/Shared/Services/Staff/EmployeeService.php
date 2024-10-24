@@ -44,7 +44,7 @@ final class EmployeeService
             'work_status' => $employeeData['work_status'],
             'creator_id' => Auth::id(),
             'password' => Hash::make(
-                value: $employeeData['phone'],
+                value: $employeeData['employee_id'],
             ),
             'role_id' => $employeeData['role_id'],
         ]);

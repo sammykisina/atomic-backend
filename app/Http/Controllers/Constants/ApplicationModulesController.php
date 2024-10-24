@@ -92,6 +92,18 @@ final class ApplicationModulesController
                 'edit-locomotive-numbers',
                 'delete-locomotive-numbers',
             ],
+            'trains' => [
+                'read-trains',
+                'create-trains',
+                'edit-trains',
+                'delete-trains',
+            ],
+            'groups' => [
+                'read-groups',
+                'create-groups',
+                'edit-groups',
+                'delete-groups',
+            ],
 
             // PE
             'SE-management' => [

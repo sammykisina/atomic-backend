@@ -23,6 +23,14 @@ return new class () extends Migration {
 
             $table->string(column: 'direction');
 
+            $table->unsignedBigInteger('originable_id');
+            $table->string('originable_type');
+
+            $table->json(column: 'through');
+
+            $table->unsignedBigInteger('destinationable_id');
+            $table->string('destinationable_type');
+
             $table->foreignId(column: 'issuer_id')
                 ->nullable()
                 ->references(column: 'id')

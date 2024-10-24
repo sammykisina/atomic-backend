@@ -2,12 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Domains\SuperAdmin\Services;
+namespace Domains\SuperAdmin\Services\ShiftManagement;
 
 use Domains\SuperAdmin\Models\Desk;
 
 final class DeskService
 {
+    public static function getDeskById(int $desk_id): ?Desk
+    {
+        return Desk::query()
+            ->where('id', $desk_id)
+            ->with([
+                'group',
+            ])
+            ->first();
+    }
     /**
      * CREATE DESK
      * @param array $deskData
@@ -15,9 +24,7 @@ final class DeskService
      */
     public function createDesk(array $deskData): Desk
     {
-        return Desk::query()->create([
-            'name' => $deskData['name'],
-        ]);
+        return Desk::query()->create(attributes: $deskData);
     }
 
     /**
@@ -28,8 +35,6 @@ final class DeskService
      */
     public function editDesk(array $updatedDeskData, Desk $desk): bool
     {
-        return $desk->update([
-            'name' => $updatedDeskData['name'],
-        ]);
+        return $desk->update(attributes: $updatedDeskData);
     }
 }

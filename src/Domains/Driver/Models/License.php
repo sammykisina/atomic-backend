@@ -7,13 +7,10 @@ namespace Domains\Driver\Models;
 use Domains\Driver\Enums\LicenseDirections;
 use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Shared\Models\User;
-use Domains\SuperAdmin\Models\Loop;
-use Domains\SuperAdmin\Models\Section;
-use Domains\SuperAdmin\Models\Station;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 final class License extends Model
@@ -30,6 +27,15 @@ final class License extends Model
         'issuer_id',
         'rejector_id',
         'issued_at',
+
+        'originable_id',
+        'originable_type',
+
+        'through',
+
+        'destinationable_id',
+        'destinationable_type',
+
         'rejected_at',
         'confirmed_at',
     ];
@@ -40,47 +46,22 @@ final class License extends Model
         return [
             'status' => LicenseStatuses::class,
             'direction' => LicenseDirections::class,
+            'through' => 'json',
             'issued_at' => 'datetime',
             'rejected_at' => 'datetime',
             'confirmed_at' => 'datetime',
         ];
     }
 
-
-    /** @return BelongsTo<Section>*/
-    public function section(): BelongsTo
+    public function originable(): MorphTo
     {
-        return $this->belongsTo(
-            related: Section::class,
-            foreignKey: 'section_id',
-        );
+        return $this->morphTo('originable');
     }
 
-    /** @return BelongsTo<Station>*/
-    public function originStation(): BelongsTo
+    // Polymorphic relationship for destination
+    public function destinationable(): MorphTo
     {
-        return $this->belongsTo(
-            related: Station::class,
-            foreignKey: 'origin_station_id',
-        );
-    }
-
-    /** @return BelongsTo<Station>*/
-    public function destinationStation(): BelongsTo
-    {
-        return $this->belongsTo(
-            related: Station::class,
-            foreignKey: 'destination_station_id',
-        );
-    }
-
-    /** @return BelongsTo<Station>*/
-    public function main(): BelongsTo
-    {
-        return $this->belongsTo(
-            related: Station::class,
-            foreignKey: 'main_id',
-        );
+        return $this->morphTo('destinationable');
     }
 
     /** @return BelongsTo<User>*/
@@ -110,20 +91,4 @@ final class License extends Model
         );
     }
 
-    /** @return BelongsTo<Loop>*/
-    public function loop(): BelongsTo
-    {
-        return $this->belongsTo(
-            related: Loop::class,
-            foreignKey: 'loop_id',
-        );
-    }
-
-    public function paths(): HasMany
-    {
-        return $this->hasMany(
-            related: Path::class,
-            foreignKey: 'license_id',
-        );
-    }
 }

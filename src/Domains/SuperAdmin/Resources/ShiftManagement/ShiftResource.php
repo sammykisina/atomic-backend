@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Domains\SuperAdmin\Resources;
+namespace Domains\SuperAdmin\Resources\ShiftManagement;
 
 use Domains\Shared\Resources\UserResource;
 use Domains\SuperAdmin\Models\Shift;
@@ -22,21 +22,6 @@ final class ShiftResource extends JsonResource
                     relationship: 'desk',
                 ),
             ),
-            'line' => new LineResource(
-                resource: $this->whenLoaded(
-                    relationship: 'line',
-                ),
-            ),
-            'start_station' => new StationResource(
-                resource: $this->whenLoaded(
-                    relationship: 'startStation',
-                ),
-            ),
-            'end_station' => new StationResource(
-                resource: $this->whenLoaded(
-                    relationship: 'endStation',
-                ),
-            ),
             'day' => $this->resource->day,
             'time' => [
                 'from' => $this->resource->from,
@@ -49,7 +34,6 @@ final class ShiftResource extends JsonResource
                     relationship: 'user',
                 ),
             ),
-            'stations' => $this->resource->stations,
         ];
     }
 }

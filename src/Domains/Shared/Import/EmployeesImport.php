@@ -8,6 +8,7 @@ use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Enums\WorkStatuses;
 use Domains\Shared\Services\Staff\EmployeeService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
@@ -45,6 +46,9 @@ final class EmployeesImport implements ToCollection, WithHeadingRow, WithValidat
                     'region_id' => (int) $region_id,
                     'work_status' => $row['work_status'],
                     'role_id' => (int) $role_id,
+                    'password' => Hash::make(
+                        value: $row['employee_id']
+                    )
                 ],
             );
         }

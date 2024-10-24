@@ -9,10 +9,12 @@ use Illuminate\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('locomotive_numbers', function (Blueprint $table): void {
+        Schema::create(table: 'groups', callback: function (Blueprint $table): void {
             $table->id();
 
-            $table->string(column: 'number')->unique();
+            $table->string(column: 'name')->unique();
+            $table->string(column: 'description');
+            $table->json(column: 'stations');
 
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();
@@ -21,6 +23,6 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('locomotive_numbers');
+        Schema::dropIfExists(table: 'groups');
     }
 };

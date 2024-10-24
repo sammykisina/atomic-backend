@@ -8,7 +8,6 @@ use Domains\Driver\Enums\LicenseDirections;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\Driver\Models\Location;
-use Domains\SuperAdmin\Models\LocomotiveNumber;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,8 +16,8 @@ final class JourneyService
 {
     /**
      * GET JOURNEY DIRECTION TO DETERMINE LICENSE DIRECTION
-     * @param int $origin
-     * @param int $destination
+     * @param float $origin
+     * @param float $destination
      * @return LicenseDirections|null
      */
     public static function getJourneyDirection(float $origin, float $destination): LicenseDirections | null
@@ -35,24 +34,37 @@ final class JourneyService
 
         return null;
     }
+
+    /**
+     * GET CURRENT USER ACTIVE JOURNEY
+     * @return Journey|null
+     */
+    public static function activeJourney(): ?Journey
+    {
+        return Journey::query()
+            ->where('is_active', true)
+            ->whereHas(relation: 'train', callback: function ($query): void {
+                $query->where('driver_id', Auth::id());
+            })
+            ->with(relations: [
+                'train.line',
+                'train.origin',
+                'train.destination',
+                'train.locomotiveNumber',
+                'train.driver',
+                'licenses.originable',
+                'licenses.destinationable',
+            ])
+            ->first();
+    }
     /**
      * CREATE JOURNEY
      * @param array $journeyData
      * @return Journey
      */
-    public function createJourney(array $journeyData, LocomotiveNumber $locomotive_number): Journey
+    public function createJourney(array $journeyData): Journey
     {
-        return Journey::query()->create([
-            'train' => $journeyData['train'],
-            'service_order' => $journeyData['service_order'],
-            'number_of_wagons' => $journeyData['number_of_wagons'],
-            'locomotive_number_id' => $locomotive_number->id,
-            'tail_number' => $journeyData['tail_number'],
-            'origin_station_id' => $journeyData['origin_station_id'],
-            'destination_station_id' => $journeyData['destination_station_id'],
-            'line_id' => $journeyData['line_id'],
-            'driver_id' => Auth::id(),
-        ]);
+        return Journey::query()->create(attributes: $journeyData);
     }
 
     /**
@@ -109,18 +121,6 @@ final class JourneyService
         }
 
         return $location;
-    }
-
-    /**
-     * GET CURRENT USER ACTIVE JOURNEY
-     * @return Journey|null
-     */
-    public function activeJourney(): ?Journey
-    {
-        return Journey::query()
-            ->where('status', true)
-            ->where('driver_id', Auth::id())
-            ->first();
     }
 
     /**

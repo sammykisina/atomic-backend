@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Domains\SuperAdmin\Resources;
+namespace Domains\SuperAdmin\Resources\ShiftManagement;
 
-use Domains\Shared\Resources\DateResource;
-use Domains\SuperAdmin\Models\Desk;
+use Domains\SuperAdmin\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @property-read Desk $resource */
-final class DeskResource extends JsonResource
+/** @property-read Group $resource */
+final class GroupResource extends JsonResource
 {
     /** @return array<string, mixed> */
     public function toArray(Request $request): array
@@ -18,9 +17,8 @@ final class DeskResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'name' => $this->resource->name,
-            'created_at' => new DateResource(
-                resource: $this->resource->created_at,
-            ),
+            'description' => $this->resource->description,
+            'stations' => $this->resource->stations,
         ];
     }
 }

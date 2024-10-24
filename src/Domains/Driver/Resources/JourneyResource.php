@@ -6,9 +6,7 @@ namespace Domains\Driver\Resources;
 
 use Domains\Driver\Models\Journey;
 use Domains\Operator\Resources\LicenseResource;
-use Domains\Shared\Resources\UserResource;
-use Domains\SuperAdmin\Resources\LocomotiveNumberResource;
-use Domains\SuperAdmin\Resources\StationResource;
+use Domains\SuperAdmin\Resources\TrainResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,30 +18,10 @@ final class JourneyResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            'train_information' => [
-                'train_number' => $this->resource->train,
-                'service_order' => $this->resource->service_order,
-                'number_of_wagons' => $this->resource->number_of_wagons,
-                'locomotive_number' => new LocomotiveNumberResource(
-                    $this->whenLoaded(
-                        relationship: 'locomotiveNumber',
-                    ),
-                ),
-            ],
-            'origin' => new StationResource(
+            'is_active' => $this->resource->is_active,
+            'train' => new TrainResource(
                 resource: $this->whenLoaded(
-                    relationship: 'origin',
-                ),
-            ),
-            'destination' => new StationResource(
-                resource: $this->whenLoaded(
-                    relationship: 'destination',
-                ),
-            ),
-            'status' => $this->resource->status,
-            'driver' => new UserResource(
-                resource: $this->whenLoaded(
-                    relationship: 'driver',
+                    relationship: 'train',
                 ),
             ),
             'licenses' => LicenseResource::collection(
@@ -51,7 +29,6 @@ final class JourneyResource extends JsonResource
                     relationship: 'licenses',
                 ),
             ),
-
         ];
     }
 }

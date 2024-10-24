@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\Operator\Shifts;
 
 use Domains\Operator\Enums\ShiftStatuses;
-use Domains\SuperAdmin\Enums\ShiftNotificationTypes;
 use Domains\SuperAdmin\Models\Shift;
-use Domains\SuperAdmin\Notifications\ShiftNotification;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
 use JustSteveKing\StatusCode\Http;
@@ -33,11 +31,6 @@ final class ManagementController
         }
 
         $notification->markAsRead();
-
-        $shift->creator->notify(new ShiftNotification(
-            shift: $shift,
-            type: ShiftNotificationTypes::SHIFT_CONFIRMED,
-        ));
 
         return Response(
             content: [

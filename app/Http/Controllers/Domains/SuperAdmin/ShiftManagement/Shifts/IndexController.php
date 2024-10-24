@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\SuperAdmin\Shifts;
+namespace App\Http\Controllers\Domains\SuperAdmin\ShiftManagement\Shifts;
 
 use Domains\SuperAdmin\Models\Shift;
-use Domains\SuperAdmin\Resources\ShiftResource;
+use Domains\SuperAdmin\Resources\ShiftManagement\ShiftResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
@@ -16,7 +16,7 @@ final class IndexController
     public function __invoke(Request $request): Response
     {
         $shifts  = QueryBuilder::for(subject: Shift::class)
-            ->allowedIncludes('user', 'startStation', 'endStation')
+            ->allowedIncludes('user', 'desk.group')
             ->get();
 
         return response(
