@@ -4,7 +4,7 @@ services:
         build:
             context: ./
             dockerfile: Dockerfile
-        image: 34996980/atomic-backend-image:v1.0.0
+        image: atomic-backend-image
         container_name: atomic-backend-container
         restart: unless-stopped
         working_dir: /var/www

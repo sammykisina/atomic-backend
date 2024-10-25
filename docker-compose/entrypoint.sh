@@ -1,11 +1,7 @@
 #!/bin/sh
 set -ex  # Enable error exit and debugging
 
-# Ensure all Composer packages are installed
-composer install
+php artisan migrate
 
-# Run database migrations and seed the database
-php artisan migrate:fresh --seed
-
-# Start PHP-FPM or any passed command
+# Start PHP-FPM or the passed command
 exec "$@"
