@@ -49,7 +49,7 @@ final class TrainResource extends JsonResource
                     relationship: 'driver',
                 ),
             ),
-            
+
         ];
     }
 }
