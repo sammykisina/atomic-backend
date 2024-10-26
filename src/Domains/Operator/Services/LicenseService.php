@@ -6,10 +6,31 @@ namespace Domains\Operator\Services;
 
 use Carbon\Carbon;
 use Domains\Driver\Models\License;
+use Domains\SuperAdmin\Models\Loop;
+use Domains\SuperAdmin\Models\Section;
+use Domains\SuperAdmin\Models\Station;
+use Domains\SuperAdmin\Services\LoopService;
+use Domains\SuperAdmin\Services\SectionService;
+use Domains\SuperAdmin\Services\StationService;
 use Illuminate\Support\Facades\Auth;
 
 final class LicenseService
 {
+    /**
+     * GET MODEL
+     * @param string $model_type
+     * @param int $model_id
+     * @return Station|Loop|Section
+     */
+    public static function getModel(string $model_type, int $model_id): Station | Loop | Section
+    {
+        return  match ($model_type) {
+            'STATION' =>  StationService::getStationById(station_id: $model_id),
+            'SECTION' =>  SectionService::getSectionById(section_id: $model_id),
+            'LOOP' =>  LoopService::getLoopById(loop_id: $model_id),
+        };
+
+    }
     /**
      * GENERATE A UNIQUE RANDOM LICENSE NUMBER
      * @return string

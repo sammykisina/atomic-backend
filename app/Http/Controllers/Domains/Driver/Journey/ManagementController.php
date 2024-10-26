@@ -5,23 +5,17 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\Driver\Journey;
 
 use Carbon\Carbon;
-use Domains\Driver\Enums\AreaTypes;
 use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\Driver\Notifications\JourneyNotification;
-use Domains\Driver\Requests\ClearRequest;
 use Domains\Driver\Requests\CreateOrEditJourneyRequest;
 use Domains\Driver\Requests\LocationRequest;
 use Domains\Driver\Resources\JourneyResource;
 use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Shared\Enums\NotificationTypes;
-use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Domains\SuperAdmin\Models\Group;
-use Domains\SuperAdmin\Models\Loop;
-use Domains\SuperAdmin\Models\Section;
-use Domains\SuperAdmin\Models\Station;
 use Domains\SuperAdmin\Services\TrainService;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
@@ -262,114 +256,6 @@ final class ManagementController
                 'message' => 'Journey ended successfully.',
             ],
             status: Http::ACCEPTED(),
-        );
-    }
-
-    /**
-     * CLEAR LOOP STATION OR SECTION
-     * @param ClearRequest $request
-     * @return Response|HttpException
-     */
-    public function clear(ClearRequest $request): Response | HttpException
-    {
-        $loop = null;
-        $station = null;
-        $section = null;
-
-        if ($request->validated('type') === AreaTypes::LOOP->value) {
-            $loop = Loop::query()
-                ->where('id', $request->validated('area_id'))
-                ->first();
-
-            if ( ! $loop) {
-                abort(
-                    code: Http::EXPECTATION_FAILED(),
-                    message: 'Loop not found.',
-                );
-            }
-
-            if ( ! $loop->update([
-                'status' => StationSectionLoopStatuses::GOOD->value,
-            ])) {
-                abort(
-                    code: Http::EXPECTATION_FAILED(),
-                    message: 'Loop not cleared. Please try again.',
-                );
-            }
-
-            return response(
-                content: [
-                    'message' => 'Loop cleared successfully.',
-                ],
-                status: Http::ACCEPTED(),
-            );
-        }
-
-
-        if ($request->validated('type') === AreaTypes::STATION->value) {
-            $station = Station::query()
-                ->where('id', $request->validated('area_id'))
-                ->first();
-
-            if ( ! $station) {
-                abort(
-                    code: Http::EXPECTATION_FAILED(),
-                    message: 'Station not found.',
-                );
-            }
-
-            if ( ! $station->update([
-                'status' => StationSectionLoopStatuses::GOOD->value,
-            ])) {
-                abort(
-                    code: Http::EXPECTATION_FAILED(),
-                    message: 'Station not cleared. Please try again.',
-                );
-            }
-
-            return response(
-                content: [
-                    'message' => 'Station cleared successfully.',
-                ],
-                status: Http::ACCEPTED(),
-            );
-        }
-
-
-        if ($request->validated('type') === AreaTypes::SECTION->value) {
-            $section = Section::query()
-                ->where('id', $request->validated('area_id'))
-                ->first();
-
-            if ( ! $section) {
-                abort(
-                    code: Http::EXPECTATION_FAILED(),
-                    message: 'Section not found.',
-                );
-            }
-
-            if ( ! $section->update([
-                'status' => StationSectionLoopStatuses::GOOD->value,
-            ])) {
-                abort(
-                    code: Http::EXPECTATION_FAILED(),
-                    message: 'Section not cleared. Please try again.',
-                );
-            }
-
-            return response(
-                content: [
-                    'message' => 'Section cleared successfully.',
-                ],
-                status: Http::ACCEPTED(),
-            );
-        }
-
-        return response(
-            content: [
-                'message' => 'Please provide acceptable area type.',
-            ],
-            status: Http::NOT_IMPLEMENTED(),
         );
     }
 }

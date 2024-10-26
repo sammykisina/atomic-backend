@@ -25,9 +25,3 @@ Route::middleware(['auth:sanctum', 'ability:read-journeys,request-journeys,edit-
             Route::patch('/{journey}/end', 'endJourney')->name(name: 'end-journey');
         });
     });
-
-Route::middleware(['auth:sanctum', 'ability:read-journeys'])->group(function (): void {
-    Route::controller(ManagementController::class)->group(function (): void {
-        Route::post('/clear/section-blocks', 'clear')->name(name: 'clear');
-    });
-});

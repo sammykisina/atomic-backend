@@ -74,6 +74,10 @@ Route::prefix('/driver')->as('driver:')->group(
     [
         // JOURNEYS
         base_path('routes/api_v1/driver/journeys.php'),
+
+        // LICENSES
+        base_path('routes/api_v1/driver/licenses.php'),
+
     ],
 );
 
@@ -85,6 +89,9 @@ Route::prefix('/operator')->as('operator:')->group(
 
         // SHIFTS
         base_path('routes/api_v1/operator/shifts.php'),
+
+        // LICENSES
+        base_path('routes/api_v1/operator/licenses.php'),
     ],
 );
 
