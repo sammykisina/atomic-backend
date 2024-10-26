@@ -108,6 +108,8 @@ final class IssueManagementController
             })
             ->with(relations: [
                 'issue.issueName',
+                'issue.issueArea.station',
+                'issue.issueArea.section',
                 'issue.inspection.inspectionSchedule.line',
                 'issue.inspection.inspectionSchedule.inspector',
                 'resolver',
