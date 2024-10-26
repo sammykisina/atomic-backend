@@ -17,7 +17,7 @@ final class SearchController
     public function __invoke(Request $request): Response
     {
         $train  = QueryBuilder::for(subject: Train::class)
-            ->allowedFilters([AllowedFilter::exact('service_order')])
+            ->where('service_order',$request->query('service_order'))
             ->allowedIncludes(includes: [
                 'line',
                 'origin',
