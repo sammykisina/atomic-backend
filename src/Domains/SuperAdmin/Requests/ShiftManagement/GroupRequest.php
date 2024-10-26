@@ -6,6 +6,7 @@ namespace Domains\SuperAdmin\Requests\ShiftManagement;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class GroupRequest extends FormRequest
 {
@@ -15,7 +16,7 @@ final class GroupRequest extends FormRequest
         return [
             'name' => [
                 'required',
-                'unique:groups,name',
+                Rule::unique('groups', 'groups')->ignore($this->group ? $this->group->id : ''),
             ],
             'description' => [
                 'required',
