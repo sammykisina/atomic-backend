@@ -16,7 +16,7 @@ final class GroupRequest extends FormRequest
         return [
             'name' => [
                 'required',
-                Rule::unique('groups', 'groups')->ignore($this->group ? $this->group->id : ''),
+                Rule::unique('groups', 'name')->ignore($this->group ? $this->group->id : ''),
             ],
             'description' => [
                 'required',
