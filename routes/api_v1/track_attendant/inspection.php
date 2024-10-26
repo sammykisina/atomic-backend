@@ -6,7 +6,6 @@ use App\Http\Controllers\Domains\TrackAttendant\InspectionIssueManagementControl
 use App\Http\Controllers\Domains\TrackAttendant\Inspections\IndexController;
 use App\Http\Controllers\Domains\TrackAttendant\Inspections\InspectionManagementController;
 use App\Http\Controllers\Domains\TrackAttendant\InspectionScheduleController;
-use App\Http\Controllers\Domains\TrackAttendant\IssueNames\IssueNamesManagement;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'ability:create-inspections,read-inspections'])->prefix('inspections')->as('inspections:')->group(function (): void {
@@ -26,12 +25,5 @@ Route::middleware(['auth:sanctum', 'ability:create-inspections,read-inspections'
 
     Route::controller(InspectionIssueManagementController::class)->group(function (): void {
         Route::post('{inspection}/issues', 'create')->name(name: 'create-issue');
-    });
-
-
-    // ISSUE NAMES
-    Route::controller(IssueNamesManagement::class)->group(function (): void {
-        Route::get('/issues-names', 'index')->name(name: 'index-issue-names');
-        Route::post('/issues-names', 'create')->name(name: 'issue-name-create');
     });
 });

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\Operator\Shifts;
 
 use Domains\SuperAdmin\Models\Shift;
-use Domains\SuperAdmin\Resources\ShiftResource;
+use Domains\SuperAdmin\Resources\ShiftManagement\ShiftResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +18,7 @@ final class IndexController
     {
         $shift  = QueryBuilder::for(subject: Shift::class)
             ->where('user_id', Auth::id())
-            ->allowedIncludes('user', 'desk')
+            ->allowedIncludes(includes: ['user', 'desk.group'])
             ->first();
 
         return response(

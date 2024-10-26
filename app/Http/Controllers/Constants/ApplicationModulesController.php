@@ -104,6 +104,12 @@ final class ApplicationModulesController
                 'edit-groups',
                 'delete-groups',
             ],
+            'issueNames' => [
+                'read-issue-names',
+                'create-issue-names',
+                'edit-issue-names',
+                'delete-issue-names',
+            ],
 
             // PE
             'SE-management' => [

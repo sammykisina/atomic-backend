@@ -66,6 +66,9 @@ Route::prefix('/super-admin')->as('super-admin:')->group(
 
         // SHIFTS
         base_path('routes/api_v1/super_admin/shift_management/shifts.php'),
+
+        // ISSUE NAMES
+        base_path('routes/api_v1/super_admin/issue_names.php'),
     ],
 );
 
