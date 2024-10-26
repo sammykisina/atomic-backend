@@ -33,7 +33,10 @@ return new class () extends Migration {
             $table->string(column: 'tail_number');
 
             $table->integer(column: "number_of_wagons");
-
+            $table->date(column: "date");
+            $table->time(column: "time");
+            $table->integer(column: "tonnages");
+            
             $table->foreignId(column: 'line_id')
                 ->index()
                 ->nullable()
@@ -53,6 +56,8 @@ return new class () extends Migration {
                 ->index()
                 ->constrained()
                 ->name('fk_destination_station');
+
+                
 
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();

@@ -53,6 +53,18 @@ final class CreateOrEditTrainRequest extends FormRequest
                 'required',
                 'exists:stations,id',
             ],
+            'date' => [
+                'required',
+                'date',
+            ],
+            'time' => [
+                'required',
+                'date_format:H:i',
+            ],
+            'tonnages' => [
+                'required',
+                'numeric',
+            ],
         ];
     }
 }

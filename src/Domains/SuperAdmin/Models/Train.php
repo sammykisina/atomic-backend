@@ -25,6 +25,9 @@ final class Train extends Model
         'line_id',
         'origin_station_id',
         'destination_station_id',
+        'date',
+        'time',
+        'tonnages',
     ];
 
     /** @return BelongsTo<Line> */

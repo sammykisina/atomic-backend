@@ -25,6 +25,9 @@ final class TrainResource extends JsonResource
                 ),
             ),
             'tail_number' => $this->resource->tail_number,
+            'date' => $this->resource->date,
+            'time' => $this->resource->time,
+            'tonnages' => $this->resource->tonnages,
             'number_of_wagons' => $this->resource->number_of_wagons,
             'line' => new LineResource(
                 resource: $this->whenLoaded(
@@ -46,6 +49,7 @@ final class TrainResource extends JsonResource
                     relationship: 'driver',
                 ),
             ),
+            
         ];
     }
 }
