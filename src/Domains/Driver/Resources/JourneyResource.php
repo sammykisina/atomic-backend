@@ -29,6 +29,7 @@ final class JourneyResource extends JsonResource
                     relationship: 'licenses',
                 ),
             ),
+            'created_at' => $this->resource->created_at,
         ];
     }
 }
