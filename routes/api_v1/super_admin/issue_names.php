@@ -6,7 +6,7 @@ use App\Http\Controllers\Domains\SuperAdmin\IssueNames\IndexController;
 use App\Http\Controllers\Domains\SuperAdmin\IssueNames\ManagementController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth:sanctum', 'ability:read-issue_names,create-issue_names,edit-issue_names,delete-issue_names'])->prefix('issue_names')->as('issue_names:')->group(function (): void {
+Route::middleware(['auth:sanctum', 'ability:read-issue-names,create-issue-names,edit-issue-names,delete-issue-names'])->prefix('issue-names')->as('issue-names:')->group(function (): void {
     Route::get('/', IndexController::class)->name(name: "index");
 
     Route::controller(ManagementController::class)->group(function (): void {
