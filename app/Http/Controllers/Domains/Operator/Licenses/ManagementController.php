@@ -13,6 +13,7 @@ use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\NotificationTypes;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Domains\SuperAdmin\Services\TrainService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\DB;
@@ -32,7 +33,7 @@ final class ManagementController
      * @param DatabaseNotification $notification
      * @return Response | HttpException
      */
-    public function acceptRequest(LicenseRequest $request, Journey $journey, DatabaseNotification $notification): Response|HttpException
+    public function acceptRequest(Request $request, Journey $journey, DatabaseNotification $notification): Response|HttpException
     {
         if (null !== $notification->read_at) {
             abort(
@@ -41,17 +42,23 @@ final class ManagementController
             );
         }
 
-        DB::transaction(function () use ($request, $journey, $notification): License {
-            $license =  $this->createLicense(
-                request: $request,
-                journey: $journey,
-            );
+        $is_authorized =  DB::transaction(function () use ($journey, $notification): bool {
+            $is_updated = $journey->update(attributes: [
+                'is_authorized' => true,
+            ]);
 
             $notification->markAsRead();
 
-            return $license;
+            return $is_updated;
 
         });
+
+        if ( ! $is_authorized) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Request for line entry is not authorized successfully.Please try again.',
+            );
+        }
 
 
         return response(

@@ -25,7 +25,10 @@ final class IndexController
                 'train.driver',
                 'licenses',
             ])
-            ->allowedFilters([AllowedFilter::exact('is_active')])
+            ->allowedFilters(filters: [
+                AllowedFilter::exact(name: 'is_active'),
+                AllowedFilter::exact(name: 'is_authorized'),
+            ])
             ->get();
 
         return response(

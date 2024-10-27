@@ -96,9 +96,6 @@ final class ManagementController
 
         return response(
             content: [
-                'journey' => new JourneyResource(
-                    resource: $journey,
-                ),
                 'message' => 'Journey created successfully.',
             ],
             status: Http::CREATED(),

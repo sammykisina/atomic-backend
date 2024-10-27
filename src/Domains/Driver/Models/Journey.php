@@ -19,6 +19,7 @@ final class Journey extends Model
     /** @var array<int, string> */
     protected $fillable = [
         "train_id",
+        'is_authorized',
         'is_active',
     ];
 
@@ -47,6 +48,7 @@ final class Journey extends Model
     {
         return [
             'is_active' => 'boolean',
+            'is_authorized' => 'boolean',
         ];
     }
 }
