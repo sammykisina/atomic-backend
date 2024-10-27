@@ -22,16 +22,16 @@ final class IndexController
                 $query->where('driver_id', Auth::id());
             })
             ->with(relations: [
-             'journey.train.line',
-             'journey.train.origin',
-             'journey.train.destination',
-             'journey.train.locomotiveNumber',
-             'journey.train.driver',
-             'journey.licenses',
-             'shift',
+                'journey.train.line',
+                'journey.train.origin',
+                'journey.train.destination',
+                'journey.train.locomotiveNumber',
+                'journey.train.driver',
+                'journey.licenses',
+                'shift',
             ])
             ->allowedFilters(filters: [
-             AllowedFilter::exact(name: 'is_acknowledge'),
+                AllowedFilter::exact(name: 'is_acknowledge'),
             ])
             ->get();
 
