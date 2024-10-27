@@ -10,7 +10,8 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table(table: 'journeys', callback: function (Blueprint $table): void {
-            $table->boolean(column: 'is_authorized')->default(value: false)->after('train_id');
+            $table->boolean(column: 'is_authorized')->default(value: false)->after(column: 'train_id');
+            $table->json(column: 'shifts')->after(column: 'is_authorized');
         });
     }
 

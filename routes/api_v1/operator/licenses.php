@@ -11,6 +11,8 @@ Route::middleware(['auth:sanctum', 'ability:read-journeys'])
         Route::post('/clear/area', ClearLicenseAreaController::class)->name(name: 'clear');
     });
 
-Route::controller(ManagementController::class) ->prefix('journeys')->as('journeys:')->group(function (): void {
-    Route::post('{journey}/assign/license', 'assignLicense')->name(name: 'assign-license');
+Route::middleware(['auth:sanctum', 'ability:read-journeys'])->group(function (): void {
+    Route::controller(ManagementController::class) ->prefix('journeys')->as('journeys:')->group(function (): void {
+        Route::post('{journey}/assign/license', 'assignLicense')->name(name: 'assign-license');
+    });
 });

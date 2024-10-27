@@ -81,6 +81,8 @@ Route::prefix('/driver')->as('driver:')->group(
         // LICENSES
         base_path('routes/api_v1/driver/licenses.php'),
 
+        // PANICS
+        base_path('routes/api_v1/driver/panics.php'),
     ],
 );
 

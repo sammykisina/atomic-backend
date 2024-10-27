@@ -7,15 +7,18 @@ namespace App\Http\Controllers\Domains\Operator\Licenses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\Driver\Services\JourneyService;
+use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Operator\Notifications\LicenseNotification;
 use Domains\Operator\Requests\LicenseRequest;
 use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\NotificationTypes;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
+use Domains\SuperAdmin\Models\Shift;
 use Domains\SuperAdmin\Services\TrainService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use JustSteveKing\StatusCode\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -63,9 +66,9 @@ final class ManagementController
 
         return response(
             content: [
-                'message' => 'Request accepted and license assigned successfully.',
+                'message' => 'Request for line entry has been authorized successfully.',
             ],
-            status: Http::CREATED(),
+            status: Http::ACCEPTED(),
         );
     }
 
@@ -78,10 +81,25 @@ final class ManagementController
     public function assignLicense(LicenseRequest $request, Journey $journey): Response|HttpException
     {
         DB::transaction(function () use ($request, $journey): License {
-            return $this->createLicense(
+            $shift  = Shift::query()
+                ->where('user_id', Auth::id())
+                ->where('status', ShiftStatuses::CONFIRMED->value)
+                ->where('active', true)
+                ->first();
+
+            $currentShiftIds = $journey->shifts ?? [];
+            $currentShiftIds[] = $shift->id;
+
+            $license = $this->createLicense(
                 request: $request,
                 journey: $journey,
             );
+
+            $journey->update(attributes: [
+                'shifts' => $currentShiftIds,
+            ]);
+
+            return $license;
         });
 
 
@@ -93,6 +111,12 @@ final class ManagementController
         );
     }
 
+    /**
+     * CREATE LICENSE
+     * @param LicenseRequest $request
+     * @param Journey $journey
+     * @return License
+     */
     private function createLicense(LicenseRequest $request, Journey $journey): License
     {
         $train = TrainService::getTrainById($journey->train->id);

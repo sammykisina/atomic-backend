@@ -21,6 +21,7 @@ final class Journey extends Model
         "train_id",
         'is_authorized',
         'is_active',
+        'shifts',
     ];
 
 
@@ -49,6 +50,7 @@ final class Journey extends Model
         return [
             'is_active' => 'boolean',
             'is_authorized' => 'boolean',
+            'shifts' => 'json',
         ];
     }
 }

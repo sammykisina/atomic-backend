@@ -37,7 +37,7 @@ final class ManagementController
      */
     public function create(CreateOrEditJourneyRequest $request): Response|HttpException
     {
-        $journey = DB::transaction(function () use ($request): Journey {
+        DB::transaction(function () use ($request): Journey {
             if ($this->journeyService->activeJourney()) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
@@ -75,7 +75,10 @@ final class ManagementController
             }
 
             $journey = $this->journeyService->createJourney(
-                journeyData: $request->validated(),
+                journeyData: array_merge(
+                    ['shifts' => [$shift->id]],
+                    $request->validated(),
+                ),
             );
 
 
