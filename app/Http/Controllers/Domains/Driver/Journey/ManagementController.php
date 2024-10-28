@@ -49,6 +49,11 @@ final class ManagementController
                 train_id: $request->validated(key: "train_id"),
             );
 
+            $journey_direction = JourneyService::getJourneyDirection(
+                origin: $train->origin->start_kilometer,
+                destination: $train->destination->start_kilometer,
+            );
+
             $group_with_train_origin = Group::query()
                 ->with(relations: ['shifts' => function ($query): void {
                     $query->where('status', ShiftStatuses::CONFIRMED->value)
@@ -76,7 +81,10 @@ final class ManagementController
 
             $journey = $this->journeyService->createJourney(
                 journeyData: array_merge(
-                    ['shifts' => [$shift->id]],
+                    [
+                        'shifts' => [$shift->id],
+                        'direction' => $journey_direction->value
+                    ],
                     $request->validated(),
                 ),
             );

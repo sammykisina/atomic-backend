@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\Driver\Models;
 
+use Domains\Driver\Enums\LicenseDirections;
 use Domains\SuperAdmin\Models\Train;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,6 +23,7 @@ final class Journey extends Model
         'is_authorized',
         'is_active',
         'shifts',
+        'direction'
     ];
 
 
@@ -51,6 +53,7 @@ final class Journey extends Model
             'is_active' => 'boolean',
             'is_authorized' => 'boolean',
             'shifts' => 'json',
+            'direction' => LicenseDirections::class
         ];
     }
 }
