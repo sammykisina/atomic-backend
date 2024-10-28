@@ -22,14 +22,14 @@ final class StoreController
         $message_data['sender_id'] = Auth::user()->id;
         $message_data['message'] = $request->message;
 
-        if(Auth::user()->type === UserTypes::OPERATOR_CONTROLLER) {
+        if (UserTypes::OPERATOR_CONTROLLER === Auth::user()->type) {
             $message_data['receiver_id'] = $journey->train->driver_id;
         }
 
-        if(Auth::user()->type === UserTypes::DRIVER) {
+        if (UserTypes::DRIVER === Auth::user()->type) {
             $shifts = $journey->shifts;
             $shift = ShiftService::getShiftById(
-                shift_id: end($shifts)
+                shift_id: end($shifts),
             );
 
             $message_data['receiver_id'] = $shift->user_id;
@@ -37,7 +37,7 @@ final class StoreController
 
 
         $message = Message::query()->create(
-            attributes: $message_data
+            attributes: $message_data,
         );
 
         if ( ! $message) {
