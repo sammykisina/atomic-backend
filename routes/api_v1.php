@@ -18,6 +18,13 @@ Route::prefix('/dashboards')->as('dashboards:')->group(
     base_path('routes/api_v1/shared/dashboards.php'),
 );
 
+
+// MESSAGES
+Route::prefix('/messages')->as('messages:')->group(
+    base_path('routes/api_v1/shared/messages.php'),
+);
+
+
 // CONSTANTS
 Route::prefix('/constants')->as('constants:')->group(
     base_path('routes/api_v1/constants.php'),
