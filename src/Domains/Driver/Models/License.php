@@ -30,11 +30,13 @@ final class License extends Model
 
         'originable_id',
         'originable_type',
+        'train_at_origin',
 
         'through',
 
         'destinationable_id',
         'destinationable_type',
+        'train_at_destination',
 
         'rejected_at',
         'confirmed_at',
@@ -50,6 +52,8 @@ final class License extends Model
             'issued_at' => 'datetime',
             'rejected_at' => 'datetime',
             'confirmed_at' => 'datetime',
+            'train_at_destination' => 'boolean',
+            'train_at_origin' => 'boolean',
         ];
     }
 

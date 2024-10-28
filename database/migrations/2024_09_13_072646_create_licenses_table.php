@@ -26,6 +26,7 @@ return new class () extends Migration {
             $table->unsignedBigInteger('originable_id');
             $table->string('originable_type');
 
+
             $table->json(column: 'through');
 
             $table->unsignedBigInteger('destinationable_id');

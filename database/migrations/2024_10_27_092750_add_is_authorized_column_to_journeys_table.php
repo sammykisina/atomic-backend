@@ -19,6 +19,7 @@ return new class () extends Migration {
     {
         Schema::table(table: 'journeys', callback: function (Blueprint $table): void {
             $table->dropColumn(columns: 'is_authorized');
+            $table->dropColumn(columns: 'shifts');
         });
     }
 };

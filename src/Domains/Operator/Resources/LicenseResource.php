@@ -43,9 +43,13 @@ final class LicenseResource extends JsonResource
             'origin' => $this->whenLoaded(
                 relationship: 'originable',
             ),
+            'train_at_origin' => $this->resource->train_at_origin,
+            'through' => $this->resource->through,
             'destination' => $this->whenLoaded(
                 relationship: 'destinationable',
             ),
+            'train_at_destination' => $this->resource->train_at_destination,
+
         ];
     }
 }

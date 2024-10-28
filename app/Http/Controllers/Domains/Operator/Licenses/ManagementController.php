@@ -144,6 +144,19 @@ final class ManagementController
         );
 
         $throughs = $request->validated('through');
+        $updated_throughs = array_map(
+            callback: function (array $through): array {
+                return [
+                    'id' => $through['id'],
+                    'type' => $through['type'],
+                    'train_is_here' => false,
+                ];
+            },
+            array: $throughs,
+        );
+
+
+
 
         $uniqueLicenseNumber = $this->licenseService->getLicense();
         $license = $this->licenseService->acceptJourneyRequest(
@@ -160,13 +173,15 @@ final class ManagementController
                 'originable_type' => get_class(
                     object: $origin,
                 ),
+                'train_at_origin' => true,
 
-                'through' => $throughs,
+                'through' => $updated_throughs,
 
                 'destinationable_id' => $destination_id,
                 'destinationable_type' => get_class(
                     object: $destination,
                 ),
+                'train_at_destination' => false,
             ],
         );
 
@@ -205,6 +220,4 @@ final class ManagementController
 
         return $license;
     }
-
-
 }
