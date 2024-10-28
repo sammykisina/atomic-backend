@@ -23,7 +23,7 @@ final class Journey extends Model
         'is_authorized',
         'is_active',
         'shifts',
-        'direction'
+        'direction',
     ];
 
 
@@ -53,7 +53,7 @@ final class Journey extends Model
             'is_active' => 'boolean',
             'is_authorized' => 'boolean',
             'shifts' => 'json',
-            'direction' => LicenseDirections::class
+            'direction' => LicenseDirections::class,
         ];
     }
 }

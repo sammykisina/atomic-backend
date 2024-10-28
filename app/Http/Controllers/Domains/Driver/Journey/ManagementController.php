@@ -83,7 +83,7 @@ final class ManagementController
                 journeyData: array_merge(
                     [
                         'shifts' => [$shift->id],
-                        'direction' => $journey_direction->value
+                        'direction' => $journey_direction->value,
                     ],
                     $request->validated(),
                 ),
