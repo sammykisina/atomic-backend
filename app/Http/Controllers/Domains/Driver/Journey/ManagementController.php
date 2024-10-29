@@ -220,7 +220,7 @@ final class ManagementController
      */
     public function endJourney(Journey $journey): Response|HttpException
     {
-    
+
         DB::transaction(function () use ($journey): void {
             if ( ! $journey->update([
                 'status' => false,
