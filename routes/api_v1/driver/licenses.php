@@ -7,5 +7,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'ability:read-journeys'])
     ->prefix('licenses')->as('licenses:')->group(function (): void {
-        Route::post('/clear/area', ClearLicenseAreaController::class)->name(name: 'clear');
+        Route::post('/{license}/clear/area', ClearLicenseAreaController::class)->name(name: 'clear');
     });
