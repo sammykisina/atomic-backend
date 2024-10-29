@@ -124,12 +124,12 @@ final class ManagementController
      */
     public function delete(Line $line): Response | HttpException
     {
-        if(!$line->delete()) {
-             abort(
+        if ( ! $line->delete()) {
+            abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: 'Line deletion failed.',
             );
-         }
+        }
 
         return response(
             content: [
