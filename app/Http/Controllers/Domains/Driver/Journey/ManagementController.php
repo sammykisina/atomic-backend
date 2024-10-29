@@ -220,25 +220,7 @@ final class ManagementController
      */
     public function endJourney(Journey $journey): Response|HttpException
     {
-        $latest_journey_license = $journey->licenses()
-            ->with(['paths' => function ($query): void {
-                $query->latest()->limit(1); // Get only the latest path
-            }])
-            ->latest()
-            ->first();
-
-        if ($latest_journey_license) {
-            $latest_path = $latest_journey_license->paths[0];
-
-            if ($journey->destination_station_id !== $latest_path['destination_station_id']) {
-                abort(
-                    code: Http::UNAUTHORIZED(),
-                    message: 'This journey can only be ended when you are at your destination.',
-                );
-            }
-        }
-
-
+    
         DB::transaction(function () use ($journey): void {
             if ( ! $journey->update([
                 'status' => false,
