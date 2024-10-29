@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Shared\Messages;
 
-use Domains\Driver\Models\Journey;
 use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Models\Message;
 use Domains\Shared\Requests\MessageRequest;
@@ -15,7 +14,7 @@ use JustSteveKing\StatusCode\Http;
 
 final class StoreController
 {
-    public function __invoke(MessageRequest $request, Journey $journey): Response
+    public function __invoke(MessageRequest $request): Response
     {
 
         $message_data = [];
@@ -28,10 +27,10 @@ final class StoreController
         }
 
         if (UserTypes::DRIVER === Auth::user()->type) {
-            $shifts = $journey->shifts;
-            $shift = ShiftService::getShiftById(
-                shift_id: end($shifts),
-            );
+            // $shifts = $journey->shifts;
+            // $shift = ShiftService::getShiftById(
+            //     shift_id: end($shifts),
+            // );
 
             // $message_data['receiver_id'] = $shift->user_id;
             $message_data['receiver_id'] = 69;
