@@ -13,5 +13,6 @@ Route::middleware(['auth:sanctum', 'ability:read-lines,create-lines,edit-lines,d
         Route::post('/', 'create')->name(name: 'create');
         Route::patch('/{line}/edit', 'edit')->name(name: 'edit');
         Route::get('/{line}/show', 'show')->name(name: 'show');
+        Route::delete('/{line}/delete', 'delete')->name(name: 'delete');
     });
 });

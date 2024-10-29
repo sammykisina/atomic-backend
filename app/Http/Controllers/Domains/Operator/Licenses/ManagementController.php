@@ -111,6 +111,48 @@ final class ManagementController
         );
     }
 
+
+    /**
+     * DECLINE LINE ENTRY
+     * @param Request $request
+     * @param Journey $journey
+     * @param DatabaseNotification $notification
+     * @return Response|HttpException
+     */
+    public function declineRequest(Request $request, Journey $journey, DatabaseNotification $notification): Response|HttpException
+    {
+        if (null !== $notification->read_at) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'This request was processed before.Please contact your system administration for more inquires on the same.',
+            );
+        }
+
+        $is_declined =  DB::transaction(function () use ($journey, $notification): bool {
+            $is_declined = $journey->delete();
+
+            $notification->markAsRead();
+
+            return $is_declined;
+
+        });
+
+        if ( ! $is_declined) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Request for line entry is not declined successfully.Please try again.',
+            );
+        }
+
+
+        return response(
+            content: [
+                'message' => 'Request for line entry has been authorized successfully.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
+
     /**
      * CREATE LICENSE
      * @param LicenseRequest $request

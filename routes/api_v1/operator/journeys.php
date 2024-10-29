@@ -12,5 +12,6 @@ Route::middleware(['auth:sanctum', 'ability:read-journeys,edit-journeys,delete-j
 
         Route::controller(ManagementController::class)->group(function (): void {
             Route::post('{journey}/notifications/{notification}/accept-request', 'acceptRequest')->name(name: 'accept-request');
+            Route::post('{journey}/notifications/{notification}/decline-request', 'declineRequest')->name(name: 'decline-request');
         });
     });

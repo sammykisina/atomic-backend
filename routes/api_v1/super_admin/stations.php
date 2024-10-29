@@ -13,6 +13,7 @@ Route::middleware(['auth:sanctum', 'ability:read-stations,create-stations,edit-s
         Route::post('/', 'create')->name(name: 'create');
         Route::patch('/{station}/edit', 'edit')->name(name: 'edit');
         Route::get('/{station}/show', 'show')->name(name: 'show');
+        Route::delete('/{station}/delete', 'delete')->name(name: 'delete');
 
 
         Route::get('/download/stations-spreadsheet', 'exportStations')->name(name: 'download-stations-spreadsheet');

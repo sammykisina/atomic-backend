@@ -137,4 +137,26 @@ final class ManagementController
             status: Http::CREATED(),
         );
     }
+
+     /**
+     * DELETE STATION
+     * @param STATION $line
+     * @return Response|HttpException
+     */
+    public function delete(Station $station): Response | HttpException
+    {
+        if(!$station->delete()) {
+             abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Station deletion failed.',
+            );
+         }
+
+        return response(
+            content: [
+                'message' => 'Station deleted successfully.',
+            ],
+            status: Http::OK(),
+        );
+    }
 }

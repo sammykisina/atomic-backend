@@ -115,4 +115,27 @@ final class ManagementController
             status: Http::OK(),
         );
     }
+
+
+    /**
+     * DELETE LINE
+     * @param Line $line
+     * @return Response|HttpException
+     */
+    public function delete(Line $line): Response | HttpException
+    {
+        if(!$line->delete()) {
+             abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Line deletion failed.',
+            );
+         }
+
+        return response(
+            content: [
+                'message' => 'Line deleted successfully.',
+            ],
+            status: Http::OK(),
+        );
+    }
 }
