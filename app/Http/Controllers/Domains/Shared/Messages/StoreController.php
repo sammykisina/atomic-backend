@@ -23,7 +23,8 @@ final class StoreController
         $message_data['message'] = $request->message;
 
         if (UserTypes::OPERATOR_CONTROLLER === Auth::user()->type) {
-            $message_data['receiver_id'] = $journey->train->driver_id;
+            // $message_data['receiver_id'] = $journey->train->driver_id;
+            $message_data['receiver_id'] = 5;
         }
 
         if (UserTypes::DRIVER === Auth::user()->type) {
@@ -32,7 +33,8 @@ final class StoreController
                 shift_id: end($shifts),
             );
 
-            $message_data['receiver_id'] = $shift->user_id;
+            // $message_data['receiver_id'] = $shift->user_id;
+            $message_data['receiver_id'] = 69;
         }
 
 
