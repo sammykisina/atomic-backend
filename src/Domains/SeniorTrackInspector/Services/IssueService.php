@@ -10,6 +10,8 @@ use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Domains\SuperAdmin\Models\Section;
 use Domains\SuperAdmin\Models\Station;
 use Domains\SuperAdmin\Services\LineService;
+use Domains\SuperAdmin\Services\SectionService;
+use Domains\SuperAdmin\Services\StationService;
 use Domains\TrackAttendant\Models\Issue;
 
 final class IssueService
@@ -98,26 +100,26 @@ final class IssueService
         $section = null;
         $station = null;
 
-        if ($issueArea->section_id) {
-            $section = Section::query()->where('id', $issueArea->section_id)->first();
-        }
-
         if ($issueArea->station_id) {
-            $station = Station::query()->where('id', $issueArea->station_id)->first();
-        }
+            $station = StationService::getStationById(
+                station_id: $issueArea->station_id,
+            );
 
-        if ($section) {
-            return $section->update([
-                'status' => StationSectionLoopStatuses::GOOD,
+            return $station->update(attributes: [
+                'status' => StationSectionLoopStatuses::GOOD->value,
             ]);
         }
 
-        if ($station) {
-            return $station->update([
-                'status' => StationSectionLoopStatuses::GOOD,
-            ]);
-        }
+        if ($issueArea->section_id) {
+            $section = SectionService::getSectionById(
+                section_id: $issueArea->section_id,
+            );
 
+            return $section->update(attributes: [
+                'status' => StationSectionLoopStatuses::GOOD->value,
+            ]);
+
+        }
         return false;
     }
 }
