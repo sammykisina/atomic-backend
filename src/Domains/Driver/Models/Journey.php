@@ -24,6 +24,7 @@ final class Journey extends Model
         'is_active',
         'shifts',
         'direction',
+        'status'
     ];
 
 
