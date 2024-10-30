@@ -214,7 +214,7 @@ final class ManagementController
     }
 
     /**
-     * END JOURNEY
+     * END JOURNE
      * @param Journey $journey
      * @return Response|HttpException
      */
