@@ -232,8 +232,6 @@ final class ManagementController
             }
 
             $licenses = $journey->licenses;
-
-            dd($licenses);
             if ($licenses->count() > 0) {
                 foreach ($licenses as $license) {
                     $license->update([
