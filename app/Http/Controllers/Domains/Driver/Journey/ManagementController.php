@@ -223,7 +223,7 @@ final class ManagementController
 
         DB::transaction(function () use ($journey): void {
             if ( ! $journey->update([
-                'status' => false,
+                'is_active' => false,
             ])) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
