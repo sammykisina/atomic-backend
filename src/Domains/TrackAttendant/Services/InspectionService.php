@@ -9,8 +9,8 @@ use Domains\SeniorTrackInspector\Enums\InspectionScheduleStatuses;
 use Domains\SeniorTrackInspector\Models\InspectionSchedule;
 use Domains\SeniorTrackInspector\Models\IssueArea;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
-use Domains\SuperAdmin\Models\Section;
-use Domains\SuperAdmin\Models\Station;
+use Domains\SuperAdmin\Services\SectionService;
+use Domains\SuperAdmin\Services\StationService;
 use Domains\TrackAttendant\Models\Inspection;
 use Domains\TrackAttendant\Models\Issue;
 use Illuminate\Support\Facades\Auth;
@@ -96,16 +96,9 @@ final class InspectionService
      */
     public function createInspectionIssue(Inspection $inspection, array $inspectionIssueData): Issue
     {
-        return Issue::query()->create([
+        return Issue::query()->create(array_merge([
             'inspection_id' => $inspection->id,
-            'description' => $inspectionIssueData['description'],
-            'condition' => $inspectionIssueData['condition'],
-            'latitude' => $inspectionIssueData['latitude'],
-            'longitude' => $inspectionIssueData['longitude'],
-            'image_url' => $inspectionIssueData['image_url'],
-            'issue_name_id' => $inspectionIssueData['issue_name_id'],
-            'issue_kilometer' => $inspectionIssueData['issue_kilometer'],
-        ]);
+        ], $inspectionIssueData));
     }
 
 
@@ -116,25 +109,25 @@ final class InspectionService
      */
     public function closeSectionOrStation(IssueArea $issueArea): bool
     {
-        $section = null;
         $station = null;
-
-        if ($issueArea->section_id) {
-            $section = Section::query()->where('id', $issueArea->section_id)->first();
-        }
+        $section = null;
 
         if ($issueArea->station_id) {
-            $station = Station::query()->where('id', $issueArea->station_id)->first();
-        }
+            $station = StationService::getStationById(
+                station_id: $issueArea->station_id,
+            );
 
-        if ($section) {
-            return $section->update([
+            return $station->update(attributes: [
                 'status' => StationSectionLoopStatuses::INTERDICTION->value,
             ]);
         }
 
-        if ($station) {
-            return $station->update([
+        if ($issueArea->section_id) {
+            $section = SectionService::getSectionById(
+                section_id: $issueArea->section_id,
+            );
+
+            return $section->update(attributes: [
                 'status' => StationSectionLoopStatuses::INTERDICTION->value,
             ]);
         }

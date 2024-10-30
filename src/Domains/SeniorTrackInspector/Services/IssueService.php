@@ -7,9 +7,9 @@ namespace Domains\SeniorTrackInspector\Services;
 use Domains\SeniorTrackInspector\Models\Assignment;
 use Domains\SeniorTrackInspector\Models\IssueArea;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
-use Domains\SuperAdmin\Models\Line;
 use Domains\SuperAdmin\Models\Section;
 use Domains\SuperAdmin\Models\Station;
+use Domains\SuperAdmin\Services\LineService;
 use Domains\TrackAttendant\Models\Issue;
 
 final class IssueService
@@ -23,37 +23,36 @@ final class IssueService
     {
         $line_id = $issue->inspection->inspectionSchedule->line->id;
 
-        $line = Line::query()
-            ->where('id', $line_id)
-            ->with(['stations', 'sections'])
-            ->first();
+        $line = LineService::getLineWithId(line_id: $line_id);
+        $issue_kilometer = $issue->issue_kilometer;
 
+        $matching_station = $line->stations->first(
+            fn($station) => $issue_kilometer >= $station->start_kilometer && $issue_kilometer <= $station->end_kilometer,
+        );
 
-        foreach ($line->stations as $station) {
-            if ($issue->issue_kilometer >= $station->start_kilometer && $issue->issue_kilometer <= $station->end_kilometer) {
-                return IssueArea::query()
-                    ->create([
-                        'issue_id' => $issue->id,
-                        'line_id' => $line->id,
-                        'station_id' => $station->id,
-                    ]);
-            }
+        if ($matching_station) {
+            return IssueArea::query()->create([
+                'issue_id' => $issue->id,
+                'line_id' => $line->id,
+                'station_id' => $matching_station->id,
+            ]);
         }
 
-        foreach ($line->sections as $section) {
-            if ($issue->issue_kilometer >= $section->start_kilometer && $issue->issue_kilometer <= $section->end_kilometer) {
-                return IssueArea::query()
-                    ->create([
-                        'issue_id' => $issue->id,
-                        'line_id' => $line->id,
-                        'section_id' => $section->id,
-                    ]);
-            }
+        $matching_section = $line->sections->first(
+            fn($section) => $issue_kilometer >= $section->start_kilometer && $issue_kilometer <= $section->end_kilometer,
+        );
+
+        if ($matching_section) {
+            return IssueArea::query()->create([
+                'issue_id' => $issue->id,
+                'line_id' => $line->id,
+                'section_id' => $matching_section->id,
+            ]);
         }
 
         return null;
-
     }
+
 
     /**
      * GET ISSUE WITH ID

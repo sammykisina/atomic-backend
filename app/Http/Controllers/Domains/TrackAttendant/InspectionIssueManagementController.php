@@ -13,6 +13,7 @@ use Domains\TrackAttendant\Requests\IssueRequest;
 use Domains\TrackAttendant\Services\InspectionService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use JustSteveKing\StatusCode\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -46,9 +47,22 @@ final class InspectionIssueManagementController
                 ],
             );
 
+            Log::channel(channel: 'custom')->info(message: '=== CREATING ISSUE ===');
+            Log::channel(channel: 'custom')->info(message: 'Issue', context: [
+                'issue_id' => $issue->id,
+                'issue_condition' => $issue->condition,
+                'issue_kilometer' => $issue->issue_kilometer,
+                'issue_name' => $issue->issueName->name,
+            ]);
+
             $issueArea = IssueService::issueLocation(
                 issue: $issue,
             );
+
+            Log::channel(channel: 'custom')->info(message: 'Issue Area', context: [
+                'station' =>  $issueArea->station_id,
+                'section_id' => $issueArea->section_id,
+            ]);
 
             if ( ! $issueArea) {
                 abort(
@@ -58,14 +72,13 @@ final class InspectionIssueManagementController
             }
 
             if (IssueConditions::CRITICAL->value === $issue->condition) {
-                if ( ! $this->inspectionService->closeSectionOrStation(issueArea: $issueArea)) {
+                if ( ! $this->inspectionService->closeSectionOrStation(issueArea: $issueArea->refresh())) {
                     abort(
                         code: Http::EXPECTATION_FAILED(),
                         message: 'There was a problem closing this section or station for license issuing. Please try again',
                     );
                 }
             }
-
 
             $issue = IssueService::getIssueWithId(
                 issue_id: $issue->id,
@@ -101,7 +114,7 @@ final class InspectionIssueManagementController
                 'reported_at' => $issue->created_at->isoFormat('MMM Do YYYY HH:mm'),
             ];
 
-            defer(fn() => $this->sendWhatsAppNotification(
+            defer(callback: fn() => $this->sendWhatsAppNotification(
                 data: $data,
                 template: $template,
                 imageUrl: $issue->image_url,

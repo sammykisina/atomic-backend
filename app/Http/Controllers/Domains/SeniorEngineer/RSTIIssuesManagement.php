@@ -8,9 +8,10 @@ use Domains\SeniorEngineer\Enums\SpeedSuggestionStatuses;
 use Domains\SeniorEngineer\Requests\RevertSpeedRestrictionRequest;
 use Domains\SeniorEngineer\Requests\SpeedRestrictionRequest;
 use Domains\SeniorTrackInspector\Models\IssueArea;
-use Domains\SuperAdmin\Models\Section;
-use Domains\SuperAdmin\Models\Station;
+use Domains\SuperAdmin\Services\SectionService;
+use Domains\SuperAdmin\Services\StationService;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use JustSteveKing\StatusCode\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -26,43 +27,62 @@ final class RSTIIssuesManagement
         $section = null;
         $station = null;
 
-        if ($issueArea->section_id) {
-            $section = Section::query()->where('id', $issueArea->section_id)->first();
-        }
-
+        Log::channel('custom')->info(message: '=== APPROVING SPEED RESTRICTION ===');
         if ($issueArea->station_id) {
-            $station = Station::query()->where('id', $issueArea->station_id)->first();
-        }
-
-        if ($section) {
-            $section->update([
-                'speed' => $issueArea->speed_suggestion,
-            ]);
-
-            $issueArea->update([
-                'speed_suggestion_status' => SpeedSuggestionStatuses::APPROVED,
-            ]);
-
-            return response(
-                content: [
-                    'message' => 'Speed restriction suggestion  approved successfully',
-                ],
-                status: Http::ACCEPTED(),
+            $station = StationService::getStationById(
+                station_id: $issueArea->station_id,
             );
-        }
 
-        if ($station) {
-            $station->update([
+            $station->update(attributes: [
                 'speed' => $issueArea->speed_suggestion,
             ]);
 
-            $issueArea->update([
+
+            $issueArea->update(attributes: [
                 'speed_suggestion_status' => SpeedSuggestionStatuses::APPROVED,
             ]);
+
+            Log::channel(channel: 'custom')->info(
+                message: 'Speed Info',
+                context: [
+                    'speed' => $issueArea->speed_suggestion,
+                    'station' => $issueArea->station_id,
+                ],
+            );
 
             return response(
                 content: [
                     'message' => 'Speed restriction suggestion  approved successfully.',
+                ],
+                status: Http::ACCEPTED(),
+            );
+
+        }
+
+        if ($issueArea->section_id) {
+            $section = SectionService::getSectionById(
+                section_id: $issueArea->section_id,
+            );
+
+            $section->update(attributes: [
+                'speed' => $issueArea->speed_suggestion,
+            ]);
+
+            $issueArea->update(attributes: [
+                'speed_suggestion_status' => SpeedSuggestionStatuses::APPROVED,
+            ]);
+
+            Log::channel(channel: 'custom')->info(
+                message: 'Speed Info',
+                context: [
+                    'speed' => $issueArea->speed_suggestion,
+                    'section' => $issueArea->section_id,
+                ],
+            );
+
+            return response(
+                content: [
+                    'message' => 'Speed restriction suggestion  approved successfully',
                 ],
                 status: Http::ACCEPTED(),
             );
@@ -84,23 +104,19 @@ final class RSTIIssuesManagement
      */
     public function addSpeedRestriction(SpeedRestrictionRequest $request, IssueArea $issueArea): Response | HttpException
     {
-        $section = null;
         $station = null;
-
-        if ($issueArea->section_id) {
-            $section = Section::query()->where('id', $issueArea->section_id)->first();
-        }
+        $section = null;
 
         if ($issueArea->station_id) {
-            $station = Station::query()->where('id', $issueArea->station_id)->first();
-        }
+            $station = StationService::getStationById(
+                station_id: $issueArea->station_id,
+            );
 
-        if ($section) {
-            $section->update([
+            $station->update(attributes: [
                 'speed' => $request->validated('proposed_speed'),
             ]);
 
-            $issueArea->update([
+            $issueArea->update(attributes: [
                 'speed_suggestion_status' => SpeedSuggestionStatuses::CHANGED,
                 'proposed_speed_comment' => $request->validated('proposed_speed_comment'),
                 'proposed_speed' => $request->validated('proposed_speed'),
@@ -114,15 +130,19 @@ final class RSTIIssuesManagement
             );
         }
 
-        if ($station) {
-            $station->update([
-                'speed' => $request->validated('proposed_speed'),
-            ]);
+        if ($issueArea->section_id) {
+            $section = SectionService::getSectionById(
+                section_id: $issueArea->section_id,
+            );
 
-            $issueArea->update([
+            $issueArea->update(attributes: [
                 'speed_suggestion_status' => SpeedSuggestionStatuses::CHANGED,
                 'proposed_speed_comment' => $request->validated('proposed_speed_comment'),
                 'proposed_speed' => $request->validated('proposed_speed'),
+            ]);
+
+            $section->update(attributes: [
+                'speed' => $request->validated('proposed_speed'),
             ]);
 
             return response(
@@ -153,20 +173,16 @@ final class RSTIIssuesManagement
         $section = null;
         $station = null;
 
-        if ($issueArea->section_id) {
-            $section = Section::query()->where('id', $issueArea->section_id)->first();
-        }
-
         if ($issueArea->station_id) {
-            $station = Station::query()->where('id', $issueArea->station_id)->first();
-        }
+            $station = StationService::getStationById(
+                station_id: $issueArea->station_id,
+            );
 
-        if ($section) {
-            $section->update([
+            $station->update(attributes: [
                 'speed' => $request->validated('reverted_speed'),
             ]);
 
-            $issueArea->update([
+            $issueArea->update(attributes: [
                 'speed_suggestion_status' => SpeedSuggestionStatuses::REVERTED,
                 'reverted_speed_comment' => $request->validated('reverted_speed_comment'),
                 'reverted_speed' => $request->validated('reverted_speed'),
@@ -180,12 +196,16 @@ final class RSTIIssuesManagement
             );
         }
 
-        if ($station) {
-            $station->update([
+        if ($issueArea->section_id) {
+            $section = SectionService::getSectionById(
+                section_id: $issueArea->section_id,
+            );
+
+            $section->update(attributes: [
                 'speed' => $request->validated('reverted_speed'),
             ]);
 
-            $issueArea->update([
+            $issueArea->update(attributes: [
                 'speed_suggestion_status' => SpeedSuggestionStatuses::REVERTED,
                 'reverted_speed_comment' => $request->validated('reverted_speed_comment'),
                 'reverted_speed' => $request->validated('reverted_speed'),
@@ -198,6 +218,7 @@ final class RSTIIssuesManagement
                 status: Http::ACCEPTED(),
             );
         }
+
 
         return response(
             content: [

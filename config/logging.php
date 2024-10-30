@@ -53,7 +53,6 @@ return [
     */
 
     'channels' => [
-
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', env('LOG_STACK', 'single')),
@@ -71,7 +70,7 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
-            'days' => env('LOG_DAILY_DAYS', 14),
+            'days' => env('LOG_DAILY_DAYS', 7),
             'replace_placeholders' => true,
         ],
 
@@ -129,6 +128,12 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'custom' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/atomik.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            // 'replace_placeholders' => true,
+        ],
     ],
 
 ];
