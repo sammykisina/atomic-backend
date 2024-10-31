@@ -63,6 +63,13 @@ final class ManagementController
                 ->whereJsonContains(column: 'stations', value: $train->origin->id)
                 ->first();
 
+                if(!$group_with_train_origin) {
+                     abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'We cannot find a shift / group connected to your origin.'
+                );
+                }
+ 
 
             $currentTime = Carbon::now()->format('H:i');
             $shift = $group_with_train_origin->shifts->filter(function ($shift) use ($currentTime) {
@@ -214,7 +221,7 @@ final class ManagementController
     }
 
     /**
-     * END JOURNE
+     * END JOURNEY
      * @param Journey $journey
      * @return Response|HttpException
      */
@@ -222,7 +229,7 @@ final class ManagementController
     {
 
         DB::transaction(function () use ($journey): void {
-            if ( ! $journey->update([
+            if ( ! $journey->update(attributes: [
                 'is_active' => false,
             ])) {
                 abort(
@@ -231,8 +238,13 @@ final class ManagementController
                 );
             }
 
+            // $latest_license = License::query()->where('journey_id', $journey->id)->latest()->first();
+            // if($latest_license)
+
+            // dd(get_class($latest_license->destinationable));
+            
             $licenses = $journey->licenses;
-            if ($licenses->count() > 0) {
+            if ($licenses && $licenses->count() > 0) {
                 foreach ($licenses as $license) {
                     $license->update([
                         'status' => LicenseStatuses::USED->value,
