@@ -57,6 +57,18 @@ final class JourneyService
             ])
             ->first();
     }
+
+    /**
+     *
+     */
+    public static function getJourneyById(int $journey_id): Journey
+    {
+        return Journey::query()
+            ->where('id', $journey_id)
+            ->With(['train', 'licenses'])
+            ->first();
+    }
+
     /**
      * CREATE JOURNEY
      * @param array $journeyData

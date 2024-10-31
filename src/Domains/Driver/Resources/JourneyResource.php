@@ -6,6 +6,7 @@ namespace Domains\Driver\Resources;
 
 use Domains\Driver\Models\Journey;
 use Domains\Operator\Resources\LicenseResource;
+use Domains\Shared\Resources\DateResource;
 use Domains\SuperAdmin\Resources\TrainResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -32,6 +33,9 @@ final class JourneyResource extends JsonResource
                 ),
             ),
             'created_at' => $this->resource->created_at,
+            'beautiful_date' => new DateResource(
+                resource: $this->resource->created_at,
+            ),
         ];
     }
 }

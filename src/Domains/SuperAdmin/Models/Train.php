@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Models;
 
+use Domains\Driver\Models\Journey;
 use Domains\Shared\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
@@ -63,6 +65,15 @@ final class Train extends Model
         return $this->belongsTo(
             related: User::class,
             foreignKey: 'driver_id',
+        );
+    }
+
+    /** @return HasOne<Journey> */
+    public function journey(): HasOne
+    {
+        return $this->hasOne(
+            related: Journey::class,
+            foreignKey: 'train_id',
         );
     }
 

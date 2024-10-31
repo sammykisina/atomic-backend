@@ -30,6 +30,7 @@ final class MessageResource extends JsonResource
             'created_at' => new DateResource(
                 resource: $this->resource->created_at,
             ),
+
         ];
     }
 }

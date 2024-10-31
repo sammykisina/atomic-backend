@@ -25,6 +25,13 @@ Route::prefix('/messages')->as('messages:')->group(
 );
 
 
+// ATOMIC LOGS
+Route::prefix('/atomic-logs')->as('atomik-logs:')->group(
+    base_path('routes/api_v1/shared/atomik_logs.php'),
+);
+
+
+
 // CONSTANTS
 Route::prefix('/constants')->as('constants:')->group(
     base_path('routes/api_v1/constants.php'),
@@ -104,6 +111,9 @@ Route::prefix('/operator')->as('operator:')->group(
 
         // LICENSES
         base_path('routes/api_v1/operator/licenses.php'),
+
+        // MESSAGES
+        base_path('routes/api_v1/operator/messages.php'),
     ],
 );
 

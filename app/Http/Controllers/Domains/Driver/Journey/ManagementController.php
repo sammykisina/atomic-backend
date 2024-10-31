@@ -14,11 +14,17 @@ use Domains\Driver\Requests\LocationRequest;
 use Domains\Driver\Resources\JourneyResource;
 use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
+use Domains\Operator\Services\LicenseService;
+use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
+use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Models\Group;
+use Domains\SuperAdmin\Models\Station;
+use Domains\SuperAdmin\Services\ShiftManagement\ShiftService;
 use Domains\SuperAdmin\Services\TrainService;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use JustSteveKing\StatusCode\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -63,13 +69,13 @@ final class ManagementController
                 ->whereJsonContains(column: 'stations', value: $train->origin->id)
                 ->first();
 
-                if(!$group_with_train_origin) {
-                     abort(
+            if ( ! $group_with_train_origin) {
+                abort(
                     code: Http::EXPECTATION_FAILED(),
-                    message: 'We cannot find a shift / group connected to your origin.'
+                    message: 'We cannot find a shift / group connected to your origin.',
                 );
-                }
- 
+            }
+
 
             $currentTime = Carbon::now()->format('H:i');
             $shift = $group_with_train_origin->shifts->filter(function ($shift) use ($currentTime) {
@@ -96,7 +102,6 @@ final class ManagementController
                 ),
             );
 
-
             if ( ! $journey) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
@@ -108,6 +113,16 @@ final class ManagementController
                 journey: $journey,
                 type: NotificationTypes::JOURNEY_CREATED,
             ));
+
+            defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::MACRO1,
+                'resourceble_id' => $journey->id,
+                'resourceble_type' => get_class($journey),
+                'actor_id' => Auth::id(),
+                'receiver_id' => $shift->user->id,
+                'current_location' => $journey->train->origin->name,
+                'train_id' => $journey->train_id,
+            ]));
 
             return $journey;
         });
@@ -182,7 +197,7 @@ final class ManagementController
                 );
             }
 
-            if ( ! $license->update([
+            if ( ! $license->update(attributes: [
                 'status' => LicenseStatuses::CONFIRMED,
                 'confirmed_at' => Carbon::now(),
             ])) {
@@ -196,6 +211,24 @@ final class ManagementController
                 journey: $journey,
                 type: NotificationTypes::LICENSE_CONFIRMED,
             ));
+
+            $shifts = $journey->shifts;
+            $shift = ShiftService::getShiftById(
+                shift_id: end($shifts),
+            );
+
+            defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::MACRO2,
+                'resourceble_id' => $license->id,
+                'resourceble_type' => get_class(object: $license),
+                'actor_id' => Auth::id(),
+                'receiver_id' => $shift->user_id,
+                'current_location' => LicenseService::getLicenseOrigin(
+                    license: $license,
+                ),
+                'train_id' => $journey->train_id,
+
+            ]));
 
             $notification->markAsRead();
 
@@ -228,7 +261,7 @@ final class ManagementController
     public function endJourney(Journey $journey): Response|HttpException
     {
 
-        DB::transaction(function () use ($journey): void {
+        $ended =  DB::transaction(function () use ($journey): bool {
             if ( ! $journey->update(attributes: [
                 'is_active' => false,
             ])) {
@@ -238,20 +271,63 @@ final class ManagementController
                 );
             }
 
-            // $latest_license = License::query()->where('journey_id', $journey->id)->latest()->first();
-            // if($latest_license)
+            $shifts = $journey->shifts;
+            $shift = ShiftService::getShiftById(
+                shift_id: end($shifts),
+            );
 
-            // dd(get_class($latest_license->destinationable));
-            
-            $licenses = $journey->licenses;
-            if ($licenses && $licenses->count() > 0) {
-                foreach ($licenses as $license) {
-                    $license->update([
-                        'status' => LicenseStatuses::USED->value,
-                    ]);
+            $prev_latest_license = LicenseService::getPrevLatestLicense(
+                journey: $journey,
+            );
+
+            if ($prev_latest_license) {
+                if ( ! $prev_latest_license->train_at_destination) {
+                    abort(
+                        code: Http::EXPECTATION_FAILED(),
+                        message: 'You have not arrived at your current license destination yet',
+                    );
+                }
+
+                if (Station::class === $prev_latest_license->destinationable_type) {
+                    if ($prev_latest_license->destinationable_id === $journey->train->destination->id) {
+                        $licenses = $journey->licenses;
+                        if ($licenses && $licenses->count() > 0) {
+                            foreach ($licenses as $license) {
+                                $license->update([
+                                    'status' => LicenseStatuses::USED->value,
+                                ]);
+                            }
+                        }
+
+                        defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+                            'type' => AtomikLogsTypes::MACRO10,
+                            'resourceble_id' => $journey->id,
+                            'resourceble_type' => get_class(object: $journey),
+                            'actor_id' => Auth::id(),
+                            'receiver_id' => $shift->user_id,
+                            'current_location' => $journey->train->origin->name,
+                            'train_id' => $journey->train_id,
+                        ]));
+
+                        return true;
+                    }
                 }
             }
+
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Your journey is still in progress',
+            );
         });
+
+        if ( ! $ended) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Journey not ended.Please try again.',
+            );
+        }
+
+
 
         return response(
             content: [

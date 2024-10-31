@@ -9,5 +9,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum'])->group(function (): void {
     Route::get('/', IndexController::class)->name(name: 'messages');
-    Route::post('/journeys/store', StoreController::class)->name(name: 'store');
+    Route::post('/', StoreController::class)->name(name: 'store');
 });

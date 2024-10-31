@@ -23,8 +23,16 @@ final class SearchController
                 'destination',
                 'driver',
                 'locomotiveNumber',
+                'journey',
             ])
             ->first();
+
+        if ($train && $train->journey) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: "This Service Order was used in another journey. Double check the Service Order or Contact OCC.",
+            );
+        }
 
         return response(
             content: [

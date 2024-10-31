@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Operator\Resources;
 
 use Domains\Driver\Models\License;
+use Domains\Driver\Resources\JourneyResource;
 use Domains\Shared\Resources\DateResource;
 use Domains\Shared\Resources\UserResource;
 use Illuminate\Http\Request;
@@ -49,6 +50,11 @@ final class LicenseResource extends JsonResource
                 relationship: 'destinationable',
             ),
             'train_at_destination' => $this->resource->train_at_destination,
+            'journey' => new JourneyResource(
+                resource: $this->whenLoaded(
+                    relationship: 'journey',
+                ),
+            ),
 
         ];
     }

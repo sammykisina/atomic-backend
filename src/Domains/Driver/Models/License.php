@@ -68,14 +68,6 @@ final class License extends Model
         return $this->morphTo('destinationable');
     }
 
-    /** @return BelongsTo<User>*/
-    public function driver(): BelongsTo
-    {
-        return $this->belongsTo(
-            related: User::class,
-            foreignKey: 'driver_id',
-        );
-    }
 
     /** @return BelongsTo<User>*/
     public function issuer(): BelongsTo
@@ -83,6 +75,15 @@ final class License extends Model
         return $this->belongsTo(
             related: User::class,
             foreignKey: 'issuer_id',
+        );
+    }
+
+    /** @return BelongsTo<User>*/
+    public function journey(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: Journey::class,
+            foreignKey: 'journey_id',
         );
     }
 

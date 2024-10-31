@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Shared\Messages;
 
+use Carbon\Carbon;
+use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Models\Message;
 use Domains\Shared\Requests\MessageRequest;
-use Domains\SuperAdmin\Services\ShiftManagement\ShiftService;
+use Domains\SuperAdmin\Models\Shift;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
@@ -21,19 +23,25 @@ final class StoreController
         $message_data['sender_id'] = Auth::user()->id;
         $message_data['message'] = $request->message;
 
-        if (UserTypes::OPERATOR_CONTROLLER === Auth::user()->type) {
-            // $message_data['receiver_id'] = $journey->train->driver_id;
-            $message_data['receiver_id'] = 5;
-        }
-
         if (UserTypes::DRIVER === Auth::user()->type) {
-            // $shifts = $journey->shifts;
-            // $shift = ShiftService::getShiftById(
-            //     shift_id: end($shifts),
-            // );
+            $today = Carbon::today()->format('Y-m-d');
+            $currentTime = Carbon::now()->format('H:i:s');
 
-            // $message_data['receiver_id'] = $shift->user_id;
-            $message_data['receiver_id'] = 69;
+            $shift = Shift::whereDate('day', $today)
+                ->whereTime('from', '<=', $currentTime)
+                ->whereTime('to', '>=', $currentTime)
+                ->where('active', true)
+                ->where('status', ShiftStatuses::CONFIRMED->value)
+                ->first();
+
+            if ( ! $shift) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'We could not find a receiver. Please check if there is an active shift',
+                );
+            }
+
+            $message_data['receiver_id'] = $shift->user_id;
         }
 
 

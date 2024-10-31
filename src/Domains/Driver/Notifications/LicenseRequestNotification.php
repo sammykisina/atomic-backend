@@ -49,7 +49,7 @@ final class LicenseRequestNotification extends Notification
             'last_license_destination_station' =>  new StationResource(
                 resource: $this->lastLicense->destinationStation,
             ),
-            'current_position_on_the_destination_station' => $this->lastLicense->main ? 'on the main line' : new LoopResource($this->lastLicense->loop),
+            'current_location_on_the_destination_station' => $this->lastLicense->main ? 'on the main line' : new LoopResource($this->lastLicense->loop),
             'type' => $this->type,
         ];
     }

@@ -34,7 +34,7 @@ return new class () extends Migration {
                 ->nullOnDelete()
                 ->name('fk_message_receiver');
 
-
+            $table->timestamp(column: 'read_at')->nullable();
 
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();

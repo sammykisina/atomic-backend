@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Operator\Licenses;
 
+use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\Driver\Services\JourneyService;
@@ -11,7 +12,9 @@ use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Operator\Notifications\LicenseNotification;
 use Domains\Operator\Requests\LicenseRequest;
 use Domains\Operator\Services\LicenseService;
+use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
+use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Domains\SuperAdmin\Models\Shift;
 use Domains\SuperAdmin\Services\TrainService;
@@ -49,6 +52,17 @@ final class ManagementController
             $is_updated = $journey->update(attributes: [
                 'is_authorized' => true,
             ]);
+
+            defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::MACRO3,
+                'resourceble_id' => $journey->id,
+                'resourceble_type' => get_class(object: $journey),
+                'actor_id' => Auth::id(),
+                'receiver_id' => $journey->train->driver_id,
+                'current_location' => $journey->train->origin->name,
+                'train_id' => $journey->train_id,
+            ]));
+
 
             $notification->markAsRead();
 
@@ -89,6 +103,16 @@ final class ManagementController
 
             $currentShiftIds = $journey->shifts ?? [];
             $currentShiftIds[] = $shift->id;
+
+            $prev_latest_license = LicenseService::getPrevLatestLicense(
+                journey: $journey,
+            );
+
+            if ($prev_latest_license) {
+                $prev_latest_license->update(attributes: [
+                    'status' => LicenseStatuses::USED->value,
+                ]);
+            }
 
             $license = $this->createLicense(
                 request: $request,
@@ -162,6 +186,7 @@ final class ManagementController
     private function createLicense(LicenseRequest $request, Journey $journey): License
     {
         $train = TrainService::getTrainById($journey->train->id);
+
         /**
          * ORIGIN
          */

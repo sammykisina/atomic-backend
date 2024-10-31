@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Operator\Services;
 
 use Carbon\Carbon;
+use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\SuperAdmin\Models\Loop;
 use Domains\SuperAdmin\Models\Section;
@@ -30,6 +31,45 @@ final class LicenseService
             'LOOP' =>  LoopService::getLoopById(loop_id: $model_id),
         };
 
+    }
+
+
+    /**
+     * GET LICENSE ORIGIN
+     * @param License $license
+     * @return string
+     */
+    public static function getLicenseOrigin(License $license): string
+    {
+        return  match ($license->originable_type) {
+            Station::class =>  $license->originable->name,
+            Loop::class =>  $license->originable->station->name . ' - LOOP',
+            Section::class =>  $license->originable->start_name . ' - ' . $license->originable->end_name,
+        };
+
+    }
+
+    /**
+     * GET LICENSE BY ID
+     * @param int $license_id
+     * @return License
+     */
+    public static function getLicenseById(int $license_id): ?License
+    {
+        return License::query()
+            ->where('id', $license_id)
+            ->with(relations: ['originable','destinationable','journey.train.driver', 'issuer'])
+            ->first();
+    }
+
+    /**
+     * GET PREVIOUS LATEST LICENSE
+     * @param Journey $journey
+     * @return License
+     */
+    public static function getPrevLatestLicense(Journey $journey): ?License
+    {
+        return License::query()->where('journey_id', $journey->id)->latest()->first();
     }
     /**
      * GENERATE A UNIQUE RANDOM LICENSE NUMBER

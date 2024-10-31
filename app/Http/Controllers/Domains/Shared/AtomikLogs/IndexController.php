@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\Shared\Messages;
+namespace App\Http\Controllers\Domains\Shared\AtomikLogs;
 
-use Domains\Shared\Models\Message;
-use Domains\Shared\Resources\MessageResource;
+use Domains\Shared\Models\AtomikLog;
+use Domains\Shared\Resources\AtomikLogResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -16,12 +15,12 @@ final class IndexController
 {
     public function __invoke(Request $request): Response
     {
-        $messages = QueryBuilder::for(subject: Message::class)
-            ->where('sender_id', Auth::id())
-            ->orWhere('receiver_id', Auth::id())
+        $atomic_logs = QueryBuilder::for(subject: AtomikLog::class)
             ->with(relations: [
+                'resourceble',
+                'actor',
                 'receiver',
-                'sender',
+                'train',
             ])
             ->orderBy('created_at', 'desc')
             ->get();
@@ -29,9 +28,9 @@ final class IndexController
 
         return response(
             content: [
-                'message' => 'Message fetched successfully.',
-                'messages' => MessageResource::collection(
-                    resource: $messages,
+                'message' => 'Atomik logs fetched successfully.',
+                'atomik_logs' => AtomikLogResource::collection(
+                    resource: $atomic_logs,
                 ),
             ],
             status: Http::OK(),

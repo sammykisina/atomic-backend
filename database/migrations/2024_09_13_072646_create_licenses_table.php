@@ -23,8 +23,8 @@ return new class () extends Migration {
 
             $table->string(column: 'direction');
 
-            $table->unsignedBigInteger('originable_id');
-            $table->string('originable_type');
+            $table->unsignedBigInteger(column: 'originable_id');
+            $table->string(column: 'originable_type');
 
 
             $table->json(column: 'through');
@@ -62,6 +62,6 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('licenses');
+        Schema::dropIfExists(table: 'licenses');
     }
 };
