@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
 
 final class License extends Model
 {
@@ -94,6 +95,17 @@ final class License extends Model
             related: User::class,
             foreignKey: 'rejector_id',
         );
+    }
+
+    /**
+     * GET TYPE
+     * @param mixed $namespaceString
+     * @return string
+     */
+    public function getType($namespaceString): string
+    {
+        $parts = explode(separator: '\\', string: $namespaceString);
+        return Str::upper(value: end($parts));
     }
 
 }

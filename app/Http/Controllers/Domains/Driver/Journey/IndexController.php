@@ -26,6 +26,7 @@ final class IndexController
                 'train.destination',
                 'train.locomotiveNumber',
                 'train.driver',
+                'licenses',
             ])
             ->get();
 
