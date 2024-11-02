@@ -10,13 +10,14 @@ use Domains\Operator\Services\LicenseService;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use JustSteveKing\StatusCode\Http;
 
 final class ClearLicenseAreaController
 {
     public function __invoke(ClearRequest $request, License $license): Response
     {
-        $model = DB::transaction(function () use ($request, $license): void {
+        DB::transaction(function () use ($request, $license): void {
             $model = LicenseService::getModel(
                 model_type: $request->validated('type'),
                 model_id: $request->validated('area_id'),
@@ -28,6 +29,8 @@ final class ClearLicenseAreaController
                     message: 'No model found. Please try again',
                 );
             }
+
+            Log::channel('atomik')->info(message: 'License to be cleared ' . $license->id);
 
             /**
              * MOVE TRAIN THROUGH THE LICENSE
@@ -88,7 +91,6 @@ final class ClearLicenseAreaController
         return response(
             content: [
                 'message' => 'Area cleared successfully.',
-                'area' => $model,
             ],
             status: Http::ACCEPTED(),
         );
