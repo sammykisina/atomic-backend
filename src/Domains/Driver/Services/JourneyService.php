@@ -52,8 +52,8 @@ final class JourneyService
                 'train.destination',
                 'train.locomotiveNumber',
                 'train.driver',
-                'licenses.originable',
-                'licenses.destinationable',
+                'licenses',
+                'licenses',
             ])
             ->first();
     }

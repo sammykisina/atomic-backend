@@ -285,8 +285,8 @@ final class ManagementController
                     );
                 }
 
-                if (Station::class === $prev_latest_license->destinationable_type) {
-                    if ($prev_latest_license->destinationable_id === $journey->train->destination->id) {
+                if (Station::class === $prev_latest_license->destination->type) {
+                    if ($prev_latest_license->destination->id === $journey->train->destination->id) {
                         $licenses = $journey->licenses;
                         if ($licenses && $licenses->count() > 0) {
                             foreach ($licenses as $license) {

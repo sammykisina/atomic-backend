@@ -33,8 +33,8 @@ final class LicenseNotification extends Notification
                 'journey_id' => $this->license->journey_id,
                 'license_number' => $this->license->license_number,
                 'direction' => $this->license->direction,
-                'origin' => $this->license->originable,
-                'destination' => $this->license->destinationable,
+                'origin' => $this->license->origin,
+                'destination' => $this->license->destination,
             ],
             'type' => $this->type,
         ];
