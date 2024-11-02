@@ -23,14 +23,12 @@ return new class () extends Migration {
 
             $table->string(column: 'direction');
 
-            $table->unsignedBigInteger(column: 'originable_id');
-            $table->string(column: 'originable_type');
+            $table->json(column: 'origin');
 
 
             $table->json(column: 'through');
 
-            $table->unsignedBigInteger('destinationable_id');
-            $table->string('destinationable_type');
+            $table->json(column: 'destination');
 
             $table->foreignId(column: 'issuer_id')
                 ->nullable()

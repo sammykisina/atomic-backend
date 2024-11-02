@@ -13,6 +13,7 @@ use Domains\SuperAdmin\Models\Station;
 use Domains\SuperAdmin\Services\LoopService;
 use Domains\SuperAdmin\Services\SectionService;
 use Domains\SuperAdmin\Services\StationService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
 final class LicenseService
@@ -39,12 +40,12 @@ final class LicenseService
      * @param License $license
      * @return string
      */
-    public static function getLicenseOrigin(License $license): string
+    public static function getLicenseOrigin(Model $model): string
     {
-        return  match ($license->originable_type) {
-            Station::class =>  $license->originable->name,
-            Loop::class =>  $license->originable->station->name . ' - LOOP',
-            Section::class =>  $license->originable->start_name . ' - ' . $license->originable->end_name,
+        return  match (get_class(object: $model)) {
+            Station::class =>  $model->name,
+            Loop::class =>  $model->station->name . ' - LOOP',
+            Section::class =>  $model->start_name . ' - ' . $model->end_name,
         };
 
     }
@@ -58,7 +59,7 @@ final class LicenseService
     {
         return License::query()
             ->where('id', $license_id)
-            ->with(relations: ['originable','destinationable','journey.train.driver', 'issuer'])
+            ->with(relations: ['journey.train.driver', 'issuer'])
             ->first();
     }
 

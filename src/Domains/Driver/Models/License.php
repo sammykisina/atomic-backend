@@ -29,14 +29,12 @@ final class License extends Model
         'rejector_id',
         'issued_at',
 
-        'originable_id',
-        'originable_type',
+        'origin',
         'train_at_origin',
 
         'through',
 
-        'destinationable_id',
-        'destinationable_type',
+        'destination',
         'train_at_destination',
 
         'rejected_at',
@@ -50,6 +48,8 @@ final class License extends Model
             'status' => LicenseStatuses::class,
             'direction' => LicenseDirections::class,
             'through' => 'json',
+            'origin' => 'json',
+            'destination' => 'json',
             'issued_at' => 'datetime',
             'rejected_at' => 'datetime',
             'confirmed_at' => 'datetime',
@@ -57,18 +57,6 @@ final class License extends Model
             'train_at_origin' => 'boolean',
         ];
     }
-
-    public function originable(): MorphTo
-    {
-        return $this->morphTo('originable');
-    }
-
-    // Polymorphic relationship for destination
-    public function destinationable(): MorphTo
-    {
-        return $this->morphTo('destinationable');
-    }
-
 
     /** @return BelongsTo<User>*/
     public function issuer(): BelongsTo

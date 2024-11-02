@@ -10,8 +10,8 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('licenses', function (Blueprint $table): void {
-            $table->boolean(column: 'train_at_origin')->after(column: 'originable_type');
-            $table->boolean(column: 'train_at_destination')->after(column: 'destinationable_type');
+            $table->boolean(column: 'train_at_origin')->after(column: 'origin');
+            $table->boolean(column: 'train_at_destination')->after(column: 'destination');
         });
     }
 

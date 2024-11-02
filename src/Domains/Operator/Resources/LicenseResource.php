@@ -41,20 +41,10 @@ final class LicenseResource extends JsonResource
             'confirmed_at' => new DateResource(
                 resource: $this->resource->confirmed_at,
             ),
-            'origin' => $this->whenLoaded(
-                relationship: 'originable',
-            ),
-            'origin_type' =>  $this->getType(
-                $this->resource->originable_type,
-            ),
+            'origin' => $this->resource->origin,
             'train_at_origin' => $this->resource->train_at_origin,
             'through' => $this->resource->through,
-            'destination' => $this->whenLoaded(
-                relationship: 'destinationable',
-            ),
-            'destination_type' =>  $this->getType(
-                $this->resource->destinationable_type,
-            ),
+            'destination' => $this->resource->destination,
             'train_at_destination' => $this->resource->train_at_destination,
             'journey' => new JourneyResource(
                 resource: $this->whenLoaded(

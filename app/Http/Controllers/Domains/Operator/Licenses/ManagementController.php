@@ -185,7 +185,7 @@ final class ManagementController
      */
     private function createLicense(LicenseRequest $request, Journey $journey): License
     {
-        $train = TrainService::getTrainById($journey->train->id);
+        $train = TrainService::getTrainById(train_id: $journey->train->id);
 
         /**
          * ORIGIN
@@ -193,6 +193,7 @@ final class ManagementController
         $origin = null;
         $origin_id = $request->validated('origin')['origin_id'];
         $origin_type = $request->validated('origin')['type'];
+        $origin_status = StationSectionLoopStatuses::LICENSE_ISSUED->value;
         $origin = LicenseService::getModel(
             model_type: $origin_type,
             model_id: $origin_id,
@@ -205,6 +206,7 @@ final class ManagementController
         $destination = null;
         $destination_id = $request->validated('destination')['destination_id'];
         $destination_type = $request->validated('destination')['type'];
+        $destination_status = StationSectionLoopStatuses::LICENSE_ISSUED->value;
         $destination = LicenseService::getModel(
             model_type: $destination_type,
             model_id: $destination_id,
@@ -217,6 +219,7 @@ final class ManagementController
                     'id' => $through['id'],
                     'type' => $through['type'],
                     'train_is_here' => false,
+                    'status' => StationSectionLoopStatuses::LICENSE_ISSUED->value,
                 ];
             },
             array: $throughs,
@@ -236,49 +239,49 @@ final class ManagementController
                 )->value,
 
 
-                'originable_id' => $origin_id,
-                'originable_type' => get_class(
-                    object: $origin,
-                ),
+                'origin' => [
+                    'id' => $origin_id,
+                    'type' => $origin_type,
+                    'status' => $origin_status,
+                    'name' => LicenseService::getLicenseOrigin(
+                        model: $origin,
+                    ),
+                ],
                 'train_at_origin' => true,
 
                 'through' => $updated_throughs,
 
-                'destinationable_id' => $destination_id,
-                'destinationable_type' => get_class(
-                    object: $destination,
-                ),
+                'destination' => [
+                    'id' => $destination_id,
+                    'type' => $destination_type,
+                    'status' => $destination_status,
+                    'name' => LicenseService::getLicenseOrigin(
+                        model: $destination,
+                    ),
+                ],
                 'train_at_destination' => false,
             ],
         );
-
-        $origin->update(attributes: [
-            'status'  => StationSectionLoopStatuses::LICENSE_ISSUED->value,
-        ]);
-
-        $destination->update(attributes: [
-            'status'  => StationSectionLoopStatuses::LICENSE_ISSUED->value,
-        ]);
 
 
         /**
          * THOUGH
          */
-        foreach ($throughs as $through) {
-            $through_model = null;
+        // foreach ($throughs as $through) {
+        //     $through_model = null;
 
-            $through_id = $through['id'];
-            $through_type = $through['type'];
+        //     $through_id = $through['id'];
+        //     $through_type = $through['type'];
 
-            $through_model =  LicenseService::getModel(
-                model_type: $through_type,
-                model_id: $through_id,
-            );
+        //     $through_model =  LicenseService::getModel(
+        //         model_type: $through_type,
+        //         model_id: $through_id,
+        //     );
 
-            $through_model->update(attributes: [
-                'status'  => StationSectionLoopStatuses::LICENSE_ISSUED->value,
-            ]);
-        }
+        //     $through_model->update(attributes: [
+        //         'status'  => StationSectionLoopStatuses::LICENSE_ISSUED->value,
+        //     ]);
+        // }
 
         $journey->train->driver->notify(new LicenseNotification(
             license: $license,

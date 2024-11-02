@@ -23,8 +23,7 @@ final class IndexController
                 'train.destination',
                 'train.locomotiveNumber',
                 'train.driver',
-                'licenses.originable',
-                'licenses.destinationable',
+                'licenses',
             ])
             ->allowedFilters(filters: [
                 AllowedFilter::exact(name: 'is_active'),
