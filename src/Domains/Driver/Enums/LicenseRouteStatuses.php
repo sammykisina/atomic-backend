@@ -11,4 +11,6 @@ enum LicenseRouteStatuses: string
     case OCCUPIED = 'OCCUPIED';
 
     case NEXT = 'NEXT';
+
+    case COMPLETED = 'COMPLETED';
 }
