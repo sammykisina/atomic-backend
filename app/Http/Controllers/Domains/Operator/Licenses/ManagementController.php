@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Operator\Licenses;
 
+use Domains\Driver\Enums\LicenseRouteStatuses;
 use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
@@ -183,6 +184,101 @@ final class ManagementController
      * @param Journey $journey
      * @return License
      */
+    // private function createLicense(LicenseRequest $request, Journey $journey): License
+    // {
+    //     $train = TrainService::getTrainById(train_id: $journey->train->id);
+
+    //     /**
+    //      * ORIGIN
+    //      */
+    //     $origin = null;
+    //     $origin_id = $request->validated('origin')['origin_id'];
+    //     $origin_type = $request->validated('origin')['type'];
+    //     $origin_status = StationSectionLoopStatuses::LICENSE_ISSUED->value;
+    //     $origin = LicenseService::getModel(
+    //         model_type: $origin_type,
+    //         model_id: $origin_id,
+    //     );
+
+
+    //     /**
+    //      * DESTINATION
+    //      */
+    //     $destination = null;
+    //     $destination_id = $request->validated('destination')['destination_id'];
+    //     $destination_type = $request->validated('destination')['type'];
+    //     $destination_status = StationSectionLoopStatuses::LICENSE_ISSUED->value;
+    //     $destination = LicenseService::getModel(
+    //         model_type: $destination_type,
+    //         model_id: $destination_id,
+    //     );
+
+    //     $throughs = $request->validated('through');
+    //     $updated_throughs = array_map(
+    //         callback: function (array $through): array {
+    //             return [
+    //                 'id' => $through['id'],
+    //                 'type' => $through['type'],
+    //                 'train_is_here' => false,
+    //                 'status' => StationSectionLoopStatuses::LICENSE_ISSUED->value,
+    //                 'start_time' => null,
+    //                 'end_time' => null,
+    //                 'in_route' => LicenseRouteStatuses::PENDING->value,
+    //             ];
+    //         },
+    //         array: $throughs,
+    //     );
+
+
+    //     $uniqueLicenseNumber = $this->licenseService->getLicense();
+    //     $license = $this->licenseService->acceptJourneyRequest(
+    //         licenseData: [
+    //             'license_number' => $uniqueLicenseNumber,
+    //             'journey_id' => $journey->id,
+    //             'direction' => JourneyService::getJourneyDirection(
+    //                 origin: $train->origin->start_kilometer,
+    //                 destination: $train->destination->start_kilometer,
+    //             )->value,
+
+
+    //             'origin' => [
+    //                 'id' => $origin_id,
+    //                 'type' => $origin_type,
+    //                 'status' => $origin_status,
+    //                 'name' => LicenseService::getLicenseOrigin(
+    //                     model: $origin,
+    //                 ),
+    //                 'start_time' => null,
+    //                 'end_time' => null,
+    //                 'in_route' => LicenseRouteStatuses::OCCUPIED->value,
+    //             ],
+    //             'train_at_origin' => true,
+
+    //             'through' => $updated_throughs,
+
+    //             'destination' => [
+    //                 'id' => $destination_id,
+    //                 'type' => $destination_type,
+    //                 'status' => $destination_status,
+    //                 'name' => LicenseService::getLicenseOrigin(
+    //                     model: $destination,
+    //                 ),
+    //                 'start_time' => null,
+    //                 'end_time' => null,
+    //                 'in_route' => LicenseRouteStatuses::PENDING->value,
+    //             ],
+    //             'train_at_destination' => false,
+    //         ],
+    //     );
+
+    //     $journey->train->driver->notify(new LicenseNotification(
+    //         license: $license,
+    //         type: NotificationTypes::REQUEST_ACCEPTED,
+    //     ));
+
+    //     return $license;
+    // }
+
     private function createLicense(LicenseRequest $request, Journey $journey): License
     {
         $train = TrainService::getTrainById(train_id: $journey->train->id);
@@ -190,7 +286,6 @@ final class ManagementController
         /**
          * ORIGIN
          */
-        $origin = null;
         $origin_id = $request->validated('origin')['origin_id'];
         $origin_type = $request->validated('origin')['type'];
         $origin_status = StationSectionLoopStatuses::LICENSE_ISSUED->value;
@@ -199,11 +294,9 @@ final class ManagementController
             model_id: $origin_id,
         );
 
-
         /**
          * DESTINATION
          */
-        $destination = null;
         $destination_id = $request->validated('destination')['destination_id'];
         $destination_type = $request->validated('destination')['type'];
         $destination_status = StationSectionLoopStatuses::LICENSE_ISSUED->value;
@@ -214,19 +307,29 @@ final class ManagementController
 
         $throughs = $request->validated('through');
         $updated_throughs = array_map(
-            callback: function (array $through): array {
+            callback: function (array $through) use ($throughs): array {
+                // Set 'NEXT' for the first point in `through`, 'PENDING' for the rest
+                $in_route = $through === reset($throughs)
+                    ? LicenseRouteStatuses::NEXT->value
+                    : LicenseRouteStatuses::PENDING->value;
+
                 return [
                     'id' => $through['id'],
                     'type' => $through['type'],
                     'train_is_here' => false,
                     'status' => StationSectionLoopStatuses::LICENSE_ISSUED->value,
+                    'start_time' => null,
+                    'end_time' => null,
+                    'in_route' => $in_route,
                 ];
             },
             array: $throughs,
         );
 
-
-
+        // Determine in_route for destination based on the presence of `through`
+        $destination_in_route = empty($throughs)
+            ? LicenseRouteStatuses::NEXT->value
+            : LicenseRouteStatuses::PENDING->value;
 
         $uniqueLicenseNumber = $this->licenseService->getLicense();
         $license = $this->licenseService->acceptJourneyRequest(
@@ -238,7 +341,6 @@ final class ManagementController
                     destination: $train->destination->start_kilometer,
                 )->value,
 
-
                 'origin' => [
                     'id' => $origin_id,
                     'type' => $origin_type,
@@ -246,6 +348,9 @@ final class ManagementController
                     'name' => LicenseService::getLicenseOrigin(
                         model: $origin,
                     ),
+                    'start_time' => null,  // Set start time for origin
+                    'end_time' => null,
+                    'in_route' => LicenseRouteStatuses::PENDING->value,
                 ],
                 'train_at_origin' => true,
 
@@ -258,30 +363,13 @@ final class ManagementController
                     'name' => LicenseService::getLicenseOrigin(
                         model: $destination,
                     ),
-                ],
+                    'start_time' => null,
+                    'end_time' => null,
+                    'in_route' => $destination_in_route,
+            ],
                 'train_at_destination' => false,
             ],
         );
-
-
-        /**
-         * THOUGH
-         */
-        // foreach ($throughs as $through) {
-        //     $through_model = null;
-
-        //     $through_id = $through['id'];
-        //     $through_type = $through['type'];
-
-        //     $through_model =  LicenseService::getModel(
-        //         model_type: $through_type,
-        //         model_id: $through_id,
-        //     );
-
-        //     $through_model->update(attributes: [
-        //         'status'  => StationSectionLoopStatuses::LICENSE_ISSUED->value,
-        //     ]);
-        // }
 
         $journey->train->driver->notify(new LicenseNotification(
             license: $license,
@@ -290,4 +378,5 @@ final class ManagementController
 
         return $license;
     }
+
 }

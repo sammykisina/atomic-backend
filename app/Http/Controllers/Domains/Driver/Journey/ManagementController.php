@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\Driver\Journey;
 
 use Carbon\Carbon;
+use Domains\Driver\Enums\LicenseRouteStatuses;
 use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
@@ -197,9 +198,14 @@ final class ManagementController
                 );
             }
 
+            $license_origin = $license->origin;
+            $license_origin['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
+            $license_origin['start_time'] = Carbon::now();
+
             if ( ! $license->update(attributes: [
                 'status' => LicenseStatuses::CONFIRMED,
                 'confirmed_at' => Carbon::now(),
+                'origin' => $license_origin,
             ])) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Driver\Journey;
 
+use Domains\Driver\Enums\LicenseRouteStatuses;
 use Domains\Driver\Models\License;
 use Domains\Driver\Requests\ClearRequest;
 use Domains\Operator\Services\LicenseService;
@@ -23,7 +24,7 @@ final class ClearLicenseAreaController
                 model_id: $request->validated('area_id'),
             );
 
-            if ( ! $model) {
+            if (!$model) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
                     message: 'No model found. Please try again',
@@ -32,58 +33,100 @@ final class ClearLicenseAreaController
 
             Log::channel('atomik')->info(message: 'License to be cleared ' . $license->id);
 
-            /**
-             * MOVE TRAIN THROUGH THE LICENSE
-             */
-            // Get the `through` attribute as an array to modify it
             $through = $license->through;
 
+            // Clear the origin
             if ($license->train_at_origin) {
-                // Clear train from origin
                 $license->train_at_origin = false;
 
-                // Work with `origin` as an array, modify it, then reassign
                 $origin = $license->origin;
                 $origin['status'] = StationSectionLoopStatuses::GOOD->value;
+                $origin['end_time'] = now(); // Set end time as train leaves
+                $origin['in_route'] = LicenseRouteStatuses::OCCUPIED->value; // Keep as OCCUPIED
                 $license->origin = $origin;
 
-                if ( ! empty($through)) {
-                    // Move train to the first position in `through`
+                // Handle the case with no through points
+                if (count($through) === 0) {
+                    // Move directly to destination
+                    $destination = $license->destination;
+                    $destination['in_route'] = LicenseRouteStatuses::OCCUPIED->value; // Set destination as OCCUPIED
+                    $destination['start_time'] = now(); // Set start time for destination
+                    $license->destination = $destination;
+
+                    // Set train_at_destination to true since the train has moved to the destination
+                    $license->train_at_destination = true; 
+                } elseif (count($through) > 0) {
+                    // Move to the first through point
                     $through[0]['train_is_here'] = true;
-                } else {
-                    // No `through`, move directly to destination
-                    $license->train_at_destination = true;
-                }
-            } else {
-                // Moving the train within `through`
-                $movedToNext = false; // Flag to track if the train has moved to the next point
+                    $through[0]['in_route'] = LicenseRouteStatuses::OCCUPIED->value; // Keep as OCCUPIED
+                    $through[0]['start_time'] = now();
+                    $through[0]['status'] = StationSectionLoopStatuses::LICENSE_ISSUED->value;
 
-                foreach ($through as $index => &$point) {
-                    if ($point['train_is_here']) {
-                        // Clear current position in `through`
-                        $point['train_is_here'] = false;
-                        $point['status'] = StationSectionLoopStatuses::GOOD->value;
-
-                        if (isset($through[$index + 1])) {
-                            // Move to the next `through` point
-                            $through[$index + 1]['train_is_here'] = true;
-                        } else {
-                            // Last `through` point cleared, move to destination
-                            $license->train_at_destination = true;
-                        }
-
-                        $movedToNext = true;
-                        break;
+                    // Check if there are more through points
+                    if (count($through) === 1) {
+                        // If there's only one through element, set destination to NEXT
+                        $destination = $license->destination;
+                        $destination['in_route'] = LicenseRouteStatuses::NEXT->value; // Set to NEXT since we are going there
+                        $license->destination = $destination;
+                    } elseif (count($through) > 1) {
+                        // Set the second point as NEXT
+                        $through[1]['in_route'] = LicenseRouteStatuses::NEXT->value; // Mark the next point
                     }
                 }
+            } else {
+                // Clearing a through point
+                foreach ($through as $index => &$point) {
+                    if ($point['train_is_here']) {
+                        // Clear the current position in through
+                        $point['train_is_here'] = false;
+                        $point['status'] = StationSectionLoopStatuses::GOOD->value;
+                        $point['end_time'] = now(); // Set end time as train leaves
+                        $point['in_route'] = LicenseRouteStatuses::OCCUPIED->value; // Keep as OCCUPIED
 
-                // If the train hasn't moved and it's not in `through`, check if it should be at destination
-                if ( ! $movedToNext && ! $license->train_at_destination) {
-                    $license->train_at_destination = true;
+                        // If this is the last through point
+                        if ($index === count($through) - 1) {
+                            // Set the destination as OCCUPIED
+                            $destination = $license->destination;
+                            $destination['in_route'] = LicenseRouteStatuses::OCCUPIED->value; // Change to OCCUPIED
+                            $destination['start_time'] = now(); // Set start_time for destination
+                            $license->destination = $destination;
+
+                            // Set train_at_destination to true since we've reached the destination
+                            $license->train_at_destination = true; 
+                        } elseif ($index === count($through) - 2) {
+                            // If this is the second-to-last through point
+                            // Mark the last through point as OCCUPIED
+                            $lastPoint = &$through[$index + 1];
+                            $lastPoint['train_is_here'] = true;
+                            $lastPoint['in_route'] = LicenseRouteStatuses::OCCUPIED->value; // Set last point as OCCUPIED
+                            $lastPoint['start_time'] = now(); // Set start_time for the last through point
+                            $lastPoint['status'] = StationSectionLoopStatuses::LICENSE_ISSUED->value;
+
+                            // Set destination as NEXT
+                            $destination = $license->destination;
+                            $destination['in_route'] = LicenseRouteStatuses::NEXT->value; // Change to NEXT
+                            $license->destination = $destination;
+                        } else {
+                            // Move to the next through point if not the last or second-to-last
+                            if (isset($through[$index + 1])) {
+                                $through[$index + 1]['train_is_here'] = true;
+                                $through[$index + 1]['in_route'] = LicenseRouteStatuses::OCCUPIED->value; // Set next point as OCCUPIED
+                                $through[$index + 1]['start_time'] = now(); // Set start_time for the next through point
+                                $through[$index + 1]['status'] = StationSectionLoopStatuses::LICENSE_ISSUED->value;
+
+                                // Mark the next subsequent point as NEXT if it exists
+                                if (isset($through[$index + 2])) {
+                                    $through[$index + 2]['in_route'] = LicenseRouteStatuses::NEXT->value;
+                                }
+                            }
+                        }
+
+                        break; // Break out of the loop since we moved
+                    }
                 }
             }
 
-            // Update the `through` attribute in the license model
+            // Save the updated through array and license model
             $license->through = $through;
             $license->save();
         });
@@ -95,5 +138,17 @@ final class ClearLicenseAreaController
             status: Http::ACCEPTED(),
         );
     }
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
