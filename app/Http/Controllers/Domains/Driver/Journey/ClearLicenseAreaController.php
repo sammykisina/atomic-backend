@@ -24,7 +24,7 @@ final class ClearLicenseAreaController
                 model_id: $request->validated('area_id'),
             );
 
-            if (!$model) {
+            if ( ! $model) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
                     message: 'No model found. Please try again',
@@ -46,7 +46,7 @@ final class ClearLicenseAreaController
                 $license->origin = $origin;
 
                 // Handle the case with no through points
-                if (count($through) === 0) {
+                if (0 === count($through)) {
                     // Move directly to destination
                     $destination = $license->destination;
                     $destination['in_route'] = LicenseRouteStatuses::OCCUPIED->value; // Set destination as OCCUPIED
@@ -54,7 +54,7 @@ final class ClearLicenseAreaController
                     $license->destination = $destination;
 
                     // Set train_at_destination to true since the train has moved to the destination
-                    $license->train_at_destination = true; 
+                    $license->train_at_destination = true;
                 } elseif (count($through) > 0) {
                     // Move to the first through point
                     $through[0]['train_is_here'] = true;
@@ -63,7 +63,7 @@ final class ClearLicenseAreaController
                     $through[0]['status'] = StationSectionLoopStatuses::LICENSE_ISSUED->value;
 
                     // Check if there are more through points
-                    if (count($through) === 1) {
+                    if (1 === count($through)) {
                         // If there's only one through element, set destination to NEXT
                         $destination = $license->destination;
                         $destination['in_route'] = LicenseRouteStatuses::NEXT->value; // Set to NEXT since we are going there
@@ -92,7 +92,7 @@ final class ClearLicenseAreaController
                             $license->destination = $destination;
 
                             // Set train_at_destination to true since we've reached the destination
-                            $license->train_at_destination = true; 
+                            $license->train_at_destination = true;
                         } elseif ($index === count($through) - 2) {
                             // If this is the second-to-last through point
                             // Mark the last through point as OCCUPIED
@@ -139,16 +139,3 @@ final class ClearLicenseAreaController
         );
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

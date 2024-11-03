@@ -366,7 +366,7 @@ final class ManagementController
                     'start_time' => null,
                     'end_time' => null,
                     'in_route' => $destination_in_route,
-            ],
+                ],
                 'train_at_destination' => false,
             ],
         );
