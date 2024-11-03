@@ -54,7 +54,7 @@ use JustSteveKing\StatusCode\Http;
 //                     $license->destination = $destination;
 
 //                     // Set train_at_destination to true since the train has moved to the destination
-//                     $license->train_at_destination = true; 
+//                     $license->train_at_destination = true;
 //                 } elseif (count($through) > 0) {
 //                     // Move to the first through point
 //                     $through[0]['train_is_here'] = true;
@@ -92,7 +92,7 @@ use JustSteveKing\StatusCode\Http;
 //                             $license->destination = $destination;
 
 //                             // Set train_at_destination to true since we've reached the destination
-//                             $license->train_at_destination = true; 
+//                             $license->train_at_destination = true;
 //                         } elseif ($index === count($through) - 2) {
 //                             // If this is the second-to-last through point
 //                             // Mark the last through point as OCCUPIED
