@@ -279,17 +279,17 @@ final class ManagementController
                 shift_id: end($shifts),
             );
 
-             defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
-                            'type' => AtomikLogsTypes::MACRO10,
-                            'resourceble_id' => $journey->id,
-                            'resourceble_type' => get_class(object: $journey),
-                            'actor_id' => Auth::id(),
-                            'receiver_id' => $shift->user_id,
-                            'current_location' => $journey->train->origin->name,
-                            'train_id' => $journey->train_id,
-                        ]));
+            defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::MACRO10,
+                'resourceble_id' => $journey->id,
+                'resourceble_type' => get_class(object: $journey),
+                'actor_id' => Auth::id(),
+                'receiver_id' => $shift->user_id,
+                'current_location' => $journey->train->origin->name,
+                'train_id' => $journey->train_id,
+            ]));
 
-            
+
 
             // $prev_latest_license = LicenseService::getPrevLatestLicense(
             //     journey: $journey,
