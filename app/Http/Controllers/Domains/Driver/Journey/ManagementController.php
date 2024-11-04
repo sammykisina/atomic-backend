@@ -274,53 +274,54 @@ final class ManagementController
                 );
             }
 
-            $shifts = $journey->shifts;
-            $shift = ShiftService::getShiftById(
-                shift_id: end($shifts),
-            );
+            // $shifts = $journey->shifts;
+            // $shift = ShiftService::getShiftById(
+            //     shift_id: end($shifts),
+            // );
 
-            $prev_latest_license = LicenseService::getPrevLatestLicense(
-                journey: $journey,
-            );
+            // $prev_latest_license = LicenseService::getPrevLatestLicense(
+            //     journey: $journey,
+            // );
 
-            if ($prev_latest_license) {
-                if ( ! $prev_latest_license->train_at_destination) {
-                    abort(
-                        code: Http::EXPECTATION_FAILED(),
-                        message: 'You have not arrived at your current license destination yet',
-                    );
-                }
+            // if ($prev_latest_license) {
+            //     if ( ! $prev_latest_license->train_at_destination) {
+            //         abort(
+            //             code: Http::EXPECTATION_FAILED(),
+            //             message: 'You have not arrived at your current license destination yet',
+            //         );
+            //     }
 
-                if (Station::class === $prev_latest_license->destination->type) {
-                    if ($prev_latest_license->destination->id === $journey->train->destination->id) {
-                        $licenses = $journey->licenses;
-                        if ($licenses && $licenses->count() > 0) {
-                            foreach ($licenses as $license) {
-                                $license->update([
-                                    'status' => LicenseStatuses::USED->value,
-                                ]);
-                            }
-                        }
+            //     if (Station::class === $prev_latest_license->destination->type) {
+            //         if ($prev_latest_license->destination->id === $journey->train->destination->id) {
+            //             $licenses = $journey->licenses;
+            //             if ($licenses && $licenses->count() > 0) {
+            //                 foreach ($licenses as $license) {
+            //                     $license->update([
+            //                         'status' => LicenseStatuses::USED->value,
+            //                     ]);
+            //                 }
+            //             }
 
-                        defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
-                            'type' => AtomikLogsTypes::MACRO10,
-                            'resourceble_id' => $journey->id,
-                            'resourceble_type' => get_class(object: $journey),
-                            'actor_id' => Auth::id(),
-                            'receiver_id' => $shift->user_id,
-                            'current_location' => $journey->train->origin->name,
-                            'train_id' => $journey->train_id,
-                        ]));
+            //             defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+            //                 'type' => AtomikLogsTypes::MACRO10,
+            //                 'resourceble_id' => $journey->id,
+            //                 'resourceble_type' => get_class(object: $journey),
+            //                 'actor_id' => Auth::id(),
+            //                 'receiver_id' => $shift->user_id,
+            //                 'current_location' => $journey->train->origin->name,
+            //                 'train_id' => $journey->train_id,
+            //             ]));
 
-                        return true;
-                    }
-                }
-            }
+            //             return true;
+            //         }
+            //     }
+            // }
 
-            abort(
-                code: Http::EXPECTATION_FAILED(),
-                message: 'Your journey is still in progress',
-            );
+            // abort(
+            //     code: Http::EXPECTATION_FAILED(),
+            //     message: 'Your journey is still in progress',
+            // );
+            return true;
         });
 
         if ( ! $ended) {
