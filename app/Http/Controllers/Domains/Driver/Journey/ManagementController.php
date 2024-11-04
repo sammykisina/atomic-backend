@@ -150,7 +150,7 @@ final class ManagementController
             shift_id: end($shifts),
         );
 
-        if(! $shift){
+        if ( ! $shift) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: 'Shift not found',
