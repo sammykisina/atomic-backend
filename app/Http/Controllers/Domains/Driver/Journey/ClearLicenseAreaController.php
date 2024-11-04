@@ -157,8 +157,6 @@ final class ClearLicenseAreaController
                 );
             }
 
-            Log::channel('atomik')->info(message: 'License to be cleared ' . $license->id);
-
             $through = $license->through;
 
             // Clear the origin

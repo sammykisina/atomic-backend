@@ -13,21 +13,11 @@ final class LocationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'station_id' => [
-                'nullable',
-                'exists:stations,id',
+            'latitude' => [
+                'required',
             ],
-            'main_id' => [
-                'nullable',
-                'exists:stations,id',
-            ],
-            'loop_id' => [
-                'nullable',
-                'exists:loops,id',
-            ],
-            'section_id' => [
-                'nullable',
-                'exists:loops,id',
+            'longitude' => [
+                'required',
             ],
         ];
     }

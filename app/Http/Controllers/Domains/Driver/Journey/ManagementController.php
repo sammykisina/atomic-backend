@@ -145,15 +145,27 @@ final class ManagementController
      */
     public function createLocation(LocationRequest $request, Journey $journey): Response | HttpException
     {
-        if ( ! $this->journeyService->createTrainLocation(
-            journey: $journey,
-            locationData: $request->validated(),
-        )) {
+        $shifts = $journey->shifts;
+        $shift = ShiftService::getShiftById(
+            shift_id: end($shifts),
+        );
+
+        if(! $shift){
             abort(
                 code: Http::EXPECTATION_FAILED(),
-                message: 'Location confirmation failed.',
+                message: 'Shift not found',
             );
         }
+
+        AtomikLogService::createAtomicLog(atomikLogData: [
+            'type' => AtomikLogsTypes::MACRO6,
+            'resourceble_id' => $journey->id,
+            'resourceble_type' => get_class(object: $journey),
+            'actor_id' => Auth::id(),
+            'receiver_id' => $shift->user_id,
+            'current_location' => $request->validated('latitude') . ', ' . $request->validated('longitude'),
+            'train_id' => $journey->train_id,
+        ]);
 
         return response(
             content: [

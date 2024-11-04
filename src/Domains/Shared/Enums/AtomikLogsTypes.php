@@ -15,4 +15,6 @@ enum AtomikLogsTypes: string
     case MACRO5 = 'MACRO5'; // LOCATION
 
     case MACRO10 = 'MACRO10'; // END JOURNEY
+
+    case MACRO6 = 'MACRO6'; // LOCATION
 }
