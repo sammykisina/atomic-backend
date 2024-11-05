@@ -23,6 +23,8 @@ final class ActiveJourneysController
                 'train.destination',
                 'train.locomotiveNumber',
                 'train.driver',
+                'licenses.issuer',
+                'licenses.rejector',
             ])
             ->get();
 
