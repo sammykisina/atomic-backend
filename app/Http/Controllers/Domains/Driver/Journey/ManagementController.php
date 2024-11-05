@@ -300,7 +300,7 @@ final class ManagementController
                 'resourceble_type' => get_class(object: $journey),
                 'actor_id' => Auth::id(),
                 'receiver_id' => $shift->user_id,
-                'current_location' => $journey->train->origin->name,
+                'current_location' => $journey->train->destination->name,
                 'train_id' => $journey->train_id,
             ]));
 
