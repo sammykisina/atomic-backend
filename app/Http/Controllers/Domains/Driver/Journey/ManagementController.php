@@ -15,6 +15,7 @@ use Domains\Driver\Requests\LocationRequest;
 use Domains\Driver\Resources\JourneyResource;
 use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
+use Domains\Operator\Notifications\RequestLineExitNotification;
 use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
@@ -291,6 +292,8 @@ final class ManagementController
                 shift_id: end($shifts),
             );
 
+            $shift->user->notify(new RequestLineExitNotification(journey: $journey));
+
             defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO10,
                 'resourceble_id' => $journey->id,
@@ -300,7 +303,6 @@ final class ManagementController
                 'current_location' => $journey->train->origin->name,
                 'train_id' => $journey->train_id,
             ]));
-
 
 
             // $prev_latest_license = LicenseService::getPrevLatestLicense(
