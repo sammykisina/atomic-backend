@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Domains\Operator\Notifications;
+namespace Domains\Driver\Notifications;
 
 use Domains\Driver\Models\Journey;
 use Domains\Shared\Enums\NotificationTypes;

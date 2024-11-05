@@ -10,20 +10,19 @@ use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\Driver\Notifications\JourneyNotification;
+use Domains\Driver\Notifications\RequestLineExitNotification;
 use Domains\Driver\Requests\CreateOrEditJourneyRequest;
 use Domains\Driver\Requests\LocationRequest;
 use Domains\Driver\Resources\JourneyResource;
 use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
-use Domains\Operator\Notifications\RequestLineExitNotification;
-use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Models\Group;
-use Domains\SuperAdmin\Models\Station;
 use Domains\SuperAdmin\Services\ShiftManagement\ShiftService;
 use Domains\SuperAdmin\Services\TrainService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Auth;
@@ -269,15 +268,44 @@ final class ManagementController
         );
     }
 
+
     /**
-     * END JOURNEY
+     * EXIT LINE REQUEST
      * @param Journey $journey
      * @return Response|HttpException
      */
-    public function endJourney(Journey $journey): Response|HttpException
+    public function sendExitLineRequest(Request $request, Journey $journey): Response|HttpException
     {
+        if ($journey->train->driver_id !== Auth::id()) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'An exit line request is only send by the driver.',
+            );
+        }
 
-        $ended =  DB::transaction(function () use ($journey): bool {
+        $shifts = $journey->shifts;
+        $shift = ShiftService::getShiftById(
+            shift_id: end($shifts),
+        );
+
+        $shift->user->notify(new RequestLineExitNotification(journey: $journey));
+
+        return response(
+            content: [
+                'message' => 'Journey ended successfully.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
+
+    /**
+     * EXIT LINE
+     * @param Journey $journey
+     * @return Response|HttpException
+     */
+    public function exitLine(Request $request, Journey $journey, DatabaseNotification $notification): Response|HttpException
+    {
+        $exited =  DB::transaction(function () use ($journey): bool {
             if ( ! $journey->update(attributes: [
                 'is_active' => false,
             ])) {
@@ -292,8 +320,6 @@ final class ManagementController
                 shift_id: end($shifts),
             );
 
-            $shift->user->notify(new RequestLineExitNotification(journey: $journey));
-
             defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO10,
                 'resourceble_id' => $journey->id,
@@ -304,60 +330,15 @@ final class ManagementController
                 'train_id' => $journey->train_id,
             ]));
 
-
-            // $prev_latest_license = LicenseService::getPrevLatestLicense(
-            //     journey: $journey,
-            // );
-
-            // if ($prev_latest_license) {
-            //     if ( ! $prev_latest_license->train_at_destination) {
-            //         abort(
-            //             code: Http::EXPECTATION_FAILED(),
-            //             message: 'You have not arrived at your current license destination yet',
-            //         );
-            //     }
-
-            //     if (Station::class === $prev_latest_license->destination->type) {
-            //         if ($prev_latest_license->destination->id === $journey->train->destination->id) {
-            //             $licenses = $journey->licenses;
-            //             if ($licenses && $licenses->count() > 0) {
-            //                 foreach ($licenses as $license) {
-            //                     $license->update([
-            //                         'status' => LicenseStatuses::USED->value,
-            //                     ]);
-            //                 }
-            //             }
-
-            //             defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
-            //                 'type' => AtomikLogsTypes::MACRO10,
-            //                 'resourceble_id' => $journey->id,
-            //                 'resourceble_type' => get_class(object: $journey),
-            //                 'actor_id' => Auth::id(),
-            //                 'receiver_id' => $shift->user_id,
-            //                 'current_location' => $journey->train->origin->name,
-            //                 'train_id' => $journey->train_id,
-            //             ]));
-
-            //             return true;
-            //         }
-            //     }
-            // }
-
-            // abort(
-            //     code: Http::EXPECTATION_FAILED(),
-            //     message: 'Your journey is still in progress',
-            // );
-
             return true;
         });
 
-        if ( ! $ended) {
+        if ( ! $exited) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
                 message: 'Journey not ended.Please try again.',
             );
         }
-
 
 
         return response(

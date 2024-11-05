@@ -24,8 +24,11 @@ Route::middleware(['auth:sanctum', 'ability:read-journeys,request-journeys,edit-
 
             Route::patch('/{journey}/licenses/request', 'requestLicense')->name(name: 'request-license');
 
-            Route::patch('/{journey}/end', 'endJourney')->name(name: 'end-journey');
-
+            
             Route::post('/{journey}/location', 'createLocation')->name(name: 'create-location');
+            
+            Route::post('/{journey}/exit-line-request', 'sendExitLineRequest')->name(name: 'send-exit-line-request');
+
+            Route::patch('/{journey}/notifications/{notification}/exit-line', 'exitLine')->name(name: 'exit-line');
         });
     });

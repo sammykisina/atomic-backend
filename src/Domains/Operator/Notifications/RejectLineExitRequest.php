@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Domains\Driver\Notifications;
+namespace Domains\Operator\Notifications;
 
 use Domains\Driver\Models\Journey;
 use Domains\Shared\Enums\NotificationTypes;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-final class LineExitNotification extends Notification
+final class RejectLineExitRequest extends Notification
 {
     use Queueable;
 
@@ -27,9 +27,9 @@ final class LineExitNotification extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'Line exit request accepted.',
-            'description' => 'Your line exit request for train ' . $this->journey->train->name . ' was accepted.',
-            'type' => NotificationTypes::LINE_EXIT_REQUEST_ACCEPTED->value,
+            'message' => 'Line exit request rejected.',
+            'description' => 'Your line exit request for train ' . $this->journey->train->name . ' was rejected.Please continue with your current license allocations.You may also send a direct message to the operator incase you have any questions.',
+            'type' => NotificationTypes::LINE_EXIT_REQUEST_REJECTED->value,
         ];
     }
 }
