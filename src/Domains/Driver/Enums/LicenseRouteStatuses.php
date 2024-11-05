@@ -13,4 +13,6 @@ enum LicenseRouteStatuses: string
     case NEXT = 'NEXT';
 
     case COMPLETED = 'COMPLETED';
+
+    case REVOKED = 'REVOKED';
 }

@@ -12,6 +12,7 @@ use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Operator\Notifications\LicenseNotification;
 use Domains\Operator\Requests\LicenseRequest;
+use Domains\Operator\Requests\RevokeLicenseAreaRequest;
 use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
@@ -177,6 +178,87 @@ final class ManagementController
             status: Http::ACCEPTED(),
         );
     }
+
+
+    /**
+     * REVOKE LICENSE AREA (S)
+     * @param RevokeLicenseAreaRequest $request
+     * @param License $license
+     * @return Response|HttpException
+     */
+    public function revokeLicenseArea(RevokeLicenseAreaRequest $request, License $license): Response|HttpException
+    {
+        $destination = $license->destination; // Get the destination array directly
+        $through = collect($license->through); // Wrap the through array in a collection
+
+        $area_id = (int) $request->validated('area_id');
+        $area_type = $request->validated('type');
+
+        $revoke_fields = function (&$area): void {
+            $area['status'] = StationSectionLoopStatuses::GOOD->value;
+            $area['in_route'] = LicenseRouteStatuses::REVOKED->value;
+        };
+
+        // Step 1: Check if license only has origin and destination
+        if ($through->isEmpty()) {
+            $revoke_fields($destination);
+            $license->train_at_destination = false; // Update train status
+            $license->destination = $destination; // Set the updated destination
+            $license->save();
+
+            return response(
+                content: [
+                    'message' => 'License section (s) have been revoked successfully.',
+                ],
+                status: Http::ACCEPTED(),
+            );
+        }
+
+        // Step 2: Attempt to locate the revoke area in the `through` array
+        $revoke_started = false;
+        $affected_parts = [];
+        $unaffected_parts = [];
+
+        foreach ($through as &$area) {
+            if ($area['id'] === $area_id && $area['type'] === $area_type) {
+                // We found the area to revoke; mark as started
+                $revoke_started = true;
+            }
+
+            // If we have started revocation, revoke this area
+            if ($revoke_started) {
+                $revoke_fields($area); // Revoke this area
+                $affected_parts[] = $area; // Store affected area
+            } else {
+                // Otherwise, store unaffected areas
+                $unaffected_parts[] = $area;
+            }
+        }
+
+        // Step 3: Revoke the destination if revocation started or if it matches
+        if ($revoke_started || ($destination['id'] === $area_id && $destination['type'] === $area_type)) {
+            $revoke_fields($destination);
+            $license->train_at_destination = false; // Update train status
+        }
+
+        // Step 4: Build the new thought array without the destination
+        $new_thought = array_merge($unaffected_parts, $affected_parts);
+
+        // Update the license
+        $license->destination = $destination; // Set updated destination
+        $license->through = $new_thought; // Set updated through array without destination
+        $license->save();
+
+        return response(
+            content: [
+                'message' => 'License section (s) have been revoked successfully.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
+
+
+
 
     /**
      * CREATE LICENSE

@@ -8,6 +8,7 @@ use Domains\SuperAdmin\Models\Train;
 use Domains\SuperAdmin\Resources\TrainResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -30,7 +31,14 @@ final class SearchController
         if ($train && $train->journey) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
-                message: "This Service Order was used in another journey. Double check the Service Order or Contact OCC.",
+                message: "This Service Order was used in another journey. Double check the Service Order or Contact Trans Logic.",
+            );
+        }
+
+        if ($train->driver_id !== Auth::id()) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: "Sorry. This Service Order may not be yours. Please double check or contact Trans Logic.",
             );
         }
 

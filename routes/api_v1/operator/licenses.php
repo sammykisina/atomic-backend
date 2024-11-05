@@ -15,4 +15,9 @@ Route::middleware(['auth:sanctum', 'ability:read-journeys'])->group(function ():
     Route::controller(ManagementController::class) ->prefix('journeys')->as('journeys:')->group(function (): void {
         Route::post('{journey}/assign/license', 'assignLicense')->name(name: 'assign-license');
     });
+
+
+    Route::controller(ManagementController::class) ->prefix('licenses')->as('licenses:')->group(function (): void {
+        Route::patch('{license}/revoke-area', 'revokeLicenseArea')->name(name: 'revoke-license-area');
+    });
 });
