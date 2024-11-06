@@ -28,7 +28,6 @@ Route::middleware(['auth:sanctum', 'ability:read-journeys,request-journeys,edit-
             Route::post('/{journey}/location', 'createLocation')->name(name: 'create-location');
 
             Route::post('/{journey}/exit-line-request', 'sendExitLineRequest')->name(name: 'send-exit-line-request');
-
             Route::patch('/{journey}/notifications/{notification}/exit-line', 'exitLine')->name(name: 'exit-line');
         });
     });

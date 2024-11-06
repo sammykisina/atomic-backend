@@ -41,7 +41,6 @@ final class ManagementController
             ],
             status: Http::ACCEPTED(),
         );
-
     }
 
     /**
