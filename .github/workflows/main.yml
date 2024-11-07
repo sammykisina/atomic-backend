@@ -1,58 +1,15 @@
-# name: Main workflow
-
-# on: [push]
-
-# jobs:
-#   linting:
-#     name: Run static code analysis
-#     uses: ./.github/workflows/ci-lint.yml
-#     permissions: # Add permissions for contents: write
-#       contents: write # This gives the reusable workflow write access to the repository
-
-#   tests:
-#     name: Run tests
-#     needs: linting
-#     uses: ./.github/workflows/ci-test.yml
-
 name: Main workflow
 
-on:
-  push:
-    tags:
-      - "v*.*" # Trigger only for version tags like v1.0, v1.1, etc.
-    branches:
-      - main # This keeps your linting and test jobs running for main branch pushes too.
+on: [push]
 
 jobs:
   linting:
     name: Run static code analysis
     uses: ./.github/workflows/ci-lint.yml
-    permissions:
-      contents: write # Gives the reusable workflow write access to the repository
+    permissions: # Add permissions for contents: write
+      contents: write # This gives the reusable workflow write access to the repository
 
   tests:
     name: Run tests
     needs: linting
     uses: ./.github/workflows/ci-test.yml
-
-  sync-main-with-tag:
-    name: Sync Main with Latest Tag
-    needs: tests
-    if: startsWith(github.ref, 'refs/tags/v') # Run only if the ref is a version tag
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.ref }} # Check out the tag that triggered the workflow
-
-      - name: Update Main Branch
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout main
-          git merge --ff-only ${{ github.ref }} # Fast-forward main to match the tag
-          git push origin main
