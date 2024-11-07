@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Operator\Shifts;
 
-
 use Carbon\Carbon;
 use Domains\Driver\Models\Panic;
 use Domains\Driver\Notifications\PanicAcknowledgedNotification;
