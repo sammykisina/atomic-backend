@@ -9,6 +9,7 @@ use Domains\SuperAdmin\Imports\StationsImport;
 use Domains\SuperAdmin\Models\Station;
 use Domains\SuperAdmin\Requests\CreateOrEditStationRequest;
 use Domains\SuperAdmin\Resources\StationResource;
+use Domains\SuperAdmin\Services\LineService;
 use Domains\SuperAdmin\Services\StationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -145,6 +146,35 @@ final class ManagementController
      */
     public function delete(Station $station): Response | HttpException
     {
+        $line = LineService::getLineWithId(
+            line_id: $station->line_id,
+        );
+
+        // Check if this is the last station in its line
+        if ($line->stations()->count() > 1) {
+            abort(
+                code: Http::FORBIDDEN(),
+                message: 'Cannot delete station as it is not the last station in its line.',
+            );
+        }
+
+        // Ensure the station has no associated loops
+        if ($station->loops()->exists()) {
+            abort(
+                code: Http::FORBIDDEN(),
+                message: 'Cannot delete station as it has associated loops.',
+            );
+        }
+
+        // Ensure the station has no associated sections
+        if ($station->section) {
+            abort(
+                code: Http::FORBIDDEN(),
+                message: 'Cannot delete station as it has associated section. Delete the section first.',
+            );
+        }
+
+        // Attempt to delete the station
         if ( ! $station->delete()) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
@@ -159,4 +189,5 @@ final class ManagementController
             status: Http::OK(),
         );
     }
+
 }

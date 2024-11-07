@@ -124,6 +124,13 @@ final class ManagementController
      */
     public function delete(Line $line): Response | HttpException
     {
+        if ($line->stations()->exists()) {
+            abort(
+                code: Http::FORBIDDEN(),
+                message: 'Cannot delete line as it has associated stations.Please delete them first.',
+            );
+        }
+
         if ( ! $line->delete()) {
             abort(
                 code: Http::EXPECTATION_FAILED(),

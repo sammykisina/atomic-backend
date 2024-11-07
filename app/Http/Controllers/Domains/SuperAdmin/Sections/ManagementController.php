@@ -97,6 +97,29 @@ final class ManagementController
     }
 
     /**
+     * DELETE SECTION
+     * @param Section $section
+     * @return Response|HttpException
+     */
+    public function delete(Section $section): Response | HttpException
+    {
+        if ( ! $section->delete()) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Section deletion failed.',
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'Section deleted successfully.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
+
+
+    /**
      * EXPORT SECTIONS TEMPLATE
      * @param Excel $excel
      * @return BinaryFileResponse

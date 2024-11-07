@@ -98,4 +98,26 @@ final class ManagementController
             status: Http::OK(),
         );
     }
+
+    /**
+     * DELETE LOOP
+     * @param Loop $loop
+     * @return Response|HttpException
+     */
+    public function delete(Loop $loop): Response | HttpException
+    {
+        if ( ! $loop->delete()) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Loop deletion failed.',
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'Loop deleted successfully.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
 }

@@ -13,5 +13,6 @@ Route::middleware(['auth:sanctum', 'ability:read-loops,create-loops,edit-loops,d
         Route::post('lines/{line}/stations/{station}/loops', 'create')->name(name: 'create');
         Route::patch('lines/{line}/stations/{station}/loops/{loop}/edit', 'edit')->name(name: 'edit');
         Route::get('loops/{loop}/show', 'show')->name(name: 'show');
+        Route::delete('loops/{loop}/delete', 'delete')->name(name: 'delete');
     });
 });
