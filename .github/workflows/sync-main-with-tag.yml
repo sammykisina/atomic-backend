@@ -1,0 +1,24 @@
+name: Sync Main with Latest Tag
+
+on:
+  push:
+    tags:
+      - "v*.*" # Matches version tags like v1.0, v1.1, etc.
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }} # Checkout the specific tag that triggered the workflow
+
+      - name: Update Main Branch
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout main
+          git merge --ff-only ${{ github.ref }}  # Fast-forward main to the tag
+          git push origin main
