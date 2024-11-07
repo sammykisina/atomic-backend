@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Operator\Shifts;
 
+
 use Carbon\Carbon;
 use Domains\Driver\Models\Panic;
+use Domains\Driver\Notifications\PanicAcknowledgedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JustSteveKing\StatusCode\Http;
@@ -24,6 +26,8 @@ final class AcknowledgePanicController
                 message: 'Panic not acknowledged. PLease try again.',
             );
         }
+
+        $panic->journey->train->driver->notify(new PanicAcknowledgedNotification(panic: $panic));
 
         return response(
             content: [

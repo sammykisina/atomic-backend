@@ -292,7 +292,7 @@ final class ManagementController
 
         return response(
             content: [
-                'message' => 'Journey ended successfully.',
+                'message' => 'Line exit request sent successfully.',
             ],
             status: Http::ACCEPTED(),
         );

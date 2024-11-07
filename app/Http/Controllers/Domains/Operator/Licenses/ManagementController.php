@@ -257,9 +257,6 @@ final class ManagementController
         );
     }
 
-
-
-
     /**
      * CREATE LICENSE
      * @param LicenseRequest $request
