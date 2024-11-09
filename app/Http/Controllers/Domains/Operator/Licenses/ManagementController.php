@@ -16,10 +16,12 @@ use Domains\Operator\Requests\RevokeLicenseAreaRequest;
 use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
+use Domains\Shared\Models\AtomikLog;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Domains\SuperAdmin\Models\Shift;
 use Domains\SuperAdmin\Services\TrainService;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Notifications\DatabaseNotification;
@@ -289,6 +291,44 @@ final class ManagementController
             model_id: $destination_id,
         );
 
+        /**
+         * CHECK LICENSE JOURNEY DIRECTION
+         */
+        $journey_direction = $journey->direction;
+
+        // dd($this->getKMs(
+        //         type: AtomikLog::getResourcebleType(namespaceString: get_class(object: $origin)),
+        //         model: $origin,
+        //     ));
+
+        // dd($destination);
+        // dd(AtomikLog::getResourcebleType(namespaceString: get_class(object: $destination)));
+        // dd( destination: $this->getKMs(
+        //         type: AtomikLog::getResourcebleType(namespaceString: get_class(object: $destination)),
+        //         model: $destination,
+        //     ),);
+
+        $license_direction = JourneyService::getJourneyDirection(
+            origin: $this->getKMs(
+                type: AtomikLog::getResourcebleType(namespaceString: get_class(object: $origin)),
+                model: $origin,
+            ),
+            destination: $this->getKMs(
+                type: AtomikLog::getResourcebleType(namespaceString: get_class(object: $destination)),
+                model: $destination,
+            ),
+        )->value;
+
+
+
+
+        if ($journey_direction->value !== $license_direction) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'License direction does not match with journey direction. Please try again',
+            );
+        }
+
         $throughs = $request->validated('through');
         $updated_throughs = array_map(
             callback: function (array $through) use ($throughs): array {
@@ -320,10 +360,7 @@ final class ManagementController
             licenseData: [
                 'license_number' => $uniqueLicenseNumber,
                 'journey_id' => $journey->id,
-                'direction' => JourneyService::getJourneyDirection(
-                    origin: $train->origin->start_kilometer,
-                    destination: $train->destination->start_kilometer,
-                )->value,
+                'direction' => $license_direction,
 
                 'origin' => [
                     'id' => $origin_id,
@@ -361,6 +398,25 @@ final class ManagementController
         ));
 
         return $license;
+    }
+
+
+
+
+
+    /**
+     * Summary of getArea
+     * @param string $type
+     * @param Model $model
+     * @return float
+     */
+    private function getKMs(string $type, Model $model): float
+    {
+        return match ($type) {
+            'Station' => $model->start_kilometer,
+            'Section' => $model->station->end_kilometer,
+            'Loop' => $model->station->start_kilometer,
+        };
     }
 
 }

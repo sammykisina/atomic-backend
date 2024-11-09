@@ -185,97 +185,65 @@ final class ClearLicenseAreaController
             } else {
                 foreach ($through as $index => &$point) {
                     if ($point['train_is_here']) {
-                        // Check if there's a valid next point to occupy
-                        $nextIndex = $index + 1;
-                        $hasValidNextPoint = false;
-
-                        // Look for a valid, non-revoked point in the remaining sections
-                        for ($i = $nextIndex; $i < count($through); $i++) {
-                            if ($through[$i]['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
-                                $hasValidNextPoint = true;
-                                break;
-                            }
-                        }
-
-                        // If no valid next point is available, abort with a message
-                        if ( ! $hasValidNextPoint) {
-                            abort(
-                                code: Http::FORBIDDEN(),
-                                message: 'No valid next area for the train to occupy. Clearing the current area is not allowed.',
-                            );
-                        }
-
-                        // Proceed to clear the current point
+                        // Clear the current point
                         $point['train_is_here'] = false;
                         $point['status'] = StationSectionLoopStatuses::GOOD->value;
                         $point['end_time'] = now();
                         $point['in_route'] = LicenseRouteStatuses::COMPLETED->value;
 
-                        // Handle transitions to the next point if available
-                        if ($index === count($through) - 1) {
-                            // Final destination logic as before
-                            if ($destination['in_route'] === LicenseRouteStatuses::REVOKED->value) {
-                                abort(
-                                    code: Http::FORBIDDEN(),
-                                    message: 'Destination is revoked. Please request a line exit.',
-                                );
-                            }
+                        // Check if we are clearing the second-to-last element of `through`
+                        $isSecondToLastPoint = (count($through) > 1 && $index === count($through) - 2);
 
-                            $destination['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
-                            $destination['start_time'] = now();
-                            $license->destination = $destination;
-                            $license->train_at_destination = true;
-                        } elseif ($index === count($through) - 2) {
+                        if ($isSecondToLastPoint) {
+                            // Set the last point as `OCCUPIED`
                             $lastPoint = &$through[$index + 1];
-
-                            if ($lastPoint['in_route'] === LicenseRouteStatuses::REVOKED->value) {
-                                abort(
-                                    code: Http::FORBIDDEN(),
-                                    message: 'The last through area is revoked and cannot be occupied.',
-                                );
-                            }
-
                             $lastPoint['train_is_here'] = true;
                             $lastPoint['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
                             $lastPoint['start_time'] = now();
                             $lastPoint['status'] = StationSectionLoopStatuses::LICENSE_ISSUED->value;
 
+                            // Set `destination` as `NEXT` if it’s not revoked
                             if ($destination['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
                                 $destination['in_route'] = LicenseRouteStatuses::NEXT->value;
-                                $license->destination = $destination;
+                            } else {
+                                // Abort if destination is revoked
+                                abort(
+                                    code: Http::FORBIDDEN(),
+                                    message: 'Destination is revoked. Please request a line exit.',
+                                );
                             }
                         } else {
-                            if (isset($through[$index + 1])) {
-                                $nextPoint = &$through[$index + 1];
+                            // For cases where we are not clearing the second-to-last point, move to the next available `through` point
+                            for ($i = $index + 1; $i < count($through); $i++) {
+                                if ($through[$i]['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
+                                    $nextPoint = &$through[$i];
+                                    $nextPoint['train_is_here'] = true;
+                                    $nextPoint['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
+                                    $nextPoint['start_time'] = now();
+                                    $nextPoint['status'] = StationSectionLoopStatuses::LICENSE_ISSUED->value;
 
-                                if ($nextPoint['in_route'] === LicenseRouteStatuses::REVOKED->value) {
-                                    continue;
-                                }
-
-                                $nextPoint['train_is_here'] = true;
-                                $nextPoint['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
-                                $nextPoint['start_time'] = now();
-                                $nextPoint['status'] = StationSectionLoopStatuses::LICENSE_ISSUED->value;
-
-                                if (isset($through[$index + 2]) && $through[$index + 2]['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
-                                    $through[$index + 2]['in_route'] = LicenseRouteStatuses::NEXT->value;
+                                    // Set the following valid point as NEXT if it exists
+                                    if (isset($through[$i + 1]) && $through[$i + 1]['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
+                                        $through[$i + 1]['in_route'] = LicenseRouteStatuses::NEXT->value;
+                                    }
+                                    break;
                                 }
                             }
                         }
 
-                        break;
+                        break; // Exit loop after processing the current point
                     }
                 }
 
             }
 
             // Additional check to prevent clearing the destination if the train is already there
-            if ($license->train_at_destination) {
-                abort(
-                    code: Http::FORBIDDEN(),
-                    message: 'The train is already at its last license-allocated area. Please exit the line or allocate a new license.',
-                );
-            }
+            // if ($license->train_at_destination) {
+            //     abort(
+            //         code: Http::FORBIDDEN(),
+            //         message: 'The train is already at its last license-allocated area. Please exit the line or allocate a new license.',
+            //     );
+            // }
 
             // Save the updated through array and license model
             $license->through = $through;
@@ -290,3 +258,168 @@ final class ClearLicenseAreaController
         );
     }
 }
+
+// final class ClearLicenseAreaController
+// {
+//     public function __invoke(ClearRequest $request, License $license): Response
+//     {
+//         DB::transaction(function () use ($request, $license): void {
+//             $model = LicenseService::getModel(
+//                 model_type: $request->validated('type'),
+//                 model_id: $request->validated('area_id'),
+//             );
+
+//             if ( ! $model) {
+//                 abort(
+//                     code: Http::EXPECTATION_FAILED(),
+//                     message: 'No model found. Please try again',
+//                 );
+//             }
+
+//             $through = $license->through;
+//             $destination = $license->destination;
+
+//             if ($license->train_at_origin) {
+//                 // Clear origin and handle transition to `through` or `destination`
+//                 $license->train_at_origin = false;
+//                 $origin = $license->origin;
+//                 $origin['status'] = StationSectionLoopStatuses::GOOD->value;
+//                 $origin['end_time'] = now();
+//                 $origin['in_route'] = LicenseRouteStatuses::COMPLETED->value;
+//                 $license->origin = $origin;
+
+//                 // Occupy destination if there's no through point
+//                 if (empty($through)) {
+//                     $this->occupyDestination($license, $destination);
+//                 } else {
+//                     $this->occupyFirstThrough($through, $license, $destination);
+//                 }
+//             } else {
+//                 $this->clearCurrentThroughPoint($through, $license, $destination);
+//             }
+
+//             // Save updated license
+//             $license->through = $through;
+//             $license->save();
+//         });
+
+//         return response(
+//             content: [
+//                 'message' => 'Area cleared successfully.',
+//             ],
+//             status: Http::ACCEPTED(),
+//         );
+//     }
+
+//     private function occupyFirstThrough(array &$through, License $license, array &$destination): void
+//     {
+//         if ($through[0]['in_route'] === LicenseRouteStatuses::REVOKED->value) {
+//             abort(
+//                 code: Http::FORBIDDEN(),
+//                 message: 'The first through area is revoked and cannot be occupied.',
+//             );
+//         }
+
+//         // Occupy the first through point
+//         $through[0]['train_is_here'] = true;
+//         $through[0]['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
+//         $through[0]['start_time'] = now();
+//         $through[0]['status'] = StationSectionLoopStatuses::LICENSE_ISSUED->value;
+
+//         // If there's only one through point, mark the destination as NEXT
+//         if (1 === count($through)) {
+//             if ($destination['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
+//                 $destination['in_route'] = LicenseRouteStatuses::NEXT->value;
+//                 $license->destination = $destination;
+//             }
+//         }
+
+//         // Mark next through point as NEXT if there are more than one
+//         if (count($through) > 1 && $through[1]['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
+//             $through[1]['in_route'] = LicenseRouteStatuses::NEXT->value;
+//         }
+//     }
+
+//     private function occupyDestination(License $license, array &$destination): void
+//     {
+//         if ($destination['in_route'] === LicenseRouteStatuses::REVOKED->value) {
+//             abort(
+//                 code: Http::FORBIDDEN(),
+//                 message: 'The destination area is revoked and cannot be occupied.',
+//             );
+//         }
+
+//         $destination['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
+//         $destination['start_time'] = now();
+//         $license->destination = $destination;
+//         $license->train_at_destination = true;
+//     }
+
+//     private function clearCurrentThroughPoint(array &$through, License $license, array &$destination): void
+//     {
+//         foreach ($through as $index => &$point) {
+//             if ($point['train_is_here']) {
+//                 // Clear the current point
+//                 $point['train_is_here'] = false;
+//                 $point['status'] = StationSectionLoopStatuses::GOOD->value;
+//                 $point['end_time'] = now();
+//                 $point['in_route'] = LicenseRouteStatuses::COMPLETED->value;
+
+//                 // Handle the case when we clear the origin (first through section)
+//                 if (0 === $index) {
+//                     // Transition the next through point if exists
+//                     if (count($through) > 1 && $through[1]['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
+//                         $through[1]['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
+//                         $through[1]['train_is_here'] = true;
+//                         $through[1]['start_time'] = now();
+//                         $through[1]['status'] = StationSectionLoopStatuses::LICENSE_ISSUED->value;
+//                     }
+//                     // Mark destination as NEXT if there's only one through point
+//                     if (1 === count($through) && $destination['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
+//                         $destination['in_route'] = LicenseRouteStatuses::NEXT->value;
+//                     }
+//                 }
+
+//                 // Handle the case for the second-to-last through point
+//                 if ($index === count($through) - 2) {
+//                     // Mark the destination as NEXT
+//                     if ($destination['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
+//                         $destination['in_route'] = LicenseRouteStatuses::NEXT->value;
+//                     }
+//                 }
+
+//                 dd();
+
+//                 // Handle the case for the last through point (clear it and occupy the destination)
+//                 if ($index === count($through) - 1) {
+//                     // If this is the last point in the through, mark the destination as OCCUPIED
+//                     if ($destination['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
+//                         $destination['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
+//                         $destination['start_time'] = now();  // Set the start time for destination occupancy
+//                         $destination['status'] = StationSectionLoopStatuses::LICENSE_ISSUED->value;
+//                     }
+//                 }
+
+//                 // Transition to the next through section if there are more points
+//                 if ($index < count($through) - 1) {
+//                     $this->occupyNextThroughPoint($through, $index + 1);
+//                 }
+
+//                 break; // Exit the loop once the current point is cleared and processed
+//             }
+//         }
+//     }
+
+
+//     private function occupyNextThroughPoint(array &$through, int $nextIndex): void
+//     {
+//         // Ensure that the next through point exists and is not revoked
+//         if (isset($through[$nextIndex]) && $through[$nextIndex]['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
+//             // Occupy the next through point
+//             $through[$nextIndex]['train_is_here'] = true;
+//             $through[$nextIndex]['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
+//             $through[$nextIndex]['start_time'] = now();
+//             $through[$nextIndex]['status'] = StationSectionLoopStatuses::LICENSE_ISSUED->value;
+//         }
+//     }
+// }

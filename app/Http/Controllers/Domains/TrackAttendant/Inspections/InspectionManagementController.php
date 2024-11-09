@@ -91,10 +91,12 @@ final class InspectionManagementController
                 message: 'You can only have one inspection a day. Check on the current active inspection actions to continue with your currently active inspection.',
             );
         }
+
         $inspection = $this->inspectionService->createInspection(
             inspectionData: $request->validated(),
             inspection_schedule: $inspection_schedule,
         );
+
         if ( ! $inspection) {
             abort(
                 code: Http::EXPECTATION_FAILED(),

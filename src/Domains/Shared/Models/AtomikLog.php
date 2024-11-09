@@ -23,6 +23,17 @@ final class AtomikLog extends Model
         'train_id',
     ];
 
+    /**
+     * GET RESOURCE TYPE
+     * @param mixed $namespaceString
+     * @return string
+     */
+    public static function getResourcebleType($namespaceString): string
+    {
+        $parts = explode(separator: '\\', string: $namespaceString);
+        return end($parts);
+    }
+
     /** @return array<string, mixed> */
     public function casts(): array
     {
@@ -62,16 +73,5 @@ final class AtomikLog extends Model
             related: Train::class,
             foreignKey: 'train_id',
         );
-    }
-
-    /**
-     * GET RESOURCE TYPE
-     * @param mixed $namespaceString
-     * @return string
-     */
-    public function getResourcebleType($namespaceString): string
-    {
-        $parts = explode(separator: '\\', string: $namespaceString);
-        return end($parts);
     }
 }
