@@ -22,11 +22,11 @@ final class JourneyResource extends JsonResource
             'is_active' => $this->resource->is_active,
             'is_authorized' => $this->resource->is_authorized,
             'direction' => $this->resource->direction,
-            // 'train' => new TrainResource(
-            //     resource: $this->whenLoaded(
-            //         relationship: 'train',
-            //     ),
-            // ),
+            'train' => new TrainResource(
+                resource: $this->whenLoaded(
+                    relationship: 'train',
+                ),
+            ),
             'licenses' => LicenseResource::collection(
                 resource: $this->whenLoaded(
                     relationship: 'licenses',
