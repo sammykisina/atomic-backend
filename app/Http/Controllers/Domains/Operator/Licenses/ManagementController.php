@@ -20,7 +20,6 @@ use Domains\Shared\Models\AtomikLog;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Domains\SuperAdmin\Models\Shift;
-use Domains\SuperAdmin\Services\TrainService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -267,7 +266,7 @@ final class ManagementController
      */
     private function createLicense(LicenseRequest $request, Journey $journey): License
     {
-    
+
         /**
          * ORIGIN
          */
