@@ -357,6 +357,14 @@ final class ClearLicenseAreaController
 
     private function clearCurrentThroughPoint(array &$through, License $license, array &$destination): void
     {
+        // Check if the train is already at the destination
+        if ($license->train_at_destination) {
+            abort(
+                code: Http::FORBIDDEN(),
+                message: 'The train is already at the destination and cannot proceed further.',
+            );
+        }
+
         foreach ($through as $index => &$point) {
             if ($point['train_is_here']) {
                 // Clear the current point
@@ -396,6 +404,11 @@ final class ClearLicenseAreaController
                         $destination['start_time'] = now();  // Set the start time for destination occupancy
                         $destination['status'] = StationSectionLoopStatuses::LICENSE_ISSUED->value;
                         $license->train_at_destination = true; // Set train_at_destination to true
+                    } else {
+                        abort(
+                            code: Http::FORBIDDEN(),
+                            message: 'Destination is revoked.',
+                        );
                     }
                 }
 
@@ -415,6 +428,13 @@ final class ClearLicenseAreaController
 
     private function occupyNextThroughPoint(array &$through, int $nextIndex): void
     {
+        if ($through[$nextIndex]['in_route'] === LicenseRouteStatuses::REVOKED->value) {
+            abort(
+                code: Http::FORBIDDEN(),
+                message: 'The next through area is revoked and cannot be occupied.',
+            );
+        }
+
         // Ensure that the next through point exists and is not revoked
         if (isset($through[$nextIndex]) && $through[$nextIndex]['in_route'] !== LicenseRouteStatuses::REVOKED->value) {
             // Occupy the next through point

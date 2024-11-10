@@ -267,8 +267,7 @@ final class ManagementController
      */
     private function createLicense(LicenseRequest $request, Journey $journey): License
     {
-        $train = TrainService::getTrainById(train_id: $journey->train->id);
-
+    
         /**
          * ORIGIN
          */
@@ -295,18 +294,6 @@ final class ManagementController
          * CHECK LICENSE JOURNEY DIRECTION
          */
         $journey_direction = $journey->direction;
-
-        // dd($this->getKMs(
-        //         type: AtomikLog::getResourcebleType(namespaceString: get_class(object: $origin)),
-        //         model: $origin,
-        //     ));
-
-        // dd($destination);
-        // dd(AtomikLog::getResourcebleType(namespaceString: get_class(object: $destination)));
-        // dd( destination: $this->getKMs(
-        //         type: AtomikLog::getResourcebleType(namespaceString: get_class(object: $destination)),
-        //         model: $destination,
-        //     ),);
 
         $license_direction = JourneyService::getJourneyDirection(
             origin: $this->getKMs(
