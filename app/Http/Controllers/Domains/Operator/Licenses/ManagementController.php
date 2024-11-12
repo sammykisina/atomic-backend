@@ -8,6 +8,7 @@ use Domains\Driver\Enums\LicenseRouteStatuses;
 use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
+use Domains\Driver\Notifications\LicenseAreasRevoked;
 use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Operator\Notifications\LicenseNotification;
@@ -249,6 +250,10 @@ final class ManagementController
         $license->destination = $destination; // Set updated destination
         $license->through = $new_thought; // Set updated through array without destination
         $license->save();
+
+        $license->journey->train->driver->notify(new LicenseAreasRevoked(
+
+        ));
 
         return response(
             content: [

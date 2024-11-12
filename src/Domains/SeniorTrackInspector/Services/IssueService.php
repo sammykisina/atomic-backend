@@ -23,7 +23,8 @@ final class IssueService
      */
     public static function issueLocation(Issue $issue): IssueArea|null
     {
-        $line_id = $issue->inspection->inspectionSchedule->line->id;
+        // $line_id = $issue->inspection->inspectionSchedule->line->id;
+        $line_id = $issue->inspection->inspectionSchedule->line_id;
 
         $line = LineService::getLineWithId(line_id: $line_id);
         $issue_kilometer = $issue->issue_kilometer;
