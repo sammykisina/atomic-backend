@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 final class CreateLineValidationPatternController
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): void
     {
         // Fetch all lines with their related stations, loops, and sections
         // $lines = Line::with(['stations.loops', 'stations.section'])->get();
