@@ -7,6 +7,8 @@ namespace Domains\Operator\Services;
 use Carbon\Carbon;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
+use Domains\Shared\Enums\AtomikLogsTypes;
+use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Models\Loop;
 use Domains\SuperAdmin\Models\Section;
 use Domains\SuperAdmin\Models\Station;
@@ -71,6 +73,37 @@ final class LicenseService
     public static function getPrevLatestLicense(Journey $journey): ?License
     {
         return License::query()->where('journey_id', $journey->id)->latest()->first();
+    }
+
+    /**
+     * CREATE LICENSE AFTER MATHS
+     * @param License $license
+     * @param Journey $journey
+     * @return void
+     */
+    public static function createLicenseAfterMaths(License $license, Journey $journey): void
+    {
+        $license->update(attributes: [
+            'logs' => [
+                [
+                    'type' => AtomikLogsTypes::LICENSE_CREATED->value,
+                    'created_at' => $license->created_at,
+                    'created_by' => Auth::user()->employee_id,
+                ],
+            ],
+        ]);
+
+        AtomikLogService::createAtomicLog(
+            atomikLogData: [
+                'type' => AtomikLogsTypes::LICENSE_CREATED->value,
+                'resourceble_id' => $license->id,
+                'resourceble_type' => License::class,
+                'actor_id' => Auth::id(),
+                'current_location' => '',
+                'train_id' => $journey->train_id,
+                'receiver_id' => $journey->train->driver_id,
+            ],
+        );
     }
     /**
      * GENERATE A UNIQUE RANDOM LICENSE NUMBER

@@ -51,7 +51,7 @@ final class LicenseResource extends JsonResource
                     relationship: 'journey',
                 ),
             ),
-
+            'logs' => $this->resource->logs,
         ];
     }
 }

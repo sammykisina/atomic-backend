@@ -13,7 +13,12 @@ final class LicenseAreasRevoked extends Notification
     use Queueable;
 
     public function __construct(
-
+        public string $message,
+        public string $description,
+        public int $area_id,
+        public string $type,
+        public NotificationTypes $notificationTypes,
+        public int $license_id,
     ) {}
 
     /** @return array<int, string> */
@@ -22,14 +27,16 @@ final class LicenseAreasRevoked extends Notification
         return ['database'];
     }
 
-
     /** @return array<string, mixed> */
     public function toArray(object $notifiable): array
     {
         return [
-            'message' => 'The license areas have been revoked',
-            'description' => 'Please be advised that some sections in your active license have been revoked (canceled). You can view your new license adjustments on your screen.',
-            'type' => NotificationTypes::LICENSE_AREAS_REVOKED->value,
+            'message' => $this->message,
+            'description' => $this->description,
+            'type' => $this->notificationTypes->value,
+            'area_id' => $this->area_id,
+            'area_type' => $this->type,
+            'license_id' => $this->license_id,
         ];
     }
 }

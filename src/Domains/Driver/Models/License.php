@@ -36,26 +36,11 @@ final class License extends Model
         'destination',
         'train_at_destination',
 
+        'logs',
+
         'rejected_at',
         'confirmed_at',
     ];
-
-    /** @return array<string, mixed> */
-    public function casts(): array
-    {
-        return [
-            'status' => LicenseStatuses::class,
-            'direction' => LicenseDirections::class,
-            'through' => 'json',
-            'origin' => 'json',
-            'destination' => 'json',
-            'issued_at' => 'datetime',
-            'rejected_at' => 'datetime',
-            'confirmed_at' => 'datetime',
-            'train_at_destination' => 'boolean',
-            'train_at_origin' => 'boolean',
-        ];
-    }
 
     /** @return BelongsTo<User>*/
     public function issuer(): BelongsTo
@@ -95,4 +80,21 @@ final class License extends Model
         return Str::upper(value: end($parts));
     }
 
+    /** @return array<string, mixed> */
+    public function casts(): array
+    {
+        return [
+            'status' => LicenseStatuses::class,
+            'direction' => LicenseDirections::class,
+            'through' => 'json',
+            'logs' => 'json',
+            'origin' => 'json',
+            'destination' => 'json',
+            'issued_at' => 'datetime',
+            'rejected_at' => 'datetime',
+            'confirmed_at' => 'datetime',
+            'train_at_destination' => 'boolean',
+            'train_at_origin' => 'boolean',
+        ];
+    }
 }

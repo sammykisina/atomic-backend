@@ -112,9 +112,18 @@ final class ManagementController
                 journey: $journey,
             );
 
+            $logs = array_merge([
+                [
+                    'type' => AtomikLogsTypes::LICENSE_USED->value,
+                    'marked_as_used_by' => Auth::user()->employee_id,
+                    'marked_at' => now(),
+                ],
+            ], $prev_latest_license->logs);
+
             if ($prev_latest_license) {
                 $prev_latest_license->update(attributes: [
                     'status' => LicenseStatuses::USED->value,
+                    'logs' => $logs,
                 ]);
             }
 
@@ -126,6 +135,11 @@ final class ManagementController
             $journey->update(attributes: [
                 'shifts' => $currentShiftIds,
             ]);
+
+            defer(callback: fn() => LicenseService::createLicenseAfterMaths(
+                license: $license,
+                journey: $journey,
+            ));
 
             return $license;
         });
@@ -190,74 +204,40 @@ final class ManagementController
      */
     public function revokeLicenseArea(RevokeLicenseAreaRequest $request, License $license): Response|HttpException
     {
-        $destination = $license->destination; // Get the destination array directly
-        $through = collect($license->through); // Wrap the through array in a collection
-
-        $area_id = (int) $request->validated('area_id');
-        $area_type = $request->validated('type');
-
-        $revoke_fields = function (&$area): void {
-            $area['status'] = StationSectionLoopStatuses::GOOD->value;
-            $area['in_route'] = LicenseRouteStatuses::REVOKED->value;
-        };
-
-        // Step 1: Check if license only has origin and destination
-        if ($through->isEmpty()) {
-            $revoke_fields($destination);
-            $license->train_at_destination = false; // Update train status
-            $license->destination = $destination; // Set the updated destination
-            $license->save();
-
-            return response(
-                content: [
-                    'message' => 'License section (s) have been revoked successfully.',
-                ],
-                status: Http::ACCEPTED(),
-            );
-        }
-
-        // Step 2: Attempt to locate the revoke area in the `through` array
-        $revoke_started = false;
-        $affected_parts = [];
-        $unaffected_parts = [];
-
-        foreach ($through as &$area) {
-            if ($area['id'] === $area_id && $area['type'] === $area_type) {
-                // We found the area to revoke; mark as started
-                $revoke_started = true;
-            }
-
-            // If we have started revocation, revoke this area
-            if ($revoke_started) {
-                $revoke_fields($area); // Revoke this area
-                $affected_parts[] = $area; // Store affected area
-            } else {
-                // Otherwise, store unaffected areas
-                $unaffected_parts[] = $area;
-            }
-        }
-
-        // Step 3: Revoke the destination if revocation started or if it matches
-        if ($revoke_started || ($destination['id'] === $area_id && $destination['type'] === $area_type)) {
-            $revoke_fields($destination);
-            $license->train_at_destination = false; // Update train status
-        }
-
-        // Step 4: Build the new thought array without the destination
-        $new_thought = array_merge($unaffected_parts, $affected_parts);
-
-        // Update the license
-        $license->destination = $destination; // Set updated destination
-        $license->through = $new_thought; // Set updated through array without destination
-        $license->save();
-
         $license->journey->train->driver->notify(new LicenseAreasRevoked(
-
+            message: 'License section area(s) revocation initiated',
+            description: 'Please be advised that some sections in your active license have been marked to be revoked (canceled).',
+            area_id: $request->validated('area_id'),
+            type: $request->validated('type'),
+            notificationTypes: NotificationTypes::LICENSE_REVOKE_REQUEST,
+            license_id : $license->id,
         ));
+
+        $logs = array_merge([
+            [
+                'type' => AtomikLogsTypes::LICENSE_REVOKE_REQUEST->value,
+                'send_by' => Auth::user()->employee_id,
+                'send_at' => now(),
+            ],
+        ], $license->logs);
+
+        $license->update(attributes: [
+            'logs' => $logs,
+        ]);
+
+        defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+            'type' => AtomikLogsTypes::LICENSE_REVOKE_REQUEST,
+            'resourceble_id' => $license->id,
+            'resourceble_type' => get_class(object: $license),
+            'actor_id' => Auth::id(),
+            'receiver_id' => $license->journey->train->driver_id,
+            'current_location' => '',
+            'train_id' => $license->journey->train_id,
+        ]));
 
         return response(
             content: [
-                'message' => 'License section (s) have been revoked successfully.',
+                'message' => 'Driver of train ' . $license->journey->train->locomotiveNumber->number . " has been notified of your intention to revoke some of his/her license section(s).Please await response.",
             ],
             status: Http::ACCEPTED(),
         );
