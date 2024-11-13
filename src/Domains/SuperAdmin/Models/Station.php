@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Models;
 
-use Domains\SuperAdmin\Enums\StationPositions;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -71,7 +70,7 @@ final class Station extends Model
     protected function casts(): array
     {
         return [
-            'position_from_line' => StationPositions::class,
+            'position_from_line' => 'integer',
             'is_yard' => 'boolean',
             'status' => StationSectionLoopStatuses::class,
         ];
