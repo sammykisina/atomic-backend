@@ -8,7 +8,10 @@ use Carbon\Carbon;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\Panic;
 use Domains\Driver\Requests\PanicRequest;
+use Domains\Shared\Enums\AtomikLogsTypes;
+use Domains\Shared\Services\AtomikLogService;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
 
 final class StoreController
@@ -36,6 +39,16 @@ final class StoreController
                 message: 'Panic not send to  operator. PLease try again.',
             );
         }
+
+        defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+            'type' => AtomikLogsTypes::EMERGENCY_ALERT,
+            'resourceble_id' => $panic->id,
+            'resourceble_type' => get_class($panic),
+            'actor_id' => Auth::id(),
+            'receiver_id' => $panic->shift->user_id,
+            'current_location' => $panic->latitude . ', ' . $panic->longitude ,
+            'train_id' => $journey->train_id,
+        ]));
 
         return response(
             content: [
