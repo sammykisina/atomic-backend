@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Shared\Resources;
 
 use Domains\Shared\Models\AtomikLog;
+use Domains\SuperAdmin\Resources\LocomotiveNumberResource;
 use Domains\SuperAdmin\Resources\TrainResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -43,6 +44,11 @@ final class AtomikLogResource extends JsonResource
                 ),
             ),
             'current_location' => $this->resource->current_location,
+            'locomotive' => new LocomotiveNumberResource(
+                resource: $this->whenLoaded(
+                    relationship: 'locomotive',
+                )
+            )
         ];
     }
 }

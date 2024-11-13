@@ -33,4 +33,6 @@ enum AtomikLogsTypes: string
     case LICENSE_REJECTED = 'LICENSE_REJECTED';
 
     case EMERGENCY_ALERT = 'EMERGENCY_ALERT';
+
+    case COMMUNICATION = 'COMMUNICATION';
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Shared\Models;
 
 use Domains\Shared\Enums\AtomikLogsTypes;
+use Domains\SuperAdmin\Models\LocomotiveNumber;
 use Domains\SuperAdmin\Models\Train;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,6 +22,7 @@ final class AtomikLog extends Model
         'receiver_id',
         'current_location',
         'train_id',
+        'locomotive_number_id'
     ];
 
     /**
@@ -63,6 +65,15 @@ final class AtomikLog extends Model
         return $this->belongsTo(
             related: User::class,
             foreignKey: 'receiver_id',
+        );
+    }
+
+     /**  @return BelongsTo<LocomotiveNumber> */
+    public function locomotive(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: LocomotiveNumber::class,
+            foreignKey: 'locomotive_number_id',
         );
     }
 

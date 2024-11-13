@@ -22,7 +22,7 @@ final class Message extends Model
         'sender_id',
         'receiver_id',
         'read_at',
-        'locomotive_id',
+        'locomotive_number_id',
     ];
 
     /** @return BelongsTo<User>*/
@@ -39,7 +39,7 @@ final class Message extends Model
     {
         return $this->belongsTo(
             related: LocomotiveNumber::class,
-            foreignKey: 'locomotive_id',
+            foreignKey: 'locomotive_number_id',
         );
     }
 

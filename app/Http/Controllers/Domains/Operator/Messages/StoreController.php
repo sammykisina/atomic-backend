@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\Operator\Messages;
 
 use Domains\Operator\Requests\StoreMessageRequest;
+use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Models\Message;
+use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Models\LocomotiveNumber;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +25,7 @@ final class StoreController
         $message_data['sender_id'] = Auth::user()->id;
         $message_data['message'] = $request->validated(key: 'message');
         $message_data['receiver_id'] = $locomotive->driver_id;
-        $message_data['locomotive_id'] = $locomotive->id;
+        $message_data['locomotive_number_id'] = $locomotive->id;
 
 
         $message = Message::query()->create(
@@ -36,6 +38,18 @@ final class StoreController
                 message: 'Message not send.Please try again',
             );
         }
+
+        // defer(callback: fn() => );
+
+        AtomikLogService::createAtomicLog(atomikLogData: [
+            'type' => AtomikLogsTypes::COMMUNICATION,
+            'resourceble_id' => $message->id,
+            'resourceble_type' => get_class($message),
+            'actor_id' => Auth::id(),
+            'receiver_id' => $locomotive->driver_id,
+            'current_location' => '',
+            'locomotive_number_id' => $locomotive->id,
+        ]);
 
         return response(
             content: [

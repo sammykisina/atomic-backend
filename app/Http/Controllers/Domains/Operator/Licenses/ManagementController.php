@@ -225,7 +225,18 @@ final class ManagementController
             'logs' => $logs,
         ]);
 
-        defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+        // defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+        //     'type' => AtomikLogsTypes::LICENSE_REVOKE_REQUEST,
+        //     'resourceble_id' => $license->id,
+        //     'resourceble_type' => get_class(object: $license),
+        //     'actor_id' => Auth::id(),
+        //     'receiver_id' => $license->journey->train->driver_id,
+        //     'current_location' => '',
+        //     'train_id' => $license->journey->train_id,
+        // ]));
+
+
+        AtomikLogService::createAtomicLog(atomikLogData: [
             'type' => AtomikLogsTypes::LICENSE_REVOKE_REQUEST,
             'resourceble_id' => $license->id,
             'resourceble_type' => get_class(object: $license),
@@ -233,7 +244,8 @@ final class ManagementController
             'receiver_id' => $license->journey->train->driver_id,
             'current_location' => '',
             'train_id' => $license->journey->train_id,
-        ]));
+        ]);
+    
 
         return response(
             content: [

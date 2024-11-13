@@ -6,9 +6,11 @@ namespace App\Http\Controllers\Domains\Shared\Messages;
 
 use Carbon\Carbon;
 use Domains\Operator\Enums\ShiftStatuses;
+use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Models\Message;
 use Domains\Shared\Requests\MessageRequest;
+use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Models\LocomotiveNumber;
 use Domains\SuperAdmin\Models\Shift;
 use Illuminate\Http\Response;
@@ -27,8 +29,7 @@ final class StoreController
         $message_data = [];
         $message_data['sender_id'] = Auth::id();
         $message_data['message'] = $request->message;
-        $message_data['locomotive_id'] = $locomotive->id;
-
+        $message_data['locomotive_number_id'] = $locomotive->id;
 
         if (UserTypes::DRIVER === Auth::user()->type) {
             $today = Carbon::today()->format('Y-m-d');
@@ -51,7 +52,6 @@ final class StoreController
             $message_data['receiver_id'] = $shift->user_id;
         }
 
-
         $message = Message::query()->create(
             attributes: $message_data,
         );
@@ -62,6 +62,19 @@ final class StoreController
                 message: 'Message not send.Please try again',
             );
         }
+
+        //   defer(callback: fn() => );
+
+        AtomikLogService::createAtomicLog(atomikLogData: [
+            'type' => AtomikLogsTypes::COMMUNICATION,
+            'resourceble_id' => $message->id,
+            'resourceble_type' => get_class($message),
+            'actor_id' => Auth::id(),
+            'receiver_id' => $message_data['receiver_id'],
+            'current_location' => '',
+            'locomotive_number_id' => $locomotive->id,
+        ]);
+
 
         return response(
             content: [

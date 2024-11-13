@@ -21,6 +21,7 @@ final class IndexController
                 'actor',
                 'receiver',
                 'train',
+                'locomotive',
             ])
             ->orderBy('created_at', 'desc')
             ->get();
