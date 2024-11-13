@@ -82,7 +82,6 @@ final class ManagementController
                 );
             }
 
-
             $currentTime = Carbon::now()->format('H:i');
             $shift = $group_with_train_origin->shifts->filter(function ($shift) use ($currentTime) {
                 return
@@ -98,15 +97,25 @@ final class ManagementController
                 );
             }
 
-            $journey = $this->journeyService->createJourney(
-                journeyData: array_merge(
-                    [
-                        'shifts' => [$shift->id],
-                        'direction' => $journey_direction->value,
-                    ],
-                    $request->validated(),
-                ),
-            );
+            $journey = null;
+            if ($train->journey) {
+                $train->journey->update([
+                    'is_active' => true,
+                    'is_authorized' => true,
+                ]);
+
+                $journey = $train->journey;
+            } else {
+                $journey = $this->journeyService->createJourney(
+                    journeyData: array_merge(
+                        [
+                            'shifts' => [$shift->id],
+                            'direction' => $journey_direction->value,
+                        ],
+                        $request->validated(),
+                    ),
+                );
+            }
 
             if ( ! $journey) {
                 abort(
@@ -320,11 +329,17 @@ final class ManagementController
      * @param Journey $journey
      * @return Response|HttpException
      */
-    public function exitLine(Request $request, Journey $journey, DatabaseNotification $notification): Response|HttpException
+    public function exitLine(Request $request, Journey $journey): Response|HttpException
     {
         $exited =  DB::transaction(function () use ($journey): bool {
             if ( ! $journey->update(attributes: [
                 'is_active' => false,
+                'last_destination' => JourneyService::getTrainLocation(
+                    journey: $journey,
+                ) ?? [
+                    'id' => $journey->train->origin->id,
+                    'type' => 'STATION',
+                ],
             ])) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),

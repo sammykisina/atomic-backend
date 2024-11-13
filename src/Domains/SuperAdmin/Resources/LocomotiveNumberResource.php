@@ -17,6 +17,7 @@ final class LocomotiveNumberResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'number' => $this->resource->number,
+            'driver' => $this->resource->driver_id,
         ];
     }
 }

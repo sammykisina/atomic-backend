@@ -16,7 +16,7 @@ final class GroupRequest extends FormRequest
         return [
             'name' => [
                 'required',
-                Rule::unique('groups', 'name')->ignore($this->group ? $this->group->id : ''),
+                Rule::unique(table: 'groups', column: 'name')->ignore($this->group ? $this->group->id : ''),
             ],
             'description' => [
                 'required',
@@ -27,6 +27,14 @@ final class GroupRequest extends FormRequest
                 'array',
             ],
             'stations.*' => [
+                'required',
+                'exists:stations,id',
+            ],
+            'lines' => [
+                'required',
+                'array',
+            ],
+            'lines.*' => [
                 'required',
                 'exists:stations,id',
             ],

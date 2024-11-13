@@ -28,6 +28,7 @@ final class ManagementController
 
         $locomotiveNumber = $this->locomotiveNumberService->createLocomotiveNumber(
             number: $request->validated(key : 'number'),
+            driver_id: $request->validated(key: 'driver_id'),
         );
 
         if ( ! $locomotiveNumber) {
@@ -58,6 +59,7 @@ final class ManagementController
     {
         $edited = $this->locomotiveNumberService->editLocomotiveNumber(
             number: $request->validated(key : 'number'),
+            driver_id: $request->validated('driver_id'),
             locomotiveNumber: $locomotiveNumber,
         );
 

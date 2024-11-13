@@ -36,6 +36,7 @@ final class JourneyResource extends JsonResource
             'beautiful_date' => new DateResource(
                 resource: $this->resource->created_at,
             ),
+            'last_destination' => $this->resource->last_destination,
         ];
     }
 }

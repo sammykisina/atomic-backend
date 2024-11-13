@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Shared\Resources;
 
 use Domains\Shared\Models\Message;
+use Domains\SuperAdmin\Resources\LocomotiveNumberResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,6 +26,11 @@ final class MessageResource extends JsonResource
             'receiver' => new UserResource(
                 resource: $this->whenLoaded(
                     relationship: 'receiver',
+                ),
+            ),
+            'locomotive' => new LocomotiveNumberResource(
+                resource: $this->whenLoaded(
+                    relationship: 'locomotive',
                 ),
             ),
             'created_at' => new DateResource(

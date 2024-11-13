@@ -8,6 +8,7 @@ use Domains\Driver\Enums\LicenseDirections;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\Driver\Models\Location;
+use Domains\Operator\Services\LicenseService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -67,6 +68,47 @@ final class JourneyService
             ->where('id', $journey_id)
             ->With(['train', 'licenses'])
             ->first();
+    }
+
+    /**
+     * FIND THE EXACT POINT A TRAIN IS
+     * @param Journey $journey
+     * @return array | null
+     */
+    public static function getTrainLocation(Journey $journey): array|null
+    {
+        $latest_train_license = LicenseService::getPrevLatestLicense(
+            journey: $journey,
+        );
+
+        if ( ! $latest_train_license) {
+            return null;
+        }
+
+        if ($latest_train_license['train_at_origin']) {
+            return [
+                'id' => $latest_train_license['origin']['id'],
+                'type' => $latest_train_license['origin']['type'],
+            ];
+        }
+
+        foreach ($latest_train_license['through'] as $through) {
+            if ($through['train_is_here']) {
+                return [
+                    'id' => $through['id'],
+                    'type' => $through['type'],
+                ];
+            }
+        }
+
+        if ($latest_train_license['train_at_destination']) {
+            return [
+                'id' => $latest_train_license['destination']['id'],
+                'type' => $latest_train_license['destination']['type'],
+            ];
+        }
+
+        return null;
     }
 
     /**
@@ -157,4 +199,5 @@ final class JourneyService
             });
         }, sleepMilliseconds: $delay);
     }
+
 }

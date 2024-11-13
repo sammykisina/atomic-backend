@@ -19,6 +19,7 @@ final class Group extends Model
     protected $fillable = [
         'name',
         'description',
+        'lines',
         'stations',
     ];
 
@@ -48,6 +49,7 @@ final class Group extends Model
     {
         return [
             'stations' => 'json',
+            'lines' => 'json',
         ];
     }
 }

@@ -18,6 +18,7 @@ final class GroupResource extends JsonResource
             'id' => $this->resource->id,
             'name' => $this->resource->name,
             'description' => $this->resource->description,
+            'lines' => $this->resource->lines,
             'stations' => $this->resource->stations,
         ];
     }

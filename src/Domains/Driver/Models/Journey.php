@@ -24,6 +24,7 @@ final class Journey extends Model
         'is_active',
         'shifts',
         'direction',
+        'last_destination',
     ];
 
 
@@ -35,7 +36,6 @@ final class Journey extends Model
             foreignKey: 'train_id',
         );
     }
-
 
     /**  @return HasMany<License>*/
     public function licenses(): HasMany
@@ -53,6 +53,7 @@ final class Journey extends Model
             'is_active' => 'boolean',
             'is_authorized' => 'boolean',
             'shifts' => 'json',
+            'last_destination' => 'json',
             'direction' => LicenseDirections::class,
         ];
     }

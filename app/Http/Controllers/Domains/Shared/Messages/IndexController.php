@@ -22,6 +22,7 @@ final class IndexController
             ->with(relations: [
                 'receiver',
                 'sender',
+                'locomotive'
             ])
             ->orderBy('created_at', 'desc')
             ->get();

@@ -28,19 +28,12 @@ final class SearchController
             ])
             ->first();
 
-        if ($train && $train->journey) {
-            abort(
-                code: Http::EXPECTATION_FAILED(),
-                message: "This Service Order was used in another journey. Double check the Service Order or Contact Trans Logic.",
-            );
-        }
-
-        if ($train->driver_id !== Auth::id()) {
-            abort(
-                code: Http::EXPECTATION_FAILED(),
-                message: "Sorry. This Service Order may not be yours. Please double check or contact Trans Logic.",
-            );
-        }
+        // if ($train->driver_id !== Auth::id()) {
+        //     abort(
+        //         code: Http::EXPECTATION_FAILED(),
+        //         message: "Sorry. This Service Order may not be yours. Please double check or contact Trans Logic.",
+        //     );
+        // }
 
         return response(
             content: [

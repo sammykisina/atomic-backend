@@ -9,6 +9,7 @@ use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Models\Message;
 use Domains\Shared\Requests\MessageRequest;
+use Domains\SuperAdmin\Models\LocomotiveNumber;
 use Domains\SuperAdmin\Models\Shift;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -19,9 +20,15 @@ final class StoreController
     public function __invoke(MessageRequest $request): Response
     {
 
+        $locomotive = LocomotiveNumber::query()
+            ->where('driver_id', Auth::id())
+            ->first();
+
         $message_data = [];
-        $message_data['sender_id'] = Auth::user()->id;
+        $message_data['sender_id'] = Auth::id();
         $message_data['message'] = $request->message;
+        $message_data['locomotive_id'] = $locomotive->id;
+
 
         if (UserTypes::DRIVER === Auth::user()->type) {
             $today = Carbon::today()->format('Y-m-d');

@@ -19,6 +19,10 @@ final class CreateOrEditLocomotiveNumberRequest extends FormRequest
                 'string',
                 Rule::unique('locomotive_numbers', 'number')->ignore($this->locomotiveNumber ? $this->locomotiveNumber->id : ''),
             ],
+            'driver_id' => [
+                'required',
+                'exists:users,id',
+            ],
         ];
     }
 }

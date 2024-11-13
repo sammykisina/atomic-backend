@@ -23,10 +23,11 @@ final class LocomotiveNumberService
      * @param string $number
      * @return LocomotiveNumber
      */
-    public function createLocomotiveNumber(string $number): LocomotiveNumber
+    public function createLocomotiveNumber(string $number, int $driver_id): LocomotiveNumber
     {
         return LocomotiveNumber::query()->create([
             "number" => $number,
+            'driver_id' => $driver_id,
         ]);
     }
 
@@ -36,10 +37,13 @@ final class LocomotiveNumberService
      * @param LocomotiveNumber $locomotiveNumber
      * @return bool
      */
-    public function editLocomotiveNumber(string $number, LocomotiveNumber $locomotiveNumber): bool
+    public function editLocomotiveNumber(string $number, int $driver_id, LocomotiveNumber $locomotiveNumber): bool
     {
         return $locomotiveNumber->update(
-            ['number' => $number],
+            attributes: [
+                'number' => $number,
+                'driver_id' => $driver_id,
+            ],
         );
     }
 }
