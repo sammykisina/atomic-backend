@@ -271,7 +271,6 @@ final class ManagementController
      */
     private function createLicense(LicenseRequest $request, Journey $journey): License
     {
-
         /**
          * ORIGIN
          */
@@ -310,15 +309,30 @@ final class ManagementController
             ),
         )->value;
 
-
-
-
         if ($journey_direction->value !== $license_direction) {
-            abort(
-                code: Http::EXPECTATION_FAILED(),
-                message: 'License direction does not match with journey direction. Please try again',
-            );
+            $latest_license = License::where('journey_id', $journey->id)
+                ->latest()
+                ->first();
+
+            if ($latest_license) {
+                foreach ($latest_license->through as $throughPoint) {
+                    if ($throughPoint['in_route'] === LicenseRouteStatuses::NEXT->value) {
+                        abort(
+                            code: Http::NOT_ACCEPTABLE(),
+                            message: 'Your have an active area in the current license moving in the opposite direction.Please revoked it to create the new license.',
+                        );
+                    }
+                }
+
+                if ($latest_license->destination['in_route'] === LicenseRouteStatuses::NEXT->value) {
+                    abort(
+                        code: Http::NOT_ACCEPTABLE(),
+                        message: 'Your have an active area in the current license moving in the opposite direction.Please revoked it to create the new license.',
+                    );
+                }
+            }
         }
+
 
         $throughs = $request->validated('through');
         $updated_throughs = array_map(
@@ -390,9 +404,6 @@ final class ManagementController
 
         return $license;
     }
-
-
-
 
 
     /**
