@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Domains\Driver\Services;
 
 use Domains\Driver\Enums\LicenseDirections;
+use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\Driver\Models\Location;
-use Domains\Operator\Services\LicenseService;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -77,9 +77,11 @@ final class JourneyService
      */
     public static function getTrainLocation(Journey $journey): array|null
     {
-        $latest_train_license = LicenseService::getPrevLatestLicense(
-            journey: $journey,
-        );
+        $latest_train_license = License::query()
+            ->where('journey_id', $journey->id)
+            ->where('status', LicenseStatuses::CONFIRMED->value)
+            ->first();
+
 
         if ( ! $latest_train_license) {
             return null;
