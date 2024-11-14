@@ -118,7 +118,7 @@ final class ManagementController
                     'marked_as_used_by' => Auth::user()->employee_id,
                     'marked_at' => now(),
                 ],
-            ], $prev_latest_license->logs);
+            ], $prev_latest_license->logs ?? []);
 
             if ($prev_latest_license) {
                 $prev_latest_license->update(attributes: [

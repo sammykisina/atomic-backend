@@ -19,7 +19,6 @@ use Domains\Driver\Resources\JourneyResource;
 use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Operator\Requests\RevokeLicenseAreaRequest;
-use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
 use Domains\Shared\Services\AtomikLogService;
@@ -405,20 +404,21 @@ final class ManagementController
                     'rejected_at' => now(),
                     'reason_for_rejection' => $request->get(key: 'reason_for_rejection'),
                 ],
-            ], $license->logs);
+            ], $license->logs ?? []);
 
             $license->update(attributes: [
                 'status' => LicenseStatuses::REJECTED->value,
                 'logs' => $logs,
             ]);
 
-            $prev_latest_license = LicenseService::getPrevLatestLicense(
-                journey: $journey,
-            );
+            $prev_latest_license = License::query()->where('id', $license->id - 1)->first();
 
-            $prev_latest_license->update(attributes: [
-                'status' => LicenseStatuses::CONFIRMED->value,
-            ]);
+            if ($prev_latest_license) {
+                $prev_latest_license->update(attributes: [
+                    'status' => LicenseStatuses::CONFIRMED->value,
+                ]);
+            }
+
 
             $shifts = $journey->shifts;
             $shift = ShiftService::getShiftById(
@@ -457,7 +457,7 @@ final class ManagementController
 
         return response(
             content: [
-                'message' => 'License confirmed successfully. You can begin or continue with your journey.',
+                'message' => 'License rejected successfully.',
             ],
             status: Http::ACCEPTED(),
         );
