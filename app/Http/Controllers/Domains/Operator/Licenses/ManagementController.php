@@ -245,7 +245,7 @@ final class ManagementController
             'current_location' => '',
             'train_id' => $license->journey->train_id,
         ]);
-    
+
 
         return response(
             content: [

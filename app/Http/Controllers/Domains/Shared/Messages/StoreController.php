@@ -63,16 +63,16 @@ final class StoreController
             );
         }
 
-          defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
-                'type' => AtomikLogsTypes::COMMUNICATION,
-                'resourceble_id' => $message->id,
-                'resourceble_type' => get_class($message),
-                'actor_id' => Auth::id(),
-                'receiver_id' => $message_data['receiver_id'],
-                'current_location' => '',
-                'locomotive_number_id' => $locomotive->id,
-            ]));
-            
+        defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+            'type' => AtomikLogsTypes::COMMUNICATION,
+            'resourceble_id' => $message->id,
+            'resourceble_type' => get_class($message),
+            'actor_id' => Auth::id(),
+            'receiver_id' => $message_data['receiver_id'],
+            'current_location' => '',
+            'locomotive_number_id' => $locomotive->id,
+        ]));
+
         return response(
             content: [
                 'message' => 'Message created successfully.',

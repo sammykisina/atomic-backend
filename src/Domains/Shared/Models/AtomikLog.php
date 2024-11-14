@@ -22,7 +22,7 @@ final class AtomikLog extends Model
         'receiver_id',
         'current_location',
         'train_id',
-        'locomotive_number_id'
+        'locomotive_number_id',
     ];
 
     /**
@@ -68,7 +68,7 @@ final class AtomikLog extends Model
         );
     }
 
-     /**  @return BelongsTo<LocomotiveNumber> */
+    /**  @return BelongsTo<LocomotiveNumber> */
     public function locomotive(): BelongsTo
     {
         return $this->belongsTo(

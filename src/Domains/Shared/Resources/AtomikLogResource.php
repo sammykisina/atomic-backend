@@ -47,8 +47,8 @@ final class AtomikLogResource extends JsonResource
             'locomotive' => new LocomotiveNumberResource(
                 resource: $this->whenLoaded(
                     relationship: 'locomotive',
-                )
-            )
+                ),
+            ),
         ];
     }
 }
