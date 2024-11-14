@@ -21,6 +21,12 @@ return new class () extends Migration {
                 ->constrained()
                 ->nullOnDelete();
 
+            $table->foreignId(column: 'locomotive_number_id')
+                ->index()
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
             $table->string(column: 'current_location');
 
             $table->unsignedBigInteger(column: 'resourceble_id');

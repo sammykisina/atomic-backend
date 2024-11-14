@@ -24,7 +24,6 @@ return new class () extends Migration {
                 ->nullOnDelete()
                 ->name('fk_message_sender');
 
-
             $table->foreignId(column: 'receiver_id')
                 ->nullable()
                 ->references('id')
@@ -35,6 +34,11 @@ return new class () extends Migration {
                 ->name('fk_message_receiver');
 
             $table->timestamp(column: 'read_at')->nullable();
+
+            $table->foreignId(column: 'locomotive_number_id')
+                ->index()
+                ->nullable()
+                ->constrained();
 
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();
