@@ -60,7 +60,9 @@ final class JourneyService
     }
 
     /**
-     *
+     * GET JOURNEY BY ID
+     * @param int $journey_id
+     * @return Journey
      */
     public static function getJourneyById(int $journey_id): Journey
     {
@@ -131,7 +133,7 @@ final class JourneyService
      */
     public function editJourney(Journey $journey, array $updatedJourneyData): bool
     {
-        return $journey->update([
+        return $journey->update(attributes: [
             'train' => $updatedJourneyData['train'],
             'service_order' => $updatedJourneyData['service_order'],
             'number_of_wagons' => $updatedJourneyData['number_of_wagons'],
@@ -146,7 +148,7 @@ final class JourneyService
 
     public function createLicense(Journey $journey): License
     {
-        return License::query()->create([
+        return License::query()->create(attributes: [
             'journey_id' => $journey->id,
         ]);
     }
@@ -161,7 +163,7 @@ final class JourneyService
     {
         $last_location = Location::query()->latest()->first();
 
-        $location = Location::query()->create([
+        $location = Location::query()->create(attributes: [
             'journey_id' => $journey->id,
             'station_id' => $locationData['station_id'] ?? null,
             'loop_id' => $locationData['loop_id'] ?? null,
