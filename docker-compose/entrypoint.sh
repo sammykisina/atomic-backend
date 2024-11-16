@@ -1,7 +1,11 @@
 #!/bin/sh
 set -ex  # Enable error exit and debugging
 
-php artisan migrate
+# Install PHP dependencies
+composer install
 
-# Start PHP-FPM or the passed command
+# Run database migrations and seed
+php artisan migrate --seed --force
+
+# Start PHP-FPM or execute the passed command
 exec "$@"

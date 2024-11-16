@@ -19,7 +19,7 @@ final class LoginController
 
     /**
      * @param LoginRequest $request
-     * @return void
+     * @return Response
      */
     public function __invoke(LoginRequest $request): Response
     {
@@ -54,7 +54,7 @@ final class LoginController
                         resource: $user,
                     ),
                     'token' => $token,
-                    'message' => 'Login Successful-',
+                    'message' => 'Login Successful',
                 ],
                 status: Http::OK(),
             );
