@@ -15,7 +15,6 @@ return new class () extends Migration {
             $table->string(column: 'number')->unique();
 
             $table->foreignId(column: 'driver_id')
-                ->after(column: 'number')
                 ->references(column: 'id')
                 ->on(table: 'users')
                 ->index()
