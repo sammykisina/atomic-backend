@@ -5,7 +5,7 @@ set -ex  # Enable error exit and debugging
 composer install
 
 # Run database migrations and seed
-php artisan migrate:fresh --seed
+php artisan migrate
 
 # Start PHP-FPM or execute the passed command
 exec "$@"

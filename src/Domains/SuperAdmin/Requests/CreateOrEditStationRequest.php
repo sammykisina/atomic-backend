@@ -71,7 +71,7 @@ final class CreateOrEditStationRequest extends FormRequest
             ],
             'position_from_line' => [
                 'required',
-                Rule::enum(StationPositions::class),
+                'numeric'
             ],
         ];
     }
