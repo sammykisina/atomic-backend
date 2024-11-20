@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Domains\Driver\Enums\LicenseStatuses;
+use Domains\Operator\Enums\LicenseTypes;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,6 +21,7 @@ return new class () extends Migration {
                 ->constrained();
 
             $table->string(column: 'status')->default(value: LicenseStatuses::PENDING);
+            $table->string(column: 'type')->default(value: LicenseTypes::NORMAL);
 
             $table->string(column: 'direction');
 

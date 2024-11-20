@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Domains\Operator\Requests;
 
+use Domains\Operator\Enums\LicenseTypes;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class LicenseRequest extends FormRequest
 {
@@ -27,6 +29,11 @@ final class LicenseRequest extends FormRequest
             'destination.destination_id' => ['required', 'integer'],
             'destination.type' => ['required', 'in:STATION,LOOP,SECTION'],
             'destination.coordinates' => ['array','required'],
+
+            'type' => [
+                'required',
+                Rule::enum(type: LicenseTypes::class),
+            ],
         ];
     }
 }

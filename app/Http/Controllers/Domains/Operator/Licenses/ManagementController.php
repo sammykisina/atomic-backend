@@ -10,6 +10,7 @@ use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\Driver\Notifications\LicenseAreasRevoked;
 use Domains\Driver\Services\JourneyService;
+use Domains\Operator\Enums\LicenseTypes;
 use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Operator\Notifications\DeclineLineEntryRequestNotification;
 use Domains\Operator\Notifications\LicenseNotification;
@@ -18,6 +19,7 @@ use Domains\Operator\Requests\RevokeLicenseAreaRequest;
 use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
+use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Models\AtomikLog;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
@@ -109,6 +111,15 @@ final class ManagementController
     public function assignLicense(LicenseRequest $request, Journey $journey): Response|HttpException
     {
         DB::transaction(function () use ($request, $journey): License {
+            if ($request->validated('type') === LicenseTypes::SPECIAL->value) {
+                if (Auth::user()->type !== UserTypes::OPERATOR_CONTROLLER_SUPERVISOR->value) {
+                    abort(
+                        code: Http::EXPECTATION_FAILED(),
+                        message: 'You are not allowed to assign a special license. Please notify your supervisor.',
+                    );
+                }
+            }
+
             $shift  = Shift::query()
                 ->where('user_id', Auth::id())
                 ->where('status', ShiftStatuses::CONFIRMED->value)
@@ -392,6 +403,7 @@ final class ManagementController
                 'license_number' => $uniqueLicenseNumber,
                 'journey_id' => $journey->id,
                 'direction' => $license_direction,
+                'type' => $request->validated('type'),
 
                 'origin' => [
                     'id' => $origin_id,

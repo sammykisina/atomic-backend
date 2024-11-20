@@ -6,6 +6,7 @@ namespace Domains\Driver\Models;
 
 use Domains\Driver\Enums\LicenseDirections;
 use Domains\Driver\Enums\LicenseStatuses;
+use Domains\Operator\Enums\LicenseTypes;
 use Domains\Shared\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,7 @@ final class License extends Model
         'license_number',
         'journey_id',
         'status',
+        'type',
         'direction',
         'issuer_id',
         'rejector_id',
@@ -86,6 +88,7 @@ final class License extends Model
         return [
             'status' => LicenseStatuses::class,
             'direction' => LicenseDirections::class,
+            'type' => LicenseTypes::class,
             'through' => 'json',
             'logs' => 'json',
             'origin' => 'json',

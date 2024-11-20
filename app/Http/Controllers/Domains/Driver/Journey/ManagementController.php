@@ -162,7 +162,7 @@ final class ManagementController
                 type: NotificationTypes::JOURNEY_CREATED,
             ));
 
-            defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+            AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO1,
                 'resourceble_id' => $journey->id,
                 'resourceble_type' => get_class($journey),
@@ -171,14 +171,14 @@ final class ManagementController
                 'current_location' => $requesting_location['name'],
                 'train_id' => $journey->train_id,
                 'locomotive_number_id' => $journey->train->locomotive_number_id,
-            ]));
+            ]);
 
             return $journey;
         });
 
         return response(
             content: [
-                'message' => 'Journey created successfully.',
+                'message' => 'Line entry request send successfully.',
             ],
             status: Http::CREATED(),
         );
@@ -353,6 +353,18 @@ final class ManagementController
 
             $shift->user->notify(new RequestLineExitNotification(journey: $journey));
 
+            $logs = array_merge([
+                [
+                    'type' => AtomikLogsTypes::REQUEST_LINE_EXIT->value,
+                    'requested_by' => Auth::user()->employee_id,
+                    'requested_at' => now(),
+                ],
+            ], $journey->logs ?? []);
+
+            $journey->update(attributes: [
+                'logs' => $logs,
+            ]);
+
             AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::REQUEST_LINE_EXIT,
                 'resourceble_id' => $journey->id,
@@ -395,10 +407,7 @@ final class ManagementController
                 'is_active' => false,
                 'last_destination' => JourneyService::getTrainLocation(
                     journey: $journey,
-                ) ?? [
-                    'id' => $journey->train->origin->id,
-                    'type' => 'STATION',
-                ],
+                ) ?? $journey->requesting_location,
             ])) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
@@ -411,6 +420,18 @@ final class ManagementController
                 shift_id: end($shifts),
             );
 
+            $logs = array_merge([
+                [
+                    'type' => AtomikLogsTypes::MACRO10->value,
+                    'line_exited_by' => Auth::user()->employee_id,
+                    'line_exited_at' => now(),
+                ],
+            ], $journey->logs ?? []);
+
+            $journey->update(attributes: [
+                'logs' => $logs,
+            ]);
+
             defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO10,
                 'resourceble_id' => $journey->id,
@@ -419,6 +440,7 @@ final class ManagementController
                 'receiver_id' => $shift->user_id,
                 'current_location' => $journey->train->destination->name,
                 'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
             ]));
 
             return true;
@@ -683,7 +705,7 @@ final class ManagementController
             'message' => $request->get(key: 'reason_for_rejection'),
         ]));
 
-    
+
         $notification->markAsRead();
 
         return response(

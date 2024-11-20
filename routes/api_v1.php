@@ -30,6 +30,11 @@ Route::prefix('/atomic-logs')->as('atomik-logs:')->group(
     base_path('routes/api_v1/shared/atomik_logs.php'),
 );
 
+// OBC- OCC
+Route::prefix('/obc-occ')->as('obc-occ:')->group(
+    base_path('routes/api_v1/shared/obc_occ.php'),
+);
+
 
 
 // CONSTANTS
