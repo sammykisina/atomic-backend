@@ -72,7 +72,7 @@ final class ManagementController
         return response(
             content: [
                 'message' => 'Train name updated successfully.',
-            ], 
+            ],
             status: Http::ACCEPTED(),
         );
     }

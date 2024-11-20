@@ -23,6 +23,13 @@ return new class () extends Migration {
 
             $table->string(column: 'direction');
 
+            $table->boolean(column: 'is_authorized')->default(value: false);
+            $table->json(column: 'shifts');
+
+            $table->json(column: 'last_destination')->nullable();
+            $table->json(column: 'requesting_location')->nullable();
+            $table->json(column: 'logs')->nullable();
+
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();
 

@@ -7,6 +7,9 @@ namespace Domains\Shared\Enums;
 enum NotificationTypes: string
 {
     case JOURNEY_CREATED = 'JOURNEY_CREATED';
+
+    case LINE_ENTRY_REQUEST_DECLINED = 'LINE_ENTRY_REQUEST_DECLINED';
+
     case JOURNEY_EDITED = 'JOURNEY_EDITED';
     case CURRENT_DRIVER_LOCATION = 'CURRENT_DRIVER_LOCATION';
 

@@ -17,6 +17,10 @@ final class CreateOrEditJourneyRequest extends FormRequest
                 'required',
                 'exists:trains,id',
             ],
+
+            'requesting_location' => ['required', 'array'],
+            'requesting_location.id' => ['required', 'integer'],
+            'requesting_location.type' => ['required', 'in:STATION,LOOP,SECTION'],
         ];
     }
 }

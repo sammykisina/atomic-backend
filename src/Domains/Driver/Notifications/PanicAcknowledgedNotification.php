@@ -30,7 +30,7 @@ final class PanicAcknowledgedNotification extends Notification
         return [
             'type' => NotificationTypes::PANIC_ACKNOWLEDGED->value,
             'message' => 'Panic Acknowledged',
-            'description' => 'A panic you send with train ' . $this->panic->journey->train->name . ' was acknowledged.',
+            'description' => 'A panic you send with train ' . $this->panic->journey->train->trainName->name . ' was acknowledged.',
         ];
     }
 }

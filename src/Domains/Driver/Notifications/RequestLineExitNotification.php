@@ -28,7 +28,7 @@ final class RequestLineExitNotification extends Notification
     {
         return [
             'message' => 'Exit Line Request',
-            'description' => 'A line exit request was made by ' . $this->journey->train->driver->fullname . ' with train ' . $this->journey->train->name,
+            'description' => 'A line exit request was made by ' . $this->journey->train->driver->fullname . ' with train ' . $this->journey->train->trainName->name,
             'journey_id' => $this->journey->id,
             'type' => NotificationTypes::REQUEST_LINE_EXIT->value,
         ];

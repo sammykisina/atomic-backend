@@ -9,7 +9,11 @@ use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\Driver\Models\Location;
+use Domains\SuperAdmin\Models\Loop;
+use Domains\SuperAdmin\Models\Section;
+use Domains\SuperAdmin\Models\Station;
 use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -113,6 +117,22 @@ final class JourneyService
         }
 
         return null;
+    }
+
+
+    /**
+     * GET LOCATION
+     * @param Model $model
+     * @return string
+     */
+    public static function getLocation(Model $model): string
+    {
+        return  match (get_class(object: $model)) {
+            Station::class =>  $model->name,
+            Loop::class =>  $model->station->name . ' - LOOP',
+            Section::class =>  $model->start_name . ' - ' . $model->end_name,
+        };
+
     }
 
     /**

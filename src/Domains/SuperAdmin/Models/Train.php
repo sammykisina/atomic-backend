@@ -56,7 +56,7 @@ final class Train extends Model
         return $this->belongsTo(
             related: Station::class,
             foreignKey: 'origin_station_id',
-        )->with(relations:[ 'loops', 'section']);
+        )->with(relations: ['loops', 'section']);
     }
 
     /** @return BelongsTo<Station> */
@@ -65,7 +65,7 @@ final class Train extends Model
         return $this->belongsTo(
             related: Station::class,
             foreignKey: 'destination_station_id',
-        )->with(relations:[ 'loops', 'section']);
+        )->with(relations: ['loops', 'section']);
     }
 
     /** @return BelongsTo<User> */

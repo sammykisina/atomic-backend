@@ -19,6 +19,7 @@ use Domains\Driver\Resources\JourneyResource;
 use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Operator\Requests\RevokeLicenseAreaRequest;
+use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
 use Domains\Shared\Services\AtomikLogService;
@@ -97,10 +98,34 @@ final class ManagementController
             }
 
             $journey = null;
+            $requesting_location_modal = LicenseService::getModel(
+                model_type: $request->validated(key: "requesting_location.type"),
+                model_id: $request->validated(key: "requesting_location.id"),
+            );
+            $requesting_location =  [
+                'type' => $request->validated(key: "requesting_location.type"),
+                'id' => $request->validated(key: "requesting_location.id"),
+                'name' => JourneyService::getLocation(
+                    model: $requesting_location_modal,
+                ),
+            ];
+
+
             if ($train->journey) {
+                $logs = array_merge([
+                    [
+                        'type' => AtomikLogsTypes::DRIVER_REQUESTED_JOURNEY_RESTART->value,
+                        'requested_by' => Auth::user()->employee_id,
+                        'requested_at' => now(),
+                        'requesting_location' => $requesting_location,
+                    ],
+                ], $train->journey->logs ?? []);
+
                 $train->journey->update([
                     'is_active' => true,
-                    'is_authorized' => true,
+                    'is_authorized' => false,
+                    'requesting_location' => $requesting_location,
+                    'logs' => $logs,
                 ]);
 
                 $journey = $train->journey;
@@ -110,8 +135,17 @@ final class ManagementController
                         [
                             'shifts' => [$shift->id],
                             'direction' => $journey_direction->value,
+                            'requesting_location' => $requesting_location,
+                            'logs' => [[
+                                'type' => AtomikLogsTypes::DRIVER_SENDS_MACRO1->value,
+                                'send_by' => Auth::user()->employee_id,
+                                'send_at' => now(),
+                                'send_from' => $requesting_location,
+                            ]],
                         ],
-                        $request->validated(),
+                        [
+                            'train_id' => $request->validated('train_id'),
+                        ],
                     ),
                 );
             }
@@ -134,8 +168,9 @@ final class ManagementController
                 'resourceble_type' => get_class($journey),
                 'actor_id' => Auth::id(),
                 'receiver_id' => $shift->user->id,
-                'current_location' => $journey->train->origin->name,
+                'current_location' => $requesting_location['name'],
                 'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
             ]));
 
             return $journey;
@@ -178,6 +213,7 @@ final class ManagementController
             'receiver_id' => $shift->user_id,
             'current_location' => $request->validated('latitude') . ', ' . $request->validated('longitude'),
             'train_id' => $journey->train_id,
+            'locomotive_number_id' => $journey->train->locomotive_number_id,
         ]);
 
         return response(

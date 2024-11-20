@@ -83,6 +83,6 @@ final class AtomikLog extends Model
         return $this->belongsTo(
             related: Train::class,
             foreignKey: 'train_id',
-        );
+        )->with(relations: ['trainName']);
     }
 }

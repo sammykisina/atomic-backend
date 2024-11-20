@@ -25,6 +25,8 @@ final class Journey extends Model
         'shifts',
         'direction',
         'last_destination',
+        'requesting_location',
+        'logs',
     ];
 
 
@@ -54,7 +56,9 @@ final class Journey extends Model
             'is_authorized' => 'boolean',
             'shifts' => 'json',
             'last_destination' => 'json',
+            'requesting_location' => 'json',
             'direction' => LicenseDirections::class,
+            'logs' => 'json',
         ];
     }
 }

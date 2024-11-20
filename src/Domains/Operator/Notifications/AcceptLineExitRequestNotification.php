@@ -28,7 +28,7 @@ final class AcceptLineExitRequestNotification extends Notification
     {
         return [
             'message' => 'Line exit request accepted.',
-            'description' => 'Your line exit request for train ' . $this->journey->train->name . ' was accepted.',
+            'description' => 'Your line exit request for train ' . $this->journey->train->trainName->name . ' was accepted.',
             'type' => NotificationTypes::LINE_EXIT_REQUEST_ACCEPTED->value,
         ];
     }

@@ -37,6 +37,8 @@ final class JourneyResource extends JsonResource
                 resource: $this->resource->created_at,
             ),
             'last_destination' => $this->resource->last_destination,
+            'logs' => $this->resource->logs,
+            'requesting_location' => $this->resource->requesting_location,
         ];
     }
 }

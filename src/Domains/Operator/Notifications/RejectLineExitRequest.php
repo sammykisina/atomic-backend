@@ -28,7 +28,7 @@ final class RejectLineExitRequest extends Notification
     {
         return [
             'message' => 'Line exit request rejected.',
-            'description' => 'Your line exit request for train ' . $this->journey->train->name . ' was rejected.Please continue with your current license allocations.You may also send a direct message to the operator incase you have any questions.',
+            'description' => 'Your line exit request for train ' . $this->journey->train->trainName->name . ' was rejected.Please continue with your current license allocations.You may also send a direct message to the operator incase you have any questions.',
             'type' => NotificationTypes::LINE_EXIT_REQUEST_REJECTED->value,
         ];
     }

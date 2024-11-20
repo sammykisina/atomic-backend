@@ -11,6 +11,7 @@ use Domains\Driver\Models\License;
 use Domains\Driver\Notifications\LicenseAreasRevoked;
 use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
+use Domains\Operator\Notifications\DeclineLineEntryRequestNotification;
 use Domains\Operator\Notifications\LicenseNotification;
 use Domains\Operator\Requests\LicenseRequest;
 use Domains\Operator\Requests\RevokeLicenseAreaRequest;
@@ -53,13 +54,18 @@ final class ManagementController
         }
 
         $is_authorized =  DB::transaction(function () use ($journey, $notification): bool {
+            $logs = array_merge([
+                [
+                    'type' => AtomikLogsTypes::OPERATOR_AUTHORIZES_LINE_ENTRY_REQUEST->value,
+                    'authorized_by' => Auth::user()->employee_id,
+                    'authorized_at' => now(),
+                ],
+            ], $journey->logs ?? []);
+
             $is_updated = $journey->update(attributes: [
                 'is_authorized' => true,
+                'logs' => $logs,
             ]);
-
-            $journey_last_destination = $journey->last_destination;
-
-            dd($journey_last_destination);
 
             defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO3,
@@ -67,7 +73,7 @@ final class ManagementController
                 'resourceble_type' => get_class(object: $journey),
                 'actor_id' => Auth::id(),
                 'receiver_id' => $journey->train->driver_id,
-                'current_location' => $journey->train->origin->name,
+                'current_location' => $journey->requesting_location['name'],
                 'train_id' => $journey->train_id,
             ]));
 
@@ -174,10 +180,15 @@ final class ManagementController
             );
         }
 
-        $is_declined =  DB::transaction(function () use ($journey, $notification): bool {
-            $is_declined = $journey->delete();
+        $is_declined =  DB::transaction(function () use ($request, $journey, $notification): bool {
+            $journey->train->driver->notify(new DeclineLineEntryRequestNotification(
+                journey: $journey,
+                reason_for_decline: $request->get(key: 'reason_for_decline'),
+            ));
 
             $notification->markAsRead();
+
+            $is_declined = $journey->delete();
 
             return $is_declined;
         });
@@ -192,7 +203,7 @@ final class ManagementController
 
         return response(
             content: [
-                'message' => 'Request for line entry has been authorized successfully.',
+                'message' => 'Request for line entry has been declined successfully.',
             ],
             status: Http::ACCEPTED(),
         );
