@@ -75,8 +75,8 @@ final class ManagementController
                 'receiver_id' => $journey->train->driver_id,
                 'current_location' => $journey->requesting_location['name'],
                 'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
             ]));
-
 
             $notification->markAsRead();
 
@@ -181,10 +181,36 @@ final class ManagementController
         }
 
         $is_declined =  DB::transaction(function () use ($request, $journey, $notification): bool {
+            $logs = array_merge([
+                [
+                    'type' => AtomikLogsTypes::DECLINE_LINE_ENTRY_REQUEST->value,
+                    'declined_by' => Auth::user()->employee_id,
+                    'declined_at' => now(),
+                ],
+            ], $journey->logs ?? []);
+
+
+            $journey->update(attributes: [
+                'logs' => $logs,
+                'is_active' => false,
+            ]);
+
             $journey->train->driver->notify(new DeclineLineEntryRequestNotification(
                 journey: $journey,
                 reason_for_decline: $request->get(key: 'reason_for_decline'),
             ));
+
+            AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::DECLINE_LINE_ENTRY_REQUEST,
+                'resourceble_id' => $journey->id,
+                'resourceble_type' => get_class(object: $journey),
+                'actor_id' => Auth::id(),
+                'receiver_id' => $journey->train->driver_id,
+                'current_location' => $journey->requesting_location['name'],
+                'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
+                'message' => $request->get(key: 'reason_for_decline'),
+            ]);
 
             $notification->markAsRead();
 
@@ -220,7 +246,7 @@ final class ManagementController
     {
         $license->journey->train->driver->notify(new LicenseAreasRevoked(
             message: 'License section area(s) revocation initiated',
-            description: 'Please be advised that some sections in your active license have been marked to be revoked (canceled).',
+            description: 'Please be advised that some sections in your active license have been marked to be revoked (canceled). with reason [ ' . $request->validated(key: 'reason_for_revoking') . ' ]',
             area_id: $request->validated('area_id'),
             type: $request->validated('type'),
             notificationTypes: NotificationTypes::LICENSE_REVOKE_REQUEST,
@@ -239,25 +265,16 @@ final class ManagementController
             'logs' => $logs,
         ]);
 
-        // defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
-        //     'type' => AtomikLogsTypes::LICENSE_REVOKE_REQUEST,
-        //     'resourceble_id' => $license->id,
-        //     'resourceble_type' => get_class(object: $license),
-        //     'actor_id' => Auth::id(),
-        //     'receiver_id' => $license->journey->train->driver_id,
-        //     'current_location' => '',
-        //     'train_id' => $license->journey->train_id,
-        // ]));
-
-
         AtomikLogService::createAtomicLog(atomikLogData: [
             'type' => AtomikLogsTypes::LICENSE_REVOKE_REQUEST,
             'resourceble_id' => $license->id,
             'resourceble_type' => get_class(object: $license),
             'actor_id' => Auth::id(),
             'receiver_id' => $license->journey->train->driver_id,
-            'current_location' => '',
+            'current_location' => JourneyService::getTrainLocation(journey: $license->journey)['name'],
             'train_id' => $license->journey->train_id,
+            'locomotive_number_id' => $license->journey->train->locomotive_number_id,
+            'message' => $request->validated(key: 'reason_for_revoking'),
         ]);
 
 
@@ -282,6 +299,7 @@ final class ManagementController
          */
         $origin_id = $request->validated('origin')['origin_id'];
         $origin_type = $request->validated('origin')['type'];
+        $origin_coordinates = $request->validated('origin')['coordinates'];
         $origin_status = StationSectionLoopStatuses::LICENSE_ISSUED->value;
         $origin = LicenseService::getModel(
             model_type: $origin_type,
@@ -293,6 +311,7 @@ final class ManagementController
          */
         $destination_id = $request->validated('destination')['destination_id'];
         $destination_type = $request->validated('destination')['type'];
+        $destination_coordinates = $request->validated('destination')['coordinates'];
         $destination_status = StationSectionLoopStatuses::LICENSE_ISSUED->value;
         $destination = LicenseService::getModel(
             model_type: $destination_type,
@@ -356,6 +375,7 @@ final class ManagementController
                     'start_time' => null,
                     'end_time' => null,
                     'in_route' => $in_route,
+                    'coordinates' => $through['coordinates'],
                 ];
             },
             array: $throughs,
@@ -367,7 +387,7 @@ final class ManagementController
             : LicenseRouteStatuses::PENDING->value;
 
         $uniqueLicenseNumber = $this->licenseService->getLicense();
-        $license = $this->licenseService->acceptJourneyRequest(
+        $license = $this->licenseService->createJourneyLicense(
             licenseData: [
                 'license_number' => $uniqueLicenseNumber,
                 'journey_id' => $journey->id,
@@ -376,6 +396,7 @@ final class ManagementController
                 'origin' => [
                     'id' => $origin_id,
                     'type' => $origin_type,
+                    'coordinates' => $origin_coordinates,
                     'status' => $origin_status,
                     'name' => LicenseService::getLicenseOrigin(
                         model: $origin,
@@ -384,6 +405,7 @@ final class ManagementController
                     'end_time' => null,
                     'in_route' => LicenseRouteStatuses::PENDING->value,
                 ],
+
                 'train_at_origin' => true,
 
                 'through' => $updated_throughs,
@@ -391,6 +413,7 @@ final class ManagementController
                 'destination' => [
                     'id' => $destination_id,
                     'type' => $destination_type,
+                    'coordinates' => $destination_coordinates,
                     'status' => $destination_status,
                     'name' => LicenseService::getLicenseOrigin(
                         model: $destination,
@@ -399,6 +422,7 @@ final class ManagementController
                     'end_time' => null,
                     'in_route' => $destination_in_route,
                 ],
+
                 'train_at_destination' => false,
             ],
         );

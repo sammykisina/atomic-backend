@@ -9,7 +9,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-final class RevokeLicenseAreaRequest extends FormRequest
+final class RevokeLicenseArea extends FormRequest
 {
     /** @return array<string, ValidationRule|array<mixed>|string> */
     public function rules(): array
@@ -22,10 +22,6 @@ final class RevokeLicenseAreaRequest extends FormRequest
             'type' => [
                 'required',
                 Rule::enum(type: AreaTypes::class),
-            ],
-            'reason_for_revoking' => [
-                'required',
-                'string',
             ],
         ];
     }

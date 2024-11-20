@@ -7,9 +7,14 @@ namespace App\Http\Controllers\Domains\Driver\Journey;
 use Domains\Driver\Enums\LicenseRouteStatuses;
 use Domains\Driver\Models\License;
 use Domains\Driver\Requests\ClearRequest;
+use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Services\LicenseService;
+use Domains\Shared\Enums\AtomikLogsTypes;
+use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
+use Domains\SuperAdmin\Services\ShiftManagement\ShiftService;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use JustSteveKing\StatusCode\Http;
 
@@ -56,6 +61,40 @@ final class ClearLicenseAreaController
             $license->through = $through;
             $license->save();
         });
+
+        $shifts = $license->journey->shifts;
+        $shift = ShiftService::getShiftById(
+            shift_id: end($shifts),
+        );
+
+        $logs = array_merge([
+            ['type' => AtomikLogsTypes::LICENSE_AREA_SECTION_CLEARED->value,
+                'cleared_by' => Auth::user()->employee_id,
+                'cleared_at' => now(),
+                'area_name' => LicenseService::getLicenseOrigin(
+                    model: LicenseService::getModel(
+                        model_type: $request->validated('type'),
+                        model_id: $request->validated('area_id'),
+                    ),
+                ),
+            ],
+        ], $license->logs);
+
+        defer(callback: fn() => $license->update(attributes: [
+            'logs' => $logs,
+        ]));
+
+
+        AtomikLogService::createAtomicLog(atomikLogData: [
+            'type' => AtomikLogsTypes::LICENSE_AREA_SECTION_CLEARED,
+            'resourceble_id' => $license->id,
+            'resourceble_type' => get_class(object: $license),
+            'actor_id' => Auth::id(),
+            'receiver_id' => $shift->user_id,
+            'current_location' => JourneyService::getTrainLocation(journey: $license->journey)['name'],
+            'train_id' => $license->journey->train_id,
+            'locomotive_number_id' => $license->journey->train->locomotive_number_id,
+        ]);
 
         return response(
             content: [
@@ -115,7 +154,7 @@ final class ClearLicenseAreaController
         if ($license->train_at_destination) {
             abort(
                 code: Http::FORBIDDEN(),
-                message: 'The train is already at the destination and cannot proceed further.',
+                message: 'The train is already at the license destination and cannot proceed further.',
             );
         }
 
@@ -203,5 +242,4 @@ final class ClearLicenseAreaController
             }
         }
     }
-
 }

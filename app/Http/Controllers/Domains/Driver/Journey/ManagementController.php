@@ -18,8 +18,8 @@ use Domains\Driver\Requests\LocationRequest;
 use Domains\Driver\Resources\JourneyResource;
 use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
+use Domains\Operator\Requests\RevokeLicenseArea;
 use Domains\Operator\Requests\RevokeLicenseAreaRequest;
-use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
 use Domains\Shared\Services\AtomikLogService;
@@ -98,7 +98,7 @@ final class ManagementController
             }
 
             $journey = null;
-            $requesting_location_modal = LicenseService::getModel(
+            $requesting_location_modal = JourneyService::getModel(
                 model_type: $request->validated(key: "requesting_location.type"),
                 model_id: $request->validated(key: "requesting_location.id"),
             );
@@ -290,8 +290,9 @@ final class ManagementController
                 'resourceble_type' => get_class(object: $license),
                 'actor_id' => Auth::id(),
                 'receiver_id' => $shift->user_id,
-                'current_location' => $license->origin['name'],
+                'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
                 'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
             ]));
 
 
@@ -337,19 +338,42 @@ final class ManagementController
      */
     public function sendExitLineRequest(Request $request, Journey $journey): Response|HttpException
     {
-        if ($journey->train->driver_id !== Auth::id()) {
+        $request_send = DB::transaction(function () use ($journey): bool {
+            if ($journey->train->driver_id !== Auth::id()) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'An exit line request is only send by the driver.',
+                );
+            }
+
+            $shifts = $journey->shifts;
+            $shift = ShiftService::getShiftById(
+                shift_id: end($shifts),
+            );
+
+            $shift->user->notify(new RequestLineExitNotification(journey: $journey));
+
+            AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::REQUEST_LINE_EXIT,
+                'resourceble_id' => $journey->id,
+                'resourceble_type' => get_class(object: $journey),
+                'actor_id' => Auth::id(),
+                'receiver_id' =>  $shift->user->id,
+                'current_location' => JourneyService::getTrainLocation(journey: $journey)['name'],
+                'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
+            ]);
+
+            return true;
+        });
+
+        if ( ! $request_send) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
-                message: 'An exit line request is only send by the driver.',
+                message: 'Line exit request failed.',
             );
         }
 
-        $shifts = $journey->shifts;
-        $shift = ShiftService::getShiftById(
-            shift_id: end($shifts),
-        );
-
-        $shift->user->notify(new RequestLineExitNotification(journey: $journey));
 
         return response(
             content: [
@@ -447,7 +471,10 @@ final class ManagementController
                 'logs' => $logs,
             ]);
 
-            $prev_latest_license = License::query()->where('id', $license->id - 1)->first();
+            $prev_latest_license = License::query()
+                ->where('id', $license->id - 1)
+                ->where('status', LicenseStatuses::USED->value)
+                ->first();
 
             if ($prev_latest_license) {
                 $prev_latest_license->update(attributes: [
@@ -467,8 +494,10 @@ final class ManagementController
                 'resourceble_type' => get_class(object: $license),
                 'actor_id' => Auth::id(),
                 'receiver_id' => $shift->user_id,
-                'current_location' => $license->origin['name'],
+                'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
                 'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
+                'message' => $request->get(key: 'reason_for_rejection'),
             ]));
 
             $license->issuer->notify(new LicenseRejectedNotification(
@@ -498,8 +527,6 @@ final class ManagementController
             status: Http::ACCEPTED(),
         );
     }
-
-
     /**
      * ACCEPT REVOKE LICENSE AREA REQUEST
      * @param RevokeLicenseAreaRequest $request
@@ -507,7 +534,7 @@ final class ManagementController
      * @param DatabaseNotification $notification
      * @return Response|HttpException
      */
-    public function acceptRevokeLicenseAreaRequest(RevokeLicenseAreaRequest $request, License $license, DatabaseNotification $notification): Response|HttpException
+    public function acceptRevokeLicenseAreaRequest(RevokeLicenseArea $request, License $license, DatabaseNotification $notification): Response|HttpException
     {
         $destination = $license->destination; // Get the destination array directly
         $through = collect($license->through); // Wrap the through array in a collection
@@ -597,8 +624,9 @@ final class ManagementController
             'resourceble_type' => get_class(object: $license),
             'actor_id' => Auth::id(),
             'receiver_id' => $license->issuer_id,
-            'current_location' => '',
+            'current_location' => JourneyService::getTrainLocation(journey: $license->journey)['name'],
             'train_id' => $license->journey->train_id,
+            'locomotive_number_id' => $license->journey->train->locomotive_number_id,
         ]));
 
         $notification->markAsRead();
@@ -643,16 +671,19 @@ final class ManagementController
             'logs' => $logs,
         ]);
 
-        defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+        defer(callback: fn() =>  AtomikLogService::createAtomicLog(atomikLogData: [
             'type' => AtomikLogsTypes::LICENSE_REVOKE_REJECTED,
             'resourceble_id' => $license->id,
             'resourceble_type' => get_class(object: $license),
             'actor_id' => Auth::id(),
             'receiver_id' => $license->issuer_id,
-            'current_location' => '',
+            'current_location' => JourneyService::getTrainLocation(journey: $license->journey)['name'],
             'train_id' => $license->journey->train_id,
+            'locomotive_number_id' => $license->journey->train->locomotive_number_id,
+            'message' => $request->get(key: 'reason_for_rejection'),
         ]));
 
+    
         $notification->markAsRead();
 
         return response(

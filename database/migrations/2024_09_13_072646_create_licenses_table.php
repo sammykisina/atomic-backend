@@ -24,10 +24,14 @@ return new class () extends Migration {
             $table->string(column: 'direction');
 
             $table->json(column: 'origin');
+            $table->boolean(column: 'train_at_origin');
 
             $table->json(column: 'through');
 
             $table->json(column: 'destination');
+            $table->boolean(column: 'train_at_destination');
+
+            $table->json(column: 'logs')->nullable();
 
             $table->foreignId(column: 'issuer_id')
                 ->nullable()

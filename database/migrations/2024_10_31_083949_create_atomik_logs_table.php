@@ -29,6 +29,8 @@ return new class () extends Migration {
 
             $table->string(column: 'current_location');
 
+            $table->string(column: 'message')->nullable();
+
             $table->unsignedBigInteger(column: 'resourceble_id');
             $table->string(column: 'resourceble_type');
 

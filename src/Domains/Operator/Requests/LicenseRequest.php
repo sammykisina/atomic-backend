@@ -16,14 +16,17 @@ final class LicenseRequest extends FormRequest
             'origin' => ['required', 'array'],
             'origin.origin_id' => ['required', 'integer'],
             'origin.type' => ['required', 'in:STATION,LOOP,SECTION'],
+            'origin.coordinates' => ['array','required'],
 
             'through' => ['array'],
             'through.*.id' => ['integer'],
             'through.*.type' => ['in:STATION,LOOP,SECTION'],
+            'through.*.coordinates' => ['array','required'],
 
             'destination' => ['required', 'array'],
             'destination.destination_id' => ['required', 'integer'],
             'destination.type' => ['required', 'in:STATION,LOOP,SECTION'],
+            'destination.coordinates' => ['array','required'],
         ];
     }
 }

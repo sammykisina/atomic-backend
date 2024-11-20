@@ -23,6 +23,7 @@ final class AtomikLog extends Model
         'current_location',
         'train_id',
         'locomotive_number_id',
+        'message',
     ];
 
     /**

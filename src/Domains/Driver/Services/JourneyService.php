@@ -12,6 +12,9 @@ use Domains\Driver\Models\Location;
 use Domains\SuperAdmin\Models\Loop;
 use Domains\SuperAdmin\Models\Section;
 use Domains\SuperAdmin\Models\Station;
+use Domains\SuperAdmin\Services\LoopService;
+use Domains\SuperAdmin\Services\SectionService;
+use Domains\SuperAdmin\Services\StationService;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -94,25 +97,55 @@ final class JourneyService
         }
 
         if ($latest_train_license['train_at_origin']) {
+            $origin_model = JourneyService::getModel(
+                model_type: $latest_train_license['origin']['type'],
+                model_id: $latest_train_license['origin']['id'],
+            );
+
+            $origin_model_name = JourneyService::getLocation(
+                model: $origin_model,
+            );
+
             return [
                 'id' => $latest_train_license['origin']['id'],
                 'type' => $latest_train_license['origin']['type'],
+                'name' =>  $origin_model_name,
             ];
         }
 
         foreach ($latest_train_license['through'] as $through) {
             if ($through['train_is_here']) {
+                $through_model = JourneyService::getModel(
+                    model_type: $through['type'],
+                    model_id: $through['id'],
+                );
+
+                $through_model_name = JourneyService::getLocation(
+                    model: $through_model,
+                );
+
                 return [
                     'id' => $through['id'],
                     'type' => $through['type'],
+                    'name' => $through_model_name,
                 ];
             }
         }
 
         if ($latest_train_license['train_at_destination']) {
+            $destination_model = JourneyService::getModel(
+                model_type: $latest_train_license['destination']['type'],
+                model_id: $latest_train_license['destination']['id'],
+            );
+
+            $destination_model_name = JourneyService::getLocation(
+                model: $destination_model,
+            );
+
             return [
                 'id' => $latest_train_license['destination']['id'],
                 'type' => $latest_train_license['destination']['type'],
+                'name' => $destination_model_name,
             ];
         }
 
@@ -133,6 +166,21 @@ final class JourneyService
             Section::class =>  $model->start_name . ' - ' . $model->end_name,
         };
 
+    }
+
+    /**
+     * GET MODEL
+     * @param string $model_type
+     * @param int $model_id
+     * @return Station|Loop|Section
+     */
+    public static function getModel(string $model_type, int $model_id): Station | Loop | Section
+    {
+        return  match ($model_type) {
+            'STATION' =>  StationService::getStationById(station_id: $model_id),
+            'SECTION' =>  SectionService::getSectionById(section_id: $model_id),
+            'LOOP' =>  LoopService::getLoopById(loop_id: $model_id),
+        };
     }
 
     /**

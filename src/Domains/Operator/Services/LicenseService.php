@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Operator\Services;
 
 use Carbon\Carbon;
+use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\License;
 use Domains\Shared\Enums\AtomikLogsTypes;
@@ -33,7 +34,6 @@ final class LicenseService
             'SECTION' =>  SectionService::getSectionById(section_id: $model_id),
             'LOOP' =>  LoopService::getLoopById(loop_id: $model_id),
         };
-
     }
 
 
@@ -72,7 +72,10 @@ final class LicenseService
      */
     public static function getPrevLatestLicense(Journey $journey): ?License
     {
-        return License::query()->where('journey_id', $journey->id)->latest()->first();
+        return License::query()
+            ->where('journey_id', $journey->id)
+            ->where('status', LicenseStatuses::CONFIRMED->value)
+            ->latest()->first();
     }
 
     /**
@@ -102,6 +105,7 @@ final class LicenseService
                 'current_location' => '',
                 'train_id' => $journey->train_id,
                 'receiver_id' => $journey->train->driver_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
             ],
         );
     }
@@ -125,7 +129,7 @@ final class LicenseService
      * @param array $licenseData
      * @return License
      */
-    public function acceptJourneyRequest(array $licenseData): License
+    public function createJourneyLicense(array $licenseData): License
     {
         $license =  License::query()->create(array_merge(
             $licenseData,
