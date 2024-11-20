@@ -17,6 +17,8 @@ final class TrainService
     {
         return Train::query()
             ->with(relations: [
+                'trainName',
+                'line',
                 'origin',
                 'destination',
                 'driver',
@@ -36,11 +38,11 @@ final class TrainService
 
     /**
      * EDIT TRAIN
-     * @param array $trainData
-     * @return Train
+     * @param array $updatedTrainData
+     * @return bool
      */
-    public function editTrain(array $trainData, Train $train): bool
+    public function editTrain(array $updatedTrainData, Train $train): bool
     {
-        return $train->update(attributes: $trainData);
+        return $train->update(attributes: $updatedTrainData);
     }
 }

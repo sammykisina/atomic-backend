@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Requests;
 
-use Domains\SuperAdmin\Enums\StationPositions;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 final class CreateOrEditStationRequest extends FormRequest
 {
@@ -71,7 +69,7 @@ final class CreateOrEditStationRequest extends FormRequest
             ],
             'position_from_line' => [
                 'required',
-                'numeric'
+                'numeric',
             ],
         ];
     }

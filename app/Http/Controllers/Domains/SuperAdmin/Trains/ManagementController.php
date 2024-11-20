@@ -58,7 +58,7 @@ final class ManagementController
     public function edit(CreateOrEditTrainRequest $request, Train $train): Response
     {
         $edited = $this->trainService->editTrain(
-            trainData: $request->validated(),
+            updatedTrainData: $request->validated(),
             train: $train,
         );
 

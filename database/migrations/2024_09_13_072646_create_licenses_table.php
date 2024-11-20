@@ -25,7 +25,6 @@ return new class () extends Migration {
 
             $table->json(column: 'origin');
 
-
             $table->json(column: 'through');
 
             $table->json(column: 'destination');

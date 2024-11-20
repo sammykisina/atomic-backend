@@ -17,6 +17,7 @@ final class IndexController
     {
         $trains  = QueryBuilder::for(subject: Train::class)
             ->allowedIncludes(includes: [
+                'trainName',
                 'line',
                 'origin',
                 'destination',

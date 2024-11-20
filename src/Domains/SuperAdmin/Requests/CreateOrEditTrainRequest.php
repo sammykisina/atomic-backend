@@ -14,9 +14,9 @@ final class CreateOrEditTrainRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => [
+            'train_name_id' => [
                 'required',
-                'string',
+                'exists:train_names,id',
             ],
             'driver_id'  => [
                 'required',

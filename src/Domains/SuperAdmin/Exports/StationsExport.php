@@ -73,28 +73,29 @@ final class StationsExport implements Responsable, ShouldAutoSize, WithEvents, W
                     $event->sheet->getDelegate()->getColumnDimension($column)->setWidth($width);
                 }
 
-                $station_position_options = [
-                    'left',
-                    'right',
-                ];
-
                 $is_yard_options = [
                     'true',
                     'false',
                 ];
 
                 $is_yard_column = 'L';
-                $station_position_column = 'M';
-
                 $row_count = 100;
 
                 for ($row = 2; $row <= $row_count; $row++) {
-                    $this->applyDropdownValidation($event, $station_position_column, $row, $station_position_options);
                     $this->applyDropdownValidation($event, $is_yard_column, $row, $is_yard_options);
+                }
+
+                // Apply number format for station_position_column
+                $station_position_column = 'M';
+                for ($row = 2; $row <= $row_count; $row++) {
+                    $event->sheet->getDelegate()->getStyle("{$station_position_column}{$row}")
+                        ->getNumberFormat()
+                        ->setFormatCode('#');
                 }
             },
         ];
     }
+
 
     /**
      * Apply dropdown validation to a specific cell in the sheet.

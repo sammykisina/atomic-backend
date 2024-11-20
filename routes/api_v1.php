@@ -69,6 +69,9 @@ Route::prefix('/super-admin')->as('super-admin:')->group(
         base_path('routes/api_v1/super_admin/setup/regions.php'),
         base_path('routes/api_v1/super_admin/setup/line_regions_divisions.php'),
 
+        // TRAIN NAMES
+        base_path('routes/api_v1/super_admin/train_names.php'),
+
         // TRAINS
         base_path('routes/api_v1/super_admin/trains.php'),
 

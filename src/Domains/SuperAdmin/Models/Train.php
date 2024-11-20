@@ -18,7 +18,7 @@ final class Train extends Model
 
     /** @var array<int, string> */
     protected $fillable = [
-        'name',
+        'train_name_id',
         'driver_id',
         'service_order',
         'locomotive_number_id',
@@ -31,6 +31,15 @@ final class Train extends Model
         'time',
         'tonnages',
     ];
+
+    /** @return BelongsTo<TrainName> */
+    public function trainName(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: TrainName::class,
+            foreignKey: 'train_name_id',
+        );
+    }
 
     /** @return BelongsTo<Line> */
     public function line(): BelongsTo

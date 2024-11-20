@@ -92,6 +92,12 @@ final class ApplicationModulesController
                 'edit-locomotive-numbers',
                 'delete-locomotive-numbers',
             ],
+            'train-names' => [
+                'read-train-names',
+                'create-train-names',
+                'edit-train-names',
+                'delete-train-names',
+            ],
             'trains' => [
                 'read-trains',
                 'create-trains',

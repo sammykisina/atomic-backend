@@ -17,7 +17,11 @@ final class TrainResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
-            'number' => $this->resource->name,
+            'name' => new TrainNameResource(
+                resource: $this->whenLoaded(
+                    relationship: 'trainName',
+                ),
+            ) ,
             'service_order' => $this->resource->service_order,
             'locomotive_number' => new LocomotiveNumberResource(
                 resource: $this->whenLoaded(

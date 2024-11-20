@@ -12,7 +12,9 @@ return new class () extends Migration {
         Schema::create(table: 'trains', callback: function (Blueprint $table): void {
             $table->id();
 
-            $table->string(column: 'name');
+            $table->foreignId(column: 'train_name_id')
+                ->index()
+                ->constrained();
 
             $table->foreignId(column: 'driver_id')
                 ->references('id')

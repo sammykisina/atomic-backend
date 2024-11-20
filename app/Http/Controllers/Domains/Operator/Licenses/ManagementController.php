@@ -57,6 +57,10 @@ final class ManagementController
                 'is_authorized' => true,
             ]);
 
+            $journey_last_destination = $journey->last_destination;
+
+            dd($journey_last_destination);
+
             defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO3,
                 'resourceble_id' => $journey->id,
@@ -176,7 +180,6 @@ final class ManagementController
             $notification->markAsRead();
 
             return $is_declined;
-
         });
 
         if ( ! $is_declined) {
@@ -412,5 +415,4 @@ final class ManagementController
             'Loop' => $model->station->start_kilometer,
         };
     }
-
 }
