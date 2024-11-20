@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Shared\OccAndObc;
 
-
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Notifications\DriverOverSpeedingNotification;
 use Domains\Driver\Services\JourneyService;
@@ -42,7 +41,7 @@ final class NotifyDriverAndOperatorOfOverSpeedingController
             $journey->update(attributes: [
                 'logs' => $logs,
             ]);
-            
+
 
             AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::DRIVER_OVER_SPEEDING,

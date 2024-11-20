@@ -8,7 +8,6 @@ use Domains\SuperAdmin\Models\Train;
 use Domains\SuperAdmin\Resources\TrainResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -19,6 +18,7 @@ final class SearchController
         $train  = QueryBuilder::for(subject: Train::class)
             ->where('service_order', $request->query('service_order'))
             ->allowedIncludes(includes: [
+                'trainName',
                 'line',
                 'origin',
                 'destination',
