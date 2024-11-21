@@ -403,7 +403,7 @@ final class ManagementController
                 'license_number' => $uniqueLicenseNumber,
                 'journey_id' => $journey->id,
                 'direction' => $license_direction,
-                'type' => $request->validated('type'),
+                'type' => $request->validated('type') ?? LicenseTypes::NORMAL->value,
 
                 'origin' => [
                     'id' => $origin_id,
