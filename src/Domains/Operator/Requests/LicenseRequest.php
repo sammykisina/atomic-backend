@@ -31,7 +31,6 @@ final class LicenseRequest extends FormRequest
             'destination.coordinates' => ['array','required'],
 
             'type' => [
-                'required',
                 Rule::enum(type: LicenseTypes::class),
             ],
         ];
