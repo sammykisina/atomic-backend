@@ -30,6 +30,7 @@ final class ShiftPanicsController
             $panics = QueryBuilder::for(subject: Panic::class)
                 ->where('shift_id', $shift->id)
                 ->with(relations: [
+                    'journey.train.trainName',
                     'journey.train.line',
                     'journey.train.origin',
                     'journey.train.destination',

@@ -22,6 +22,7 @@ final class IndexController
                 $query->where('driver_id', Auth::id());
             })
             ->with(relations: [
+                'journey.train.trainName',
                 'journey.train.line',
                 'journey.train.origin',
                 'journey.train.destination',

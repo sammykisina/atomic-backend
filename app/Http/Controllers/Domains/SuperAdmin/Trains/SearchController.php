@@ -28,13 +28,6 @@ final class SearchController
             ])
             ->first();
 
-        // if ($train->driver_id !== Auth::id()) {
-        //     abort(
-        //         code: Http::EXPECTATION_FAILED(),
-        //         message: "Sorry. This Service Order may not be yours. Please double check or contact Trans Logic.",
-        //     );
-        // }
-
         return response(
             content: [
                 'message' => 'Train fetched successfully.',

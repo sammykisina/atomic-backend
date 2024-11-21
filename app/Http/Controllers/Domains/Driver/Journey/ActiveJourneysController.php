@@ -18,6 +18,7 @@ final class ActiveJourneysController
         $journeys = QueryBuilder::for(subject: Journey::class)
             ->where('is_active', true)
             ->with(relations: [
+                'train.trainName',
                 'train.line',
                 'train.origin',
                 'train.destination',

@@ -23,6 +23,7 @@ final class ActivePanicController
             })
             ->where('is_acknowledge', false)
             ->with(relations: [
+                'journey.train.trainName',
                 'journey.train.line',
                 'journey.train.origin',
                 'journey.train.destination',

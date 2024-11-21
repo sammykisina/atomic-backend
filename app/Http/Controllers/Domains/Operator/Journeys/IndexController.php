@@ -18,6 +18,7 @@ final class IndexController
     {
         $journeys = QueryBuilder::for(subject: Journey::class)
             ->with(relations: [
+                'train.trainName',
                 'train.line',
                 'train.origin',
                 'train.destination',
