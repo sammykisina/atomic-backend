@@ -202,7 +202,6 @@ final class ApplicationModulesController
 
             ],
 
-
             // DRIVER
             'journeys' => [
                 'read-journeys',

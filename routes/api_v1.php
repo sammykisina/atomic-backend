@@ -122,6 +122,10 @@ Route::prefix('/operator')->as('operator:')->group(
 
         // MESSAGES
         base_path('routes/api_v1/operator/messages.php'),
+
+
+        // LINE MANAGEMENT
+        base_path('routes/api_v1/operator/line_management.php'),
     ],
 );
 
