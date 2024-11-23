@@ -5,10 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\Operator\Journeys;
 
 use Carbon\Carbon;
-use Domains\Driver\Enums\LicenseRouteStatuses;
-use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
-use Domains\Driver\Models\License;
 use Domains\Driver\Notifications\JourneyNotification;
 use Domains\Driver\Requests\CreateOrEditJourneyRequest;
 use Domains\Driver\Services\JourneyService;
@@ -19,7 +16,6 @@ use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Models\Group;
-use Domains\SuperAdmin\Services\ShiftManagement\ShiftService;
 use Domains\SuperAdmin\Services\TrainService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;

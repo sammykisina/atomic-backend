@@ -433,6 +433,89 @@ final class ManagementController
         );
     }
 
+
+    /**
+     * CONFIRM LICENSE
+     * @param Journey $journey
+     * @param License $license
+     * @return Response|HttpException
+     */
+    public function confirmLicense(Journey $journey, License $license, DatabaseNotification $notification): Response | HttpException
+    {
+        $result = DB::transaction(function () use ($journey, $license, $notification): bool {
+            if (null !== $notification->read_at) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'License confirmation already.Incase of inquires please contact your system administration.',
+                );
+            }
+
+            $license_origin = $license->origin;
+            $license_origin['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
+            $license_origin['start_time'] = Carbon::now();
+
+            if ( ! $license->update(attributes: [
+                'status' => LicenseStatuses::CONFIRMED,
+                'confirmed_at' => Carbon::now(),
+                'origin' => $license_origin,
+            ])) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'License confirmation failed. Please try again',
+                );
+            }
+
+            $shifts = $journey->shifts;
+            $shift = ShiftService::getShiftById(
+                shift_id: end($shifts),
+            );
+
+            defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::OPERATOR_MACRO2,
+                'resourceble_id' => $license->id,
+                'resourceble_type' => get_class(object: $license),
+                'actor_id' => Auth::id(),
+                'receiver_id' => $shift->user_id,
+                'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
+                'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
+            ]));
+
+
+            $logs = array_merge([
+                ['type' => AtomikLogsTypes::LICENSE_CONFIRMED->value,
+                    'confirmed_by' => Auth::user()->employee_id,
+                    'confirmed_at' => now(),
+                ],
+            ], $license->logs);
+
+            defer(callback: fn() => $license->update(attributes: [
+                'logs' => $logs,
+            ]));
+
+            $notification->markAsRead();
+
+            return true;
+        });
+
+
+        if ( ! $result) {
+            return response(
+                content: [
+                    'message' => 'Something went wrong.Please try again.',
+                ],
+                status: Http::NOT_IMPLEMENTED(),
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'License confirmed successfully. Please inform the driver to begin or continue with his/her journey.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
+
     /**
      * MARK TRAIN AS RESCUED
      * @param Journey $journey
@@ -643,88 +726,5 @@ final class ManagementController
             'Section' => $model->station->end_kilometer,
             'Loop' => $model->station->start_kilometer,
         };
-    }
-
-
-    /**
-     * CONFIRM LICENSE
-     * @param Journey $journey
-     * @param License $license
-     * @return Response|HttpException
-     */
-    public function confirmLicense(Journey $journey, License $license, DatabaseNotification $notification): Response | HttpException
-    {
-        $result = DB::transaction(function () use ($journey, $license, $notification): bool {
-            if (null !== $notification->read_at) {
-                abort(
-                    code: Http::EXPECTATION_FAILED(),
-                    message: 'License confirmation already.Incase of inquires please contact your system administration.',
-                );
-            }
-
-            $license_origin = $license->origin;
-            $license_origin['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
-            $license_origin['start_time'] = Carbon::now();
-
-            if ( ! $license->update(attributes: [
-                'status' => LicenseStatuses::CONFIRMED,
-                'confirmed_at' => Carbon::now(),
-                'origin' => $license_origin,
-            ])) {
-                abort(
-                    code: Http::EXPECTATION_FAILED(),
-                    message: 'License confirmation failed. Please try again',
-                );
-            }
-
-            $shifts = $journey->shifts;
-            $shift = ShiftService::getShiftById(
-                shift_id: end($shifts),
-            );
-
-            defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
-                'type' => AtomikLogsTypes::OPERATOR_MACRO2,
-                'resourceble_id' => $license->id,
-                'resourceble_type' => get_class(object: $license),
-                'actor_id' => Auth::id(),
-                'receiver_id' => $shift->user_id,
-                'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
-                'train_id' => $journey->train_id,
-                'locomotive_number_id' => $journey->train->locomotive_number_id,
-            ]));
-
-
-            $logs = array_merge([
-                ['type' => AtomikLogsTypes::LICENSE_CONFIRMED->value,
-                    'confirmed_by' => Auth::user()->employee_id,
-                    'confirmed_at' => now(),
-                ],
-            ], $license->logs);
-
-            defer(callback: fn() => $license->update(attributes: [
-                'logs' => $logs,
-            ]));
-
-            $notification->markAsRead();
-
-            return true;
-        });
-
-
-        if ( ! $result) {
-            return response(
-                content: [
-                    'message' => 'Something went wrong.Please try again.',
-                ],
-                status: Http::NOT_IMPLEMENTED(),
-            );
-        }
-
-        return response(
-            content: [
-                'message' => 'License confirmed successfully. Please inform the driver to begin or continue with his/her journey.',
-            ],
-            status: Http::ACCEPTED(),
-        );
     }
 }
