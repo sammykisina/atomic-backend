@@ -21,7 +21,8 @@ return new class () extends Migration {
                 ->constrained();
 
             $table->string(column: 'status')->default(value: LicenseStatuses::PENDING);
-            $table->string(column: 'type')->default(value: LicenseTypes::NORMAL);
+            $table->string(column: 'type')->default(value: LicenseTypes::SIMPLE);
+            $table->string(column: 'reason_for_sos_license')->nullable();
 
             $table->string(column: 'direction');
 

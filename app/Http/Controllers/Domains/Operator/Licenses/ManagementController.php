@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Operator\Licenses;
 
+use Carbon\Carbon;
 use Domains\Driver\Enums\LicenseRouteStatuses;
 use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
@@ -24,6 +25,7 @@ use Domains\Shared\Models\AtomikLog;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Domains\SuperAdmin\Models\Shift;
+use Domains\SuperAdmin\Services\ShiftManagement\ShiftService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -69,6 +71,15 @@ final class ManagementController
                 'logs' => $logs,
             ]);
 
+            if ( ! $journey->train->trainName->update([
+                'is_active' => true,
+            ])) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'This train was not activated for this trip.Please try again.',
+                );
+            }
+
             defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO3,
                 'resourceble_id' => $journey->id,
@@ -111,11 +122,11 @@ final class ManagementController
     public function assignLicense(LicenseRequest $request, Journey $journey): Response|HttpException
     {
         DB::transaction(function () use ($request, $journey): License {
-            if ($request->validated('type') === LicenseTypes::SPECIAL->value) {
+            if ($request->validated('type') === LicenseTypes::SOS->value) {
                 if (Auth::user()->type !== UserTypes::OPERATOR_CONTROLLER_SUPERVISOR->value) {
                     abort(
                         code: Http::EXPECTATION_FAILED(),
-                        message: 'You are not allowed to assign a special license. Please notify your supervisor.',
+                        message: 'You are not allowed to assign an SOS license. Please notify your supervisor.',
                     );
                 }
             }
@@ -162,6 +173,21 @@ final class ManagementController
                 journey: $journey,
             ));
 
+
+            if ($journey->has_obc) {
+                $journey->train->driver->notify(new LicenseNotification(
+                    license: $license,
+                    type: NotificationTypes::REQUEST_ACCEPTED,
+                ));
+            } else {
+                $shift->user->notify(
+                    new LicenseNotification(
+                        license: $license,
+                        type: NotificationTypes::REQUEST_ACCEPTED,
+                    ),
+                );
+            }
+
             return $license;
         });
 
@@ -169,6 +195,116 @@ final class ManagementController
         return response(
             content: [
                 'message' => 'License assigned successfully. Awaiting confirmation.',
+            ],
+            status: Http::CREATED(),
+        );
+    }
+
+    /**
+     * ASSIGN SOS LICENSE
+     * @param LicenseRequest $request
+     * @param Journey $journey
+     * @return Response
+     */
+    public function sosLicense(LicenseRequest $request, Journey $journey): Response
+    {
+        DB::transaction(function () use ($request, $journey): License {
+            if ($request->validated('type') === LicenseTypes::SOS->value) {
+                if (Auth::user()->type !== UserTypes::OPERATOR_CONTROLLER_SUPERVISOR->value) {
+                    abort(
+                        code: Http::EXPECTATION_FAILED(),
+                        message: 'You are not allowed to assign an SOS license. Please notify your supervisor.',
+                    );
+                }
+            }
+
+            $shift  = Shift::query()
+                ->where('user_id', Auth::id())
+                ->where('status', ShiftStatuses::CONFIRMED->value)
+                ->where('active', operator: true)
+                ->first();
+
+            $currentShiftIds = $journey->shifts ?? [];
+            $currentShiftIds[] = $shift->id;
+
+            $prev_latest_license = LicenseService::getPrevLatestLicense(
+                journey: $journey,
+            );
+
+            $logs = array_merge([
+                [
+                    'type' => AtomikLogsTypes::LICENSE_USED->value,
+                    'marked_as_used_by' => Auth::user()->employee_id,
+                    'marked_at' => now(),
+                ],
+            ], $prev_latest_license->logs ?? []);
+
+            if ($prev_latest_license) {
+                $prev_latest_license->update(attributes: [
+                    'status' => LicenseStatuses::USED->value,
+                    'logs' => $logs,
+                ]);
+            }
+
+            $license = $this->createLicense(
+                request: $request,
+                journey: $journey,
+            );
+
+            $journey->update(attributes: [
+                'shifts' => $currentShiftIds,
+            ]);
+
+            $license->update(attributes: [
+                'logs' => [
+                    [
+                        'type' => AtomikLogsTypes::SOS_LICENSE_CREATED->value,
+                        'created_at' => $license->created_at,
+                        'created_by' => Auth::user()->employee_id,
+                    ],
+                ],
+            ]);
+
+            if ($license->type === LicenseTypes::SOS->value) {
+                AtomikLogService::createAtomicLog(atomikLogData: [
+                    'type' => AtomikLogsTypes::SOS_LICENSE_CREATED,
+                    'resourceble_id' => $license->id,
+                    'resourceble_type' => get_class(object: $license),
+                    'actor_id' => Auth::id(),
+                    'receiver_id' => $journey->train->driver_id,
+                    'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
+                    'train_id' => $journey->train_id,
+                    'locomotive_number_id' => $journey->train->locomotive_number_id,
+                    'message' => $request->validated(key: 'reason_for_sos_license'),
+                ]);
+            }
+
+            /**
+             * UPDATE THE JOURNEY TO BE RESCUED
+             */
+            $journey_to_be_rescued = JourneyService::getJourneyById(journey_id: $request->validated(key: 'journey_to_be_rescued'));
+            $this->markTrainAsRescued(journey: $journey_to_be_rescued);
+
+            if ($journey->has_obc) {
+                $journey->train->driver->notify(new LicenseNotification(
+                    license: $license,
+                    type: NotificationTypes::REQUEST_ACCEPTED,
+                ));
+            } else {
+                $shift->user->notify(
+                    new LicenseNotification(
+                        license: $license,
+                        type: NotificationTypes::REQUEST_ACCEPTED,
+                    ),
+                );
+            }
+
+            return $license;
+        });
+
+        return response(
+            content: [
+                'message' => 'SOS License assigned successfully. Awaiting confirmation.',
             ],
             status: Http::CREATED(),
         );
@@ -298,6 +434,56 @@ final class ManagementController
     }
 
     /**
+     * MARK TRAIN AS RESCUED
+     * @param Journey $journey
+     * @return void
+     */
+    private function markTrainAsRescued(Journey $journey): void
+    {
+        $latest_train_license = License::query()
+            ->where('journey_id', $journey->id)
+            ->where('status', LicenseStatuses::CONFIRMED->value)
+            ->first();
+
+        if ( ! $latest_train_license) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'The train to be rescued was not assigned any licenses yet.Please assign it a license so that its status can be tracked',
+            );
+        }
+
+        // Update origin if train is at origin
+        if ($latest_train_license['train_at_origin']) {
+            $origin = $latest_train_license->origin;
+            $origin['in_route'] = LicenseRouteStatuses::RESCUED->value;
+            $latest_train_license->origin = $origin;
+        }
+
+        // Update the 'throughs' array, modifying the specific 'through' element where the train is present
+        $throughs = $latest_train_license['through'];
+        if (is_array($throughs)) {
+            foreach ($throughs as $index => $through) {
+                if ($through['train_is_here']) {
+                    $through['in_route'] = LicenseRouteStatuses::RESCUED->value;
+                    $throughs[$index] = $through; // Update the specific 'through' in the array
+                    break; // Assuming only one 'train_is_here' exists
+                }
+            }
+            $latest_train_license['through'] = $throughs;
+        }
+
+        // Update destination if train is at destination
+        if ($latest_train_license['train_at_destination']) {
+            $destination = $latest_train_license->destination;
+            $destination['in_route'] = LicenseRouteStatuses::RESCUED->value;
+            $latest_train_license->destination = $destination;
+        }
+
+        $latest_train_license->save();
+    }
+
+
+    /**
      * CREATE LICENSE
      * @param LicenseRequest $request
      * @param Journey $journey
@@ -403,7 +589,8 @@ final class ManagementController
                 'license_number' => $uniqueLicenseNumber,
                 'journey_id' => $journey->id,
                 'direction' => $license_direction,
-                'type' => $request->validated('type') ?? LicenseTypes::NORMAL->value,
+                'type' => $request->validated('type') ?? LicenseTypes::SIMPLE->value,
+                'reason_for_sos_license' => $request->validated('reason_for_sos_license') ?? null,
 
                 'origin' => [
                     'id' => $origin_id,
@@ -439,11 +626,6 @@ final class ManagementController
             ],
         );
 
-        $journey->train->driver->notify(new LicenseNotification(
-            license: $license,
-            type: NotificationTypes::REQUEST_ACCEPTED,
-        ));
-
         return $license;
     }
 
@@ -461,5 +643,88 @@ final class ManagementController
             'Section' => $model->station->end_kilometer,
             'Loop' => $model->station->start_kilometer,
         };
+    }
+
+
+    /**
+     * CONFIRM LICENSE
+     * @param Journey $journey
+     * @param License $license
+     * @return Response|HttpException
+     */
+    public function confirmLicense(Journey $journey, License $license, DatabaseNotification $notification): Response | HttpException
+    {
+        $result = DB::transaction(function () use ($journey, $license, $notification): bool {
+            if (null !== $notification->read_at) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'License confirmation already.Incase of inquires please contact your system administration.',
+                );
+            }
+
+            $license_origin = $license->origin;
+            $license_origin['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
+            $license_origin['start_time'] = Carbon::now();
+
+            if ( ! $license->update(attributes: [
+                'status' => LicenseStatuses::CONFIRMED,
+                'confirmed_at' => Carbon::now(),
+                'origin' => $license_origin,
+            ])) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'License confirmation failed. Please try again',
+                );
+            }
+
+            $shifts = $journey->shifts;
+            $shift = ShiftService::getShiftById(
+                shift_id: end($shifts),
+            );
+
+            defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::OPERATOR_MACRO2,
+                'resourceble_id' => $license->id,
+                'resourceble_type' => get_class(object: $license),
+                'actor_id' => Auth::id(),
+                'receiver_id' => $shift->user_id,
+                'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
+                'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
+            ]));
+
+
+            $logs = array_merge([
+                ['type' => AtomikLogsTypes::LICENSE_CONFIRMED->value,
+                    'confirmed_by' => Auth::user()->employee_id,
+                    'confirmed_at' => now(),
+                ],
+            ], $license->logs);
+
+            defer(callback: fn() => $license->update(attributes: [
+                'logs' => $logs,
+            ]));
+
+            $notification->markAsRead();
+
+            return true;
+        });
+
+
+        if ( ! $result) {
+            return response(
+                content: [
+                    'message' => 'Something went wrong.Please try again.',
+                ],
+                status: Http::NOT_IMPLEMENTED(),
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'License confirmed successfully. Please inform the driver to begin or continue with his/her journey.',
+            ],
+            status: Http::ACCEPTED(),
+        );
     }
 }

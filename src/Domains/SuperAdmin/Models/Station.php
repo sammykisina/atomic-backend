@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Models;
 
+use Domains\SeniorEngineer\Models\Speed;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 final class Station extends Model
 {
@@ -63,6 +65,15 @@ final class Station extends Model
             related: Section::class,
             foreignKey: 'station_id',
             localKey: 'id',
+        );
+    }
+
+    /** @return MorphMany */
+    public function speeds(): MorphMany
+    {
+        return $this->morphMany(
+            related: Speed::class,
+            name: 'areable',
         );
     }
 

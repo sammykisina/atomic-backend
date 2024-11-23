@@ -76,7 +76,7 @@ final class JourneyService
     {
         return Journey::query()
             ->where('id', $journey_id)
-            ->With(['train', 'licenses'])
+            ->with(['train', 'licenses'])
             ->first();
     }
 

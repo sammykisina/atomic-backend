@@ -61,6 +61,13 @@ final class ManagementController
                 train_id: $request->validated(key: "train_id"),
             );
 
+            if ($train->trainName->is_active) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'Train is active in another journey. Please contact your operator.',
+                );
+            }
+
             $journey_direction = JourneyService::getJourneyDirection(
                 origin: $train->origin->start_kilometer,
                 destination: $train->destination->start_kilometer,
@@ -110,7 +117,6 @@ final class ManagementController
                 ),
             ];
 
-
             if ($train->journey) {
                 $logs = array_merge([
                     [
@@ -126,6 +132,7 @@ final class ManagementController
                     'is_authorized' => false,
                     'requesting_location' => $requesting_location,
                     'logs' => $logs,
+                    'has_obc' => true,
                 ]);
 
                 $journey = $train->journey;
@@ -145,6 +152,7 @@ final class ManagementController
                         ],
                         [
                             'train_id' => $request->validated('train_id'),
+                            'has_obc' => true,
                         ],
                     ),
                 );
@@ -172,6 +180,7 @@ final class ManagementController
                 'train_id' => $journey->train_id,
                 'locomotive_number_id' => $journey->train->locomotive_number_id,
             ]);
+
 
             return $journey;
         });
@@ -400,9 +409,9 @@ final class ManagementController
      * @param Journey $journey
      * @return Response|HttpException
      */
-    public function exitLine(Request $request, Journey $journey): Response|HttpException
+    public function exitLine(Request $request, Journey $journey, DatabaseNotification $notification): Response|HttpException
     {
-        $exited =  DB::transaction(function () use ($journey): bool {
+        $exited =  DB::transaction(function () use ($journey, $notification): bool {
             if ( ! $journey->update(attributes: [
                 'is_active' => false,
                 'last_destination' => JourneyService::getTrainLocation(
@@ -431,6 +440,17 @@ final class ManagementController
             $journey->update(attributes: [
                 'logs' => $logs,
             ]);
+
+            if ( ! $journey->train->trainName->update([
+                'is_active' => false,
+            ])) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'This train was not deactivated for this trip.Please try again.',
+                );
+            }
+
+            $notification->markAsRead();
 
             defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO10,
@@ -549,6 +569,7 @@ final class ManagementController
             status: Http::ACCEPTED(),
         );
     }
+
     /**
      * ACCEPT REVOKE LICENSE AREA REQUEST
      * @param RevokeLicenseAreaRequest $request
@@ -660,7 +681,6 @@ final class ManagementController
             status: Http::ACCEPTED(),
         );
     }
-
 
     /**
      * LICENSE SECTION AREAS REVOKE REJECT

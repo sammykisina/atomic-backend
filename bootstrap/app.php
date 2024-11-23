@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -24,4 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__ . '/../routes/channels.php',
         ['prefix' => 'api', 'middleware' => ['api', 'auth:sanctum']],
     )
+    ->withSchedule(function (Schedule $schedule): void {
+        // $schedule->call(new DeleteRecentUsers)->daily();
+        $schedule->call(function (): void {
+            Log::info('Running scheduled command');
+        })->everyMinute();
+    })
     ->withExceptions(function (Exceptions $exceptions): void {})->create();

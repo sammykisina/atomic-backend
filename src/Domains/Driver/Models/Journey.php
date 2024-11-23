@@ -27,6 +27,7 @@ final class Journey extends Model
         'last_destination',
         'requesting_location',
         'logs',
+        'has_obc',
     ];
 
 
@@ -59,6 +60,7 @@ final class Journey extends Model
             'requesting_location' => 'json',
             'direction' => LicenseDirections::class,
             'logs' => 'json',
+            'has_obc' => 'boolean',
         ];
     }
 }

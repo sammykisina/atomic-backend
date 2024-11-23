@@ -6,7 +6,7 @@ namespace Domains\Operator\Enums;
 
 enum LicenseTypes: string
 {
-    case NORMAL = 'NORMAL';
+    case SIMPLE = 'SIMPLE';
 
-    case SPECIAL = 'SPECIAL';
+    case SOS = 'SOS';
 }

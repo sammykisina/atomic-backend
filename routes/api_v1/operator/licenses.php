@@ -14,6 +14,9 @@ Route::middleware(['auth:sanctum', 'ability:read-journeys'])
 Route::middleware(['auth:sanctum', 'ability:read-journeys'])->group(function (): void {
     Route::controller(ManagementController::class) ->prefix('journeys')->as('journeys:')->group(function (): void {
         Route::post('{journey}/assign/license', 'assignLicense')->name(name: 'assign-license');
+        Route::post('{journey}/assign/sos-license', 'sosLicense')->name(name: 'assign-sos-license');
+
+        Route::patch('/{journey}/licenses/{license}/notifications/{notification}/confirm-license', 'confirmLicense')->name(name: 'operator-confirm-license');
     });
 
 

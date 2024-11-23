@@ -25,6 +25,7 @@ final class License extends Model
         'journey_id',
         'status',
         'type',
+        'reason_for_sos_license',
         'direction',
         'issuer_id',
         'rejector_id',

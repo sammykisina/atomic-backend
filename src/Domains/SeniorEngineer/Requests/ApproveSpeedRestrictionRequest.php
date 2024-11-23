@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 namespace Domains\SeniorEngineer\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-final class SpeedRestrictionRequest extends FormRequest
+final class ApproveSpeedRestrictionRequest extends FormRequest
 {
-    /**  @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string> */
+    /**
+     * DETERMINE IF THE USER IS AUTHORIZED TO MAKE THIS REQUEST
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * GET THE VALIDATION RULES THAT APPLY TO THE REQUEST
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
-            'proposed_speed' => [
-                'required',
-                'numeric',
-                'min:0',
-            ],
-            'proposed_speed_comment' => [
-                'required',
-                'string',
-            ],
             'end_kilometer' => [
                 'required',
             ],

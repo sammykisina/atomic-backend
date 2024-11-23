@@ -33,6 +33,12 @@ final class LicenseRequest extends FormRequest
             'type' => [
                 Rule::enum(type: LicenseTypes::class),
             ],
+            'reason_for_sos_license' => [
+                'required_if:type,SOS',
+            ],
+            'journey_to_be_rescued' => [
+                'required_if:type,SOS',
+            ],
         ];
     }
 }

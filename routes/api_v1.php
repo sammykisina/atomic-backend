@@ -143,6 +143,7 @@ Route::prefix('/senior-engineer')->as('senior-engineer:')->group(
     [
         base_path('routes/api_v1/senior_engineer/rsti_management.php'),
         base_path('routes/api_v1/senior_engineer/se.php'),
+        base_path('routes/api_v1/senior_engineer/speeds.php'),
     ],
 );
 

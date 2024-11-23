@@ -22,6 +22,7 @@ final class JourneyResource extends JsonResource
             'is_active' => $this->resource->is_active,
             'is_authorized' => $this->resource->is_authorized,
             'direction' => $this->resource->direction,
+            'has_obc' => $this->resource->has_obc,
             'train' => new TrainResource(
                 resource: $this->whenLoaded(
                     relationship: 'train',

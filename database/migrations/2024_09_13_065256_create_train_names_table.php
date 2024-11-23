@@ -13,6 +13,7 @@ return new class () extends Migration {
             $table->id();
 
             $table->string(column: 'name')->unique();
+            $table->boolean(column: 'is_active')->default(value: false);
 
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();

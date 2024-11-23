@@ -20,6 +20,7 @@ return new class () extends Migration {
                 ->name('fk_journey_train');
 
             $table->boolean(column: 'is_active')->default(value: true);
+            $table->boolean(column: 'has_obc')->default(value: true);
 
             $table->string(column: 'direction');
 

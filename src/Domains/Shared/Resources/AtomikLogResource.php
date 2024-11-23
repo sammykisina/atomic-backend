@@ -49,6 +49,7 @@ final class AtomikLogResource extends JsonResource
                     relationship: 'locomotive',
                 ),
             ),
+            'message' => $this->resource->message,
         ];
     }
 }

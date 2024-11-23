@@ -144,6 +144,12 @@ final class ApplicationModulesController
                 'read-rsti-inspections',
                 'show-rsti-inspections',
             ],
+            'speed-restrictions' => [
+                'read-speeds',
+                'edit-speeds',
+                'delete-speeds',
+                'create-speeds',
+            ],
 
             // RSTI
             'STI-management' => [

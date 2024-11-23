@@ -15,4 +15,6 @@ enum LicenseRouteStatuses: string
     case COMPLETED = 'COMPLETED';
 
     case REVOKED = 'REVOKED';
+
+    case RESCUED = 'RESCUED';
 }

@@ -15,6 +15,7 @@ final class TrainName extends Model
     /** @var array<int, string> */
     protected $fillable = [
         'name',
+        'is_active',
     ];
 
     /** @return LogOptions */
