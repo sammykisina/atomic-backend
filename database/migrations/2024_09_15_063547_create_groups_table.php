@@ -15,6 +15,7 @@ return new class () extends Migration {
             $table->string(column: 'name')->unique();
             $table->string(column: 'description');
             $table->json(column: 'stations');
+            $table->json(column: 'lines');
 
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();
