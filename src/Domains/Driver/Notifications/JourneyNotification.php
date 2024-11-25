@@ -36,6 +36,8 @@ final class JourneyNotification extends Notification
         return [
             'journey' => [
                 'journey_id' => $this->journey->id,
+                'requesting_location' => $this->journey->requesting_location,
+                'last_destination' => $this->journey->last_destination,
                 'train' => new TrainResource(
                     resource: $train,
                 ),
