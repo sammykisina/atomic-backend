@@ -20,6 +20,7 @@ use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Operator\Requests\RevokeLicenseArea;
 use Domains\Operator\Requests\RevokeLicenseAreaRequest;
+use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
 use Domains\Shared\Services\AtomikLogService;
@@ -448,6 +449,25 @@ final class ManagementController
                     code: Http::EXPECTATION_FAILED(),
                     message: 'This train was not deactivated for this trip.Please try again.',
                 );
+            }
+
+            $prev_latest_license = LicenseService::getPrevLatestLicense(
+                journey: $journey,
+            );
+
+            $logs = array_merge([
+                [
+                    'type' => AtomikLogsTypes::LICENSE_USED->value,
+                    'marked_as_used_by' => Auth::user()->employee_id,
+                    'marked_at' => now(),
+                ],
+            ], $prev_latest_license->logs ?? []);
+
+            if ($prev_latest_license) {
+                $prev_latest_license->update(attributes: [
+                    'status' => LicenseStatuses::USED->value,
+                    'logs' => $logs,
+                ]);
             }
 
             $notification->markAsRead();

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Operator\Journeys;
 
+use Domains\Driver\Enums\LicenseStatuses;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Notifications\OperatorExitLineRequestNotification;
+use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Models\User;
 use Domains\Shared\Services\AtomikLogService;
@@ -106,6 +108,25 @@ final class ExitTrainController
                     code: Http::EXPECTATION_FAILED(),
                     message: 'This train was not deactivated for this trip.Please try again.',
                 );
+            }
+
+            $prev_latest_license = LicenseService::getPrevLatestLicense(
+                journey: $journey,
+            );
+
+            $logs = array_merge([
+                [
+                    'type' => AtomikLogsTypes::LICENSE_USED->value,
+                    'marked_as_used_by' => Auth::user()->employee_id,
+                    'marked_at' => now(),
+                ],
+            ], $prev_latest_license->logs ?? []);
+
+            if ($prev_latest_license) {
+                $prev_latest_license->update(attributes: [
+                    'status' => LicenseStatuses::USED->value,
+                    'logs' => $logs,
+                ]);
             }
 
             $notification->markAsRead();
