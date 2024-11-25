@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Resources;
 
+use Domains\Driver\Resources\JourneyResource;
 use Domains\Shared\Resources\UserResource;
 use Domains\SuperAdmin\Models\Train;
 use Illuminate\Http\Request;
@@ -51,6 +52,11 @@ final class TrainResource extends JsonResource
             'driver' => new UserResource(
                 resource: $this->whenLoaded(
                     relationship: 'driver',
+                ),
+            ),
+            'journey' => new JourneyResource(
+                resource: $this->whenLoaded(
+                    relationship: 'journey',
                 ),
             ),
 
