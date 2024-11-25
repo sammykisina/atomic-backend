@@ -39,7 +39,7 @@ final class OperatorExitLineRequestNotification extends Notification
             'message' => 'Exit Line Request',
             'description' => 'Are your sure you want to exit train ' . $this->journey->train->trainName->name . ' with driver ' . $this->journey->train->driver->fullname . ' ?',
             'journey_id' => $this->journey->id,
-            'type' => NotificationTypes::REQUEST_LINE_EXIT->value,
+            'type' => NotificationTypes::OPERATOR_REQUEST_LINE_EXIT->value,
         ];
     }
 }
