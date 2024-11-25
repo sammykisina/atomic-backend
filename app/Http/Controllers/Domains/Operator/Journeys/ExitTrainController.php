@@ -33,17 +33,17 @@ final class ExitTrainController
             journey: $journey,
         ));
 
-         defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
-                'type' => AtomikLogsTypes::OPERATOR_REQUEST_LINE_EXIT,
-                'resourceble_id' => $journey->id,
-                'resourceble_type' => get_class(object: $journey),
-                'actor_id' => Auth::id(),
-                'receiver_id' => Auth::id(),
-                'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
-                'train_id' => $journey->train_id,
-                'locomotive_number_id' => $journey->train->locomotive_number_id,
-                'message' => $request->get(key: 'reason_for_exit'),
-            ]));
+        defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+            'type' => AtomikLogsTypes::OPERATOR_REQUEST_LINE_EXIT,
+            'resourceble_id' => $journey->id,
+            'resourceble_type' => get_class(object: $journey),
+            'actor_id' => Auth::id(),
+            'receiver_id' => Auth::id(),
+            'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
+            'train_id' => $journey->train_id,
+            'locomotive_number_id' => $journey->train->locomotive_number_id,
+            'message' => $request->get(key: 'reason_for_exit'),
+        ]));
 
         return response(
             content: [
