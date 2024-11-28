@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Domains\Shared\Messages;
+namespace App\Http\Controllers\Domains\Operator\Messages;
 
 use Domains\Shared\Models\Message;
 use Domains\Shared\Models\User;
@@ -12,12 +12,13 @@ use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
 use Spatie\QueryBuilder\QueryBuilder;
 
-final class MakeAsReadController
+final class OperatorMakeAsReadController
 {
-    public function __invoke(Request $request): Response
+    public function __invoke(Request $request, User $driver): Response
     {
         $messages = QueryBuilder::for(subject: Message::class)
             ->where('receiver_id', Auth::id())
+            ->where('sender_id', $driver->id)
             ->whereNull('read_at')
             ->with(['receiver', 'sender'])
             ->orderBy('created_at', 'desc')

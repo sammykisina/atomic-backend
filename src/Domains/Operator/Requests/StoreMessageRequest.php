@@ -13,9 +13,9 @@ final class StoreMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'locomotive_id' =>  [
+            'receiver_id' =>  [
                 'required',
-                'exists:locomotive_numbers,id',
+                'exists:users,id',
             ],
             'message' =>  [
                 'required',

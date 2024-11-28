@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Resources;
 
+use Domains\Shared\Resources\UserResource;
 use Domains\SuperAdmin\Models\LocomotiveNumber;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -17,7 +18,11 @@ final class LocomotiveNumberResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'number' => $this->resource->number,
-            'driver' => $this->resource->driver_id,
+            'driver' => new UserResource(
+                resource: $this->whenLoaded(
+                    relationship: 'driver',
+                ),
+            ),
         ];
     }
 }

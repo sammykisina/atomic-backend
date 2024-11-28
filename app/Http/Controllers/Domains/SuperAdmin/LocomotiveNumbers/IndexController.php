@@ -14,7 +14,8 @@ final class IndexController
 {
     public function __invoke(): Response
     {
-        $locomotive_numbers  = QueryBuilder::for(LocomotiveNumber::class)
+        $locomotive_numbers  = QueryBuilder::for(subject: LocomotiveNumber::class)
+            ->with(relations: ['driver'])
             ->get();
 
         return response(

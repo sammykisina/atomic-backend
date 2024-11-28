@@ -18,7 +18,7 @@ final class StoreController
     public function __invoke(StoreMessageRequest $request): Response
     {
         $locomotive = LocomotiveNumber::query()
-            ->where('id', $request->validated('locomotive_id'))
+            ->where('driver_id', $request->validated('receiver_id'))
             ->first();
 
         $message_data = [];
@@ -47,6 +47,7 @@ final class StoreController
             'receiver_id' => $locomotive->driver_id,
             'current_location' => '',
             'locomotive_number_id' => $locomotive->id,
+            'message' => $message->message,
         ]));
 
         return response(

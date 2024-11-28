@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Domains\Driver\Models\Journey;
 use Domains\Driver\Models\Panic;
 use Domains\Driver\Requests\PanicRequest;
+use Domains\Driver\Services\JourneyService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Services\AtomikLogService;
 use Illuminate\Http\Response;
@@ -46,8 +47,10 @@ final class StoreController
             'resourceble_type' => get_class($panic),
             'actor_id' => Auth::id(),
             'receiver_id' => $panic->shift->user_id,
-            'current_location' => $panic->latitude . ', ' . $panic->longitude ,
             'train_id' => $journey->train_id,
+            'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
+            'locomotive_number_id' => $journey->train->locomotive_number_id,
+            'message' => $panic->issue
         ]));
 
         return response(

@@ -21,10 +21,17 @@ final class StoreController
 {
     public function __invoke(MessageRequest $request): Response
     {
-
         $locomotive = LocomotiveNumber::query()
             ->where('driver_id', Auth::id())
             ->first();
+
+
+        if ( ! $locomotive) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'We could not find a locomotive assigned to you yet.',
+            );
+        }
 
         $message_data = [];
         $message_data['sender_id'] = Auth::id();
@@ -71,6 +78,7 @@ final class StoreController
             'receiver_id' => $message_data['receiver_id'],
             'current_location' => '',
             'locomotive_number_id' => $locomotive->id,
+            'message' => $message->message,
         ]));
 
         return response(

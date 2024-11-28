@@ -19,7 +19,7 @@ final class OperatorUnreadMessagesController
         $messages = QueryBuilder::for(subject: Message::class)
             ->where('receiver_id', Auth::id())
             ->whereNull('read_at')
-            ->with(['receiver', 'sender'])
+            ->with(['receiver', 'sender', 'locomotive.driver'])
             ->orderBy('created_at', 'desc')
             ->get();
 
