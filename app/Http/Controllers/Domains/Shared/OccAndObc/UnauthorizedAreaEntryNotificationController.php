@@ -18,7 +18,7 @@ use JustSteveKing\StatusCode\Http;
 
 final class UnauthorizedAreaEntryNotificationController
 {
-    public function __invoke(Request $request, Journey $journey)  
+    public function __invoke(Request $request, Journey $journey)
     {
         $notified =  DB::transaction(function () use ($journey): bool {
 
