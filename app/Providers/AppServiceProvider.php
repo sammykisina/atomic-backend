@@ -18,7 +18,7 @@ final class AppServiceProvider extends ServiceProvider
         Model::shouldBeStrict();
         JsonResource::withoutWrapping();
         DB::prohibitDestructiveCommands(
-            $this->app->isProduction()
+            $this->app->isProduction(),
         );
     }
 }
