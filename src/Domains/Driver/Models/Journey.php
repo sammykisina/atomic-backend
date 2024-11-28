@@ -47,7 +47,7 @@ final class Journey extends Model
         return $this->hasMany(
             related: License::class,
             foreignKey: 'journey_id',
-        )->where(column: 'status', operator: '!==', value: LicenseStatuses::USED->value);
+        )->where(column: 'status'  ,operator: '!=', value: LicenseStatuses::USED->value);
     }
 
     /** @return array<string, mixed> */
