@@ -50,7 +50,7 @@ final class StoreController
             'train_id' => $journey->train_id,
             'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
             'locomotive_number_id' => $journey->train->locomotive_number_id,
-            'message' => $panic->issue
+            'message' => $panic->issue,
         ]));
 
         return response(
