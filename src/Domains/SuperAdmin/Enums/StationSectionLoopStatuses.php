@@ -12,5 +12,5 @@ enum StationSectionLoopStatuses: string
 
     case LICENSE_ISSUED = 'LICENSE_ISSUED';
 
-    case LICENSE_ISSUED = 'UNDER_MAINTENANCE';
+    case UNDER_MAINTENANCE = 'UNDER_MAINTENANCE';
 }
