@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Domains\Driver\Models;
 
 use Domains\Driver\Enums\LicenseDirections;
+use Domains\Driver\Enums\LicenseStatuses;
 use Domains\SuperAdmin\Models\Train;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -46,7 +47,7 @@ final class Journey extends Model
         return $this->hasMany(
             related: License::class,
             foreignKey: 'journey_id',
-        );
+        )->where(column: 'status'  ,operator: '=', value: LicenseStatuses::CONFIRMED->value);
     }
 
     /** @return array<string, mixed> */
