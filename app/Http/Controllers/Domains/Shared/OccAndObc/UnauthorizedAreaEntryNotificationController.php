@@ -4,9 +4,78 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Domains\Shared\OccAndObc;
 
-use App\Http\Requests\UnauthorizedAreaEntryNotificationRequest;
+use Domains\Driver\Models\Journey;
+use Domains\Driver\Notifications\DriverUnauthorizedAreaNotification;
+use Domains\Driver\Services\JourneyService;
+use Domains\Operator\Notifications\OperatorUnauthorizedAreaNotification;
+use Domains\Shared\Enums\AtomikLogsTypes;
+use Domains\Shared\Services\AtomikLogService;
+use Domains\SuperAdmin\Services\ShiftManagement\ShiftService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use JustSteveKing\StatusCode\Http;
 
 final class UnauthorizedAreaEntryNotificationController
 {
-    public function __invoke(UnauthorizedAreaEntryNotificationRequest $request): void {}
+    public function __invoke(Request $request, Journey $journey)  
+    {
+        $notified =  DB::transaction(function () use ($journey): bool {
+
+            $shifts = $journey->shifts;
+            $shift = ShiftService::getShiftById(
+                shift_id: end($shifts),
+            );
+
+            $current_location = JourneyService::getTrainLocation(journey: $journey);
+
+            $logs = array_merge([
+                ['type' => AtomikLogsTypes::DRIVER_IN_UNAUTHORIZED_AREA->value,
+                    'notified_by' => Auth::user()->employee_id,
+                    'notified_at' => now(),
+                    'current_location' => $current_location ? $current_location['name'] : $journey->requesting_location['name'] ,
+                ],
+            ], $journey->logs);
+
+            $journey->update(attributes: [
+                'logs' => $logs,
+            ]);
+
+
+            AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::DRIVER_IN_UNAUTHORIZED_AREA,
+                'resourceble_id' => $journey->id,
+                'resourceble_type' => get_class(object: $journey),
+                'actor_id' => Auth::id(),
+                'receiver_id' =>  $shift->user->id,
+                'current_location' => $current_location ? $current_location['name'] : $journey->requesting_location['name'] ,
+                'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
+            ]);
+
+            $shift->user->notify(new OperatorUnauthorizedAreaNotification(
+                journey: $journey,
+            ));
+
+            $journey->train->driver->notify(new DriverUnauthorizedAreaNotification());
+
+            return true;
+        });
+
+        if ( ! $notified) {
+            return response(
+                content: [
+                    'message' => 'Something went wrong.',
+                ],
+                status: Http::NOT_IMPLEMENTED(),
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'Operator has been notified of your over-speeding.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
 }
