@@ -17,11 +17,11 @@ final class EmployeeService
      * @param int $employee_id
      * @return User|null
      */
-    public static function getEmployee(UserTypes $type, int $employee_id): ?User
+    public static function getEmployee(array $types, int $employee_id): ?User
     {
         return User::query()
             ->where('id', $employee_id)
-            ->where('type', $type->value)
+            ->whereIn('type', $types)
             ->first();
     }
     /**

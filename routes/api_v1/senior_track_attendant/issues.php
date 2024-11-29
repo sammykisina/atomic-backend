@@ -9,5 +9,6 @@ Route::middleware(['auth:sanctum', 'ability:resolve-assignments'])->prefix('issu
     Route::controller(IssueManagementController::class)->group(function (): void {
         Route::post('/{issue}/assignments/{assignment}/resolve', 'resolve')->name(name: 'resolve-issue');
         Route::get('/history', 'index')->name(name: 'index');
+        Route::post('issue-area/{issueArea}/mark-area-under-maintenance', 'markAreaUnderMaintenance')->name(name: 'mark-area-under-maintenance');
     });
 });

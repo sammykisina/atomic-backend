@@ -34,7 +34,7 @@ final class ManagementController
     public function create(CreateOrEditShiftRequest $request): HttpException | Response
     {
         $operator = EmployeeService::getEmployee(
-            type: UserTypes::OPERATOR_CONTROLLER,
+            types: [UserTypes::OPERATOR_CONTROLLER, UserTypes::OPERATOR_CONTROLLER_SUPERVISOR],
             employee_id: $request->validated(
                 key: 'user_id',
             ),
@@ -120,7 +120,7 @@ final class ManagementController
     public function edit(CreateOrEditShiftRequest $request, Shift $shift): HttpException | Response
     {
         $operator = EmployeeService::getEmployee(
-            type: UserTypes::OPERATOR_CONTROLLER,
+             types: [UserTypes::OPERATOR_CONTROLLER, UserTypes::OPERATOR_CONTROLLER_SUPERVISOR],
             employee_id: $request->validated(
                 key: 'user_id',
             ),

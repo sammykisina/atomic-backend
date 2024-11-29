@@ -5,8 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\SeniorTrackAttendant;
 
 use Domains\SeniorTrackInspector\Models\Assignment;
+use Domains\SeniorTrackInspector\Models\IssueArea;
 use Domains\SeniorTrackInspector\Resources\AssignmentResource;
 use Domains\Shared\Concerns\Whatsapp;
+use Domains\Shared\Enums\AtomikLogsTypes;
+use Domains\Shared\Services\AtomikLogService;
+use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
+use Domains\SuperAdmin\Services\SectionService;
+use Domains\SuperAdmin\Services\StationService;
 use Domains\TrackAttendant\Enums\IssueStatuses;
 use Domains\TrackAttendant\Models\Issue;
 use Illuminate\Http\Request;
@@ -128,55 +134,76 @@ final class IssueManagementController
         );
     }
 
-
     /**
-     * SEND WHATS APP NOTIFICATION OF AN ISSUE
-     * @param Issue $issue
-     * @return void
+     * MARK AREA UNDER MAINTENANCE
+     * @param IssueArea $issueArea
+     * @return Response
      */
-    // public function sendWhatsAppNotification(Issue $issue): void
-    // {
+    public function markAreaUnderMaintenance(IssueArea $issueArea): Response
+    {
+        $section = null;
+        $station = null;
 
 
-    //     $area_station = $issue->issueArea->station;
-    //     $area_section = $issue->issueArea->section;
+        if ($issueArea->station_id) {
+            $station = StationService::getStationById(
+                station_id: $issueArea->station_id,
+            );
 
-    //     $data = [
-    //         'issue_id' => $issue->id,
-    //         'type' => 'ISSUE SOLUTION',
-    //         'condition' => $issue->condition,
-    //         'name' => $issue->issueName->name,
-    //         'solution_comment' => $issue->assignment->comment,
-    //         'kilometer' => "KM " . $issue->issue_kilometer,
-    //         'location' => $issue->issueArea->line->name . " (" . ($area_station ? $area_station->name : $area_section->fullname) . " )",
-    //         'sti' => $issue->inspection->inspectionSchedule->owner->fullname,
-    //         'sta' => $issue->assignment->resolver->fullname,
-    //     ];
+            $station->update(attributes: [
+                'status' => StationSectionLoopStatuses::UNDER_MAINTENANCE->value,
+            ]);
 
-    //     $message = str_replace(
-    //         search: ['{{ issue_id }}', '{{ type }}', '{{ condition }}', '{{ name }}', '{{ solution_comment }}', '{{ kilometer }}', '{{ location }}', '{{ sti }}', '{{ sta }}'],
-    //         replace: [$data['issue_id'], $data['type'], $data['condition'], $data['name'], $data['solution_comment'], $data['kilometer'], $data['location'], $data['sti'], $data['sta']],
-    //         subject: $template,
-    //     );
 
-    //     $response = FacadesHttp::withHeaders([
-    //         'Authorization' => 'Bearer ' . config('whatsapp.wassenger.auth_token'),
-    //         'Accept' => 'application/json',
-    //     ])->post(config('whatsapp.wassenger.base_url') . '/messages', [
-    //         'group' => config('whatsapp.wassenger.group_url'),
-    //         'message' => $message,
-    //         'media' => [
-    //             'url' => $issue->assignment->image_url,
-    //             "expiration" => "7d",
-    //             "viewOnce" => false,
-    //         ],
-    //     ]);
+            AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::MARK_AREA_UNDER_MAINTENANCE,
+                'resourceble_id' => $station->id,
+                'resourceble_type' => get_class(object: $station),
+                'actor_id' => Auth::id(),
+                'receiver_id' => Auth::id(),
+                'current_location' => $station->name,
+            ]);
 
-    //     if ($response->successful()) {
-    //         Log::info('Message send');
-    //     } else {
-    //         Log::info('Failed to send message: ' . $response->body());
-    //     }
+            return response(
+                content: [
+                    'message' => 'Issue area marked under maintenance successfully.',
+                ],
+                status: Http::ACCEPTED(),
+            );
 
-    // }
+        }
+
+        if ($issueArea->section_id) {
+            $section = SectionService::getSectionById(
+                section_id: $issueArea->section_id,
+            );
+
+            $section->update(attributes: [
+                'status' => StationSectionLoopStatuses::UNDER_MAINTENANCE->value,
+            ]);
+
+            AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::MARK_AREA_UNDER_MAINTENANCE,
+                'resourceble_id' => $section->id,
+                'resourceble_type' => get_class(object: $section),
+                'actor_id' => Auth::id(),
+                'receiver_id' => Auth::id(),
+                'current_location' => $section->start_name . " - " . $section->end_name,
+            ]);
+
+            return response(
+                content: [
+                    'message' => 'Issue area marked under maintenance successfully.',
+                ],
+                status: Http::ACCEPTED(),
+            );
+        }
+
+        return response(
+            content: [
+                'message' => 'Something went wrong. Issue area not marked under maintenance',
+            ],
+            status: Http::NOT_ACCEPTABLE(),
+        );
+    }
 }
