@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Domains\Shared\Messages;
 
 use Carbon\Carbon;
+use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Enums\ShiftStatuses;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\UserTypes;
@@ -13,6 +14,7 @@ use Domains\Shared\Requests\MessageRequest;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Models\LocomotiveNumber;
 use Domains\SuperAdmin\Models\Shift;
+use Domains\SuperAdmin\Services\ShiftManagement\ShiftService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use JustSteveKing\StatusCode\Http;
@@ -42,12 +44,34 @@ final class StoreController
             $today = Carbon::today()->format('Y-m-d');
             $currentTime = Carbon::now()->format('H:i:s');
 
-            $shift = Shift::whereDate('day', $today)
-                ->whereTime('from', '<=', $currentTime)
-                ->whereTime('to', '>=', $currentTime)
-                ->where('active', true)
-                ->where('status', ShiftStatuses::CONFIRMED->value)
-                ->first();
+            // $shift = Shift::whereDate('day', $today)
+            //     ->whereTime('from', '<=', $currentTime)
+            //     ->whereTime('to', '>=', $currentTime)
+            //     ->where('active', true)
+            //     ->where('status', ShiftStatuses::CONFIRMED->value)
+            //     ->first();
+
+            $shift = null;
+            $active_journey = JourneyService::activeJourney();
+            if ($active_journey) {
+                $shifts = $active_journey->shifts;
+                $shift = ShiftService::getShiftById(
+                    shift_id: end($shifts),
+                );
+            } else {
+                $shift = Shift::whereDate('day', $today) // Ensure the shift is for today
+                    ->where(function ($query) use ($currentTime): void {
+                        $query->whereTime('from', '<=', $currentTime)
+                            ->whereTime('to', '>=', $currentTime);
+                    })
+                    ->orWhere(function ($query) use ($currentTime): void {
+                        $query->whereTime('from', '>=', $currentTime) // After midnight (e.g., 23:00-03:00)
+                            ->whereTime('to', '<=', $currentTime);  // Before midnight
+                    })
+                    ->where('active', true)                // Ensure shift is active
+                    ->where('status', ShiftStatuses::CONFIRMED->value) // Ensure shift is confirmed
+                    ->first();
+            }
 
             if ( ! $shift) {
                 abort(
