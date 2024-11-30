@@ -13,6 +13,7 @@ Route::middleware(['auth:sanctum', 'ability:read-shifts,create-shifts,edit-shift
         Route::post('/', 'create')->name(name: 'create');
         Route::get('/{shift}/show', 'show')->name(name: 'show');
         Route::delete('/{shift}/delete', 'delete')->name(name: 'delete');
+        Route::patch('/{shift}/deactivate', 'deactivate')->name(name: 'deactivate');
         Route::patch('/{shift}/edit', 'edit')->name(name: 'edit');
     });
 });

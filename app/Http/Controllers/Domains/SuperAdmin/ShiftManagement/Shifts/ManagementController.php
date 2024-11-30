@@ -269,4 +269,30 @@ final class ManagementController
         );
     }
 
+
+    /**
+     * DEACTIVATE SHIFT
+     * @param Shift $shift
+     * @return Response
+     */
+    public function deactivate(Shift $shift): Response
+    {
+        if ( ! $shift->update(attributes: [
+            'active' => false,
+        ])) {
+            abort(
+                code: Http::EXPECTATION_FAILED(),
+                message: 'Shift deactivation failed.Please try again.',
+            );
+        }
+
+
+        return response(
+            content: [
+                'message' => 'Shift deactivated successfully.',
+            ],
+            status: Http::ACCEPTED(),
+        );
+    }
+
 }
