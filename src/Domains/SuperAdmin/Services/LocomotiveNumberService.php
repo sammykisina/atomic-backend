@@ -18,6 +18,17 @@ final class LocomotiveNumberService
         return LocomotiveNumber::query()->where('number', $number)->first();
     }
 
+
+    /**
+     * GET LOCOMOTIVE NUMBER WITH ID
+     * @param string $number
+     * @return LocomotiveNumber|null
+     */
+    public static function getLocomotiveNumberWithId(int $locomotive_number_id): ?LocomotiveNumber
+    {
+        return LocomotiveNumber::query()->where('id', $locomotive_number_id)->first();
+    }
+
     /**
      * CREATE LOCOMOTIVE NUMBER
      * @param string $number

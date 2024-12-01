@@ -14,6 +14,7 @@ use Domains\Shared\Requests\MessageRequest;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Models\LocomotiveNumber;
 use Domains\SuperAdmin\Models\Shift;
+use Domains\SuperAdmin\Services\LocomotiveNumberService;
 use Domains\SuperAdmin\Services\ShiftManagement\ShiftService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -43,13 +44,6 @@ final class StoreController
         if (UserTypes::DRIVER === Auth::user()->type) {
             $today = Carbon::today()->format('Y-m-d');
             $currentTime = Carbon::now()->format('H:i:s');
-
-            // $shift = Shift::whereDate('day', $today)
-            //     ->whereTime('from', '<=', $currentTime)
-            //     ->whereTime('to', '>=', $currentTime)
-            //     ->where('active', true)
-            //     ->where('status', ShiftStatuses::CONFIRMED->value)
-            //     ->first();
 
             $shift = null;
             $active_journey = JourneyService::activeJourney();
@@ -94,7 +88,8 @@ final class StoreController
             );
         }
 
-        defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+        // defer(callback: fn() => );
+        AtomikLogService::createAtomicLog(atomikLogData: [
             'type' => AtomikLogsTypes::COMMUNICATION,
             'resourceble_id' => $message->id,
             'resourceble_type' => get_class($message),
@@ -103,7 +98,8 @@ final class StoreController
             'current_location' => '',
             'locomotive_number_id' => $locomotive->id,
             'message' => $message->message,
-        ]));
+            'train_id' => $locomotive->activeJourney->train->id ?? null
+        ]);
 
         return response(
             content: [
