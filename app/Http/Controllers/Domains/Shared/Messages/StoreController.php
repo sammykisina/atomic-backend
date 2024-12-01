@@ -14,7 +14,6 @@ use Domains\Shared\Requests\MessageRequest;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Models\LocomotiveNumber;
 use Domains\SuperAdmin\Models\Shift;
-use Domains\SuperAdmin\Services\LocomotiveNumberService;
 use Domains\SuperAdmin\Services\ShiftManagement\ShiftService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -98,7 +97,7 @@ final class StoreController
             'current_location' => '',
             'locomotive_number_id' => $locomotive->id,
             'message' => $message->message,
-            'train_id' => $locomotive->activeJourney->train->id ?? null
+            'train_id' => $locomotive->activeJourney->train->id ?? null,
         ]);
 
         return response(

@@ -37,7 +37,7 @@ final class IndexController
                     ->where('receiver_id', $auth_user_id);
             })
             ->with(['receiver', 'sender','locomotive'])
-            ->orderBy('created_at', 'desc')
+            // ->orderBy('created_at', 'desc')
             ->get();
 
         return response(

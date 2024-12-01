@@ -48,7 +48,7 @@ final class StoreController
             'current_location' => '',
             'locomotive_number_id' => $locomotive->id,
             'message' => $message->message,
-            'train_id' => $locomotive->activeJourney->train->id ?? null
+            'train_id' => $locomotive->activeJourney->train->id ?? null,
         ]));
 
         return response(

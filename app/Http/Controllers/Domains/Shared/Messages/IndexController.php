@@ -24,7 +24,7 @@ final class IndexController
                 'sender',
                 'locomotive',
             ])
-            ->orderBy('created_at', 'desc')
+            // ->orderBy('created_at', 'desc')
             ->get();
 
 

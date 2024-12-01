@@ -31,7 +31,7 @@ final class LocomotiveNumber extends Model
         );
     }
 
-     /**  @return HasMany<Train> */
+    /**  @return HasMany<Train> */
     public function trains(): HasMany
     {
         return $this->hasMany(
@@ -40,7 +40,7 @@ final class LocomotiveNumber extends Model
         );
     }
 
-     /** @return HasOneThrough<Journey> */
+    /** @return HasOneThrough<Journey> */
     public function activeJourney(): HasOneThrough
     {
         return $this->hasOneThrough(
@@ -49,7 +49,7 @@ final class LocomotiveNumber extends Model
             firstKey: 'id', // LocomotiveNumber's primary key
             secondKey: 'train_id', // Train's foreign key in Journey
             localKey: 'id', // LocomotiveNumber's primary key
-            secondLocalKey: 'locomotive_number_id' // Foreign key in Train
+            secondLocalKey: 'locomotive_number_id', // Foreign key in Train
         )->where('is_active', true); // Add a condition to filter only active journeys
     }
 }
