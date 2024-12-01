@@ -210,7 +210,7 @@ final class ManagementController
     {
         DB::transaction(function () use ($request, $journey): License {
             if ($request->validated('type') === LicenseTypes::SOS->value) {
-                if (Auth::user()->type !== UserTypes::OPERATOR_CONTROLLER_SUPERVISOR->value) {
+                if (Auth::user()->type->value !== UserTypes::OPERATOR_CONTROLLER_SUPERVISOR->value) {
                     abort(
                         code: Http::EXPECTATION_FAILED(),
                         message: 'You are not allowed to assign an SOS license. Please notify your supervisor.',
@@ -223,6 +223,13 @@ final class ManagementController
                 ->where('status', ShiftStatuses::CONFIRMED->value)
                 ->where('active', operator: true)
                 ->first();
+
+            if ( ! $shift) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'We cannot find a shift for the supervisor tying to assign an SOS license!',
+                );
+            }
 
             $currentShiftIds = $journey->shifts ?? [];
             $currentShiftIds[] = $shift->id;
@@ -265,19 +272,17 @@ final class ManagementController
                 ],
             ]);
 
-            if ($license->type === LicenseTypes::SOS->value) {
-                AtomikLogService::createAtomicLog(atomikLogData: [
-                    'type' => AtomikLogsTypes::SOS_LICENSE_CREATED,
-                    'resourceble_id' => $license->id,
-                    'resourceble_type' => get_class(object: $license),
-                    'actor_id' => Auth::id(),
-                    'receiver_id' => $journey->train->driver_id,
-                    'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
-                    'train_id' => $journey->train_id,
-                    'locomotive_number_id' => $journey->train->locomotive_number_id,
-                    'message' => $request->validated(key: 'reason_for_sos_license'),
-                ]);
-            }
+            AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::SOS_LICENSE_CREATED,
+                'resourceble_id' => $license->id,
+                'resourceble_type' => get_class(object: $license),
+                'actor_id' => Auth::id(),
+                'receiver_id' => $journey->train->driver_id,
+                'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
+                'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
+                'message' => $request->validated(key: 'reason_for_sos_license'),
+            ]);
 
             /**
              * UPDATE THE JOURNEY TO BE RESCUED
