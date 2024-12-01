@@ -51,7 +51,7 @@ final class JourneyService
     {
         return Journey::query()
             ->where('is_active', true)
-            ->where('is_authorized', true)
+            // ->where('is_authorized', true)
             ->whereHas(relation: 'train', callback: function ($query): void {
                 $query->where('driver_id', Auth::id());
             })
