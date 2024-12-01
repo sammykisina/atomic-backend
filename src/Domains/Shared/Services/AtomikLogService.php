@@ -17,4 +17,6 @@ final class AtomikLogService
     {
         return AtomikLog::query()->create(attributes: $atomikLogData);
     }
+
+
 }
