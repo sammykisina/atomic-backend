@@ -35,17 +35,25 @@ final class ExitTrainController
             journey: $journey,
         ));
 
-        defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+        $train_current_location = JourneyService::getTrainLocation(
+            journey: $journey,
+        );
+
+        if ( ! $train_current_location) {
+            $train_current_location = $journey->requesting_location;
+        }
+
+        AtomikLogService::createAtomicLog(atomikLogData: [
             'type' => AtomikLogsTypes::OPERATOR_REQUEST_LINE_EXIT,
             'resourceble_id' => $journey->id,
             'resourceble_type' => get_class(object: $journey),
             'actor_id' => Auth::id(),
             'receiver_id' => Auth::id(),
-            'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
+            'current_location' => $train_current_location['name'],
             'train_id' => $journey->train_id,
             'locomotive_number_id' => $journey->train->locomotive_number_id,
             'message' => $request->get(key: 'reason_for_exit'),
-        ]));
+        ]);
 
         return response(
             content: [
@@ -65,6 +73,14 @@ final class ExitTrainController
     public function lineExit(Request $request, Journey $journey, DatabaseNotification $notification): Response
     {
         $exited =  DB::transaction(function () use ($journey, $notification): bool {
+            $train_current_location = JourneyService::getTrainLocation(
+                journey: $journey,
+            );
+
+            if ( ! $train_current_location) {
+                $train_current_location = $journey->requesting_location;
+            }
+
             if (null !== $notification->read_at) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
@@ -74,9 +90,7 @@ final class ExitTrainController
 
             if ( ! $journey->update(attributes: [
                 'is_active' => false,
-                'last_destination' => JourneyService::getTrainLocation(
-                    journey: $journey,
-                ) ?? $journey->requesting_location,
+                'last_destination' => $train_current_location,
             ])) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
@@ -131,13 +145,15 @@ final class ExitTrainController
 
             $notification->markAsRead();
 
+
+
             defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::OPERATOR_MACRO10,
                 'resourceble_id' => $journey->id,
                 'resourceble_type' => get_class(object: $journey),
                 'actor_id' => Auth::id(),
                 'receiver_id' => $shift->user_id,
-                'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
+                'current_location' =>  $train_current_location['name'],
                 'train_id' => $journey->train_id,
                 'locomotive_number_id' => $journey->train->locomotive_number_id,
             ]));
