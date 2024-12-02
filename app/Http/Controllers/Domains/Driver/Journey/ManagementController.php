@@ -23,6 +23,7 @@ use Domains\Operator\Requests\RevokeLicenseAreaRequest;
 use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
+use Domains\Shared\Enums\UserTypes;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Domains\SuperAdmin\Models\Group;
@@ -95,7 +96,8 @@ final class ManagementController
                 return
                     Carbon::now()->isSameDay(Carbon::parse($shift['day']))
                     && $currentTime >= $shift['from']
-                    && $currentTime <= $shift['to'];
+                    && $currentTime <= $shift['to']
+                    && $shift->user->type->value === UserTypes::OPERATOR_CONTROLLER->value;
             })->first();
 
             if ( ! $shift) {
@@ -413,11 +415,17 @@ final class ManagementController
     public function exitLine(Request $request, Journey $journey, DatabaseNotification $notification): Response|HttpException
     {
         $exited =  DB::transaction(function () use ($journey, $notification): bool {
+            $train_current_location = JourneyService::getTrainLocation(
+                journey: $journey,
+            );
+
+            if ( ! $train_current_location) {
+                $train_current_location = $journey->requesting_location;
+            }
+
             if ( ! $journey->update(attributes: [
                 'is_active' => false,
-                'last_destination' => JourneyService::getTrainLocation(
-                    journey: $journey,
-                ) ?? $journey->requesting_location,
+                'last_destination' => $train_current_location,
             ])) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
@@ -472,16 +480,16 @@ final class ManagementController
 
             $notification->markAsRead();
 
-            defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+            AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO10,
                 'resourceble_id' => $journey->id,
                 'resourceble_type' => get_class(object: $journey),
                 'actor_id' => Auth::id(),
                 'receiver_id' => $shift->user_id,
-                'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
+                'current_location' => $train_current_location['name'],
                 'train_id' => $journey->train_id,
                 'locomotive_number_id' => $journey->train->locomotive_number_id,
-            ]));
+            ]);
 
             return true;
         });
