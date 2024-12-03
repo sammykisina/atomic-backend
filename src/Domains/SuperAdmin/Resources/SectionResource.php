@@ -18,6 +18,8 @@ final class SectionResource extends JsonResource
     {
         return [
             'id' => $this->resource->id,
+            'line_id' => $this->resource->line_id,
+            'station_id' => $this->resource->station_id,
             'name' => [
                 'start' => $this->resource->start_name,
                 'end' => $this->resource->end_name,
