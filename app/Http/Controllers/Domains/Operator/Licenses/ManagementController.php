@@ -676,6 +676,7 @@ final class ManagementController
             licenseData: [
                 'license_number' => $uniqueLicenseNumber,
                 'distance_to_stop' => $request->validated('distance_to_stop'),
+                'line_to_use' => $request->validated('line_to_use'),
                 'journey_id' => $journey->id,
                 'direction' => $license_direction,
                 'type' => $request->validated('type') ?? LicenseTypes::SIMPLE->value,
