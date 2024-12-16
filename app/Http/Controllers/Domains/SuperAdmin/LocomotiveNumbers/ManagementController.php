@@ -26,16 +26,16 @@ final class ManagementController
      */
     public function create(CreateOrEditLocomotiveNumberRequest $request): HttpException | Response
     {
-        $obc = ObcService::getObcById( obc_id: $request->validated(key: 'obc_id'));
+        $obc = ObcService::getObcById(obc_id: $request->validated(key: 'obc_id'));
         if ($obc->locomotiveNumber) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
-                message: 'This obc is already attached to another locomotive number ' . $obc->locomotiveNumber->number. '.',
+                message: 'This obc is already attached to another locomotive number ' . $obc->locomotiveNumber->number . '.',
             );
         }
 
         $locomotiveNumber = $this->locomotiveNumberService->createLocomotiveNumber(
-          attributes: $request->validated(),
+            attributes: $request->validated(),
         );
 
         if ( ! $locomotiveNumber) {
@@ -64,11 +64,11 @@ final class ManagementController
      */
     public function edit(CreateOrEditLocomotiveNumberRequest $request, LocomotiveNumber $locomotiveNumber): HttpException | Response
     {
-        $obc = ObcService::getObcById( obc_id: $request->validated(key: 'obc_id'));
+        $obc = ObcService::getObcById(obc_id: $request->validated(key: 'obc_id'));
         if ($obc->locomotiveNumber && $obc->locomotiveNumber->id !== $locomotiveNumber->id) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
-                message: 'This obc is already attached to another locomotive number ' . $obc->locomotiveNumber->number. '. Detach the currently linked loco before you attach it to this locomotive.',
+                message: 'This obc is already attached to another locomotive number ' . $obc->locomotiveNumber->number . '. Detach the currently linked loco before you attach it to this locomotive.',
             );
         }
 
