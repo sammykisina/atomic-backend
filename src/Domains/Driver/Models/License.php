@@ -26,6 +26,8 @@ final class License extends Model
         'status',
         'type',
         'reason_for_sos_license',
+        'distance_to_stop',
+        'line_to_use',
         'direction',
         'issuer_id',
         'rejector_id',

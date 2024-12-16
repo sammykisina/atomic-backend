@@ -23,6 +23,8 @@ use Domains\Operator\Requests\RevokeLicenseAreaRequest;
 use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
+use Domains\Shared\Enums\UserTypes;
+use Domains\Shared\Models\Message;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Domains\SuperAdmin\Models\Group;
@@ -95,7 +97,8 @@ final class ManagementController
                 return
                     Carbon::now()->isSameDay(Carbon::parse($shift['day']))
                     && $currentTime >= $shift['from']
-                    && $currentTime <= $shift['to'];
+                    && $currentTime <= $shift['to']
+                    && $shift->user->type->value === UserTypes::OPERATOR_CONTROLLER->value;
             })->first();
 
             if ( ! $shift) {
@@ -171,6 +174,11 @@ final class ManagementController
                 type: NotificationTypes::JOURNEY_CREATED,
             ));
 
+            JourneyService::updateTrainLength(
+                train: $train,
+                length: (int) $request->validated(key: "length"),
+            );
+
             AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO1,
                 'resourceble_id' => $journey->id,
@@ -201,30 +209,76 @@ final class ManagementController
      * @param Journey $journey
      * @return Response|HttpException
      */
-    public function createLocation(LocationRequest $request, Journey $journey): Response | HttpException
+    public function createLocation(LocationRequest $request, Journey $journey, License $license): Response | HttpException
     {
-        $shifts = $journey->shifts;
-        $shift = ShiftService::getShiftById(
-            shift_id: end($shifts),
-        );
+        $updated = DB::transaction(function () use ($request, $journey, $license): bool {
+            $shifts = $journey->shifts;
+            $shift = ShiftService::getShiftById(
+                shift_id: end($shifts),
+            );
 
-        if ( ! $shift) {
+            if ( ! $shift) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'Shift not found',
+                );
+            }
+
+            if ($license->train_at_origin) {
+                $origin = $license->origin;
+                $origin['distance_remaining'] = $request->validated('distance_remaining');
+                $license->origin = $origin;
+            }
+
+            if ($license->train_at_destination) {
+                $destination = $license->destination;
+                $destination['distance_remaining'] = $request->validated('distance_remaining');
+                $license->destination = $destination;
+            }
+
+            $throughs = $license->through;
+            if (is_array($throughs)) {
+                foreach ($throughs as $index => $through) {
+                    if ($through['train_is_here']) {
+                        $through['distance_remaining'] = $request->validated('distance_remaining');
+                        $throughs[$index] = $through;
+                        break;
+                    }
+                }
+
+                $license['through'] = $throughs;
+            }
+
+            $license->save();
+
+
+            $model = LicenseService::getModel(
+                model_type: $request->validated('type'),
+                model_id: $request->validated('area_id'),
+            );
+
+            AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::MACRO6,
+                'resourceble_id' => $journey->id,
+                'resourceble_type' => get_class(object: $journey),
+                'actor_id' => Auth::id(),
+                'receiver_id' => $shift->user_id,
+                'current_location' => JourneyService::getLocation(model: $model),
+                'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
+            ]);
+
+
+            return true;
+        });
+
+        if ( ! $updated) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
-                message: 'Shift not found',
+                message: 'Location update failed. Please try again.',
             );
         }
 
-        AtomikLogService::createAtomicLog(atomikLogData: [
-            'type' => AtomikLogsTypes::MACRO6,
-            'resourceble_id' => $journey->id,
-            'resourceble_type' => get_class(object: $journey),
-            'actor_id' => Auth::id(),
-            'receiver_id' => $shift->user_id,
-            'current_location' => $request->validated('latitude') . ', ' . $request->validated('longitude'),
-            'train_id' => $journey->train_id,
-            'locomotive_number_id' => $journey->train->locomotive_number_id,
-        ]);
 
         return response(
             content: [
@@ -413,11 +467,17 @@ final class ManagementController
     public function exitLine(Request $request, Journey $journey, DatabaseNotification $notification): Response|HttpException
     {
         $exited =  DB::transaction(function () use ($journey, $notification): bool {
+            $train_current_location = JourneyService::getTrainLocation(
+                journey: $journey,
+            );
+
+            if ( ! $train_current_location) {
+                $train_current_location = $journey->requesting_location;
+            }
+
             if ( ! $journey->update(attributes: [
                 'is_active' => false,
-                'last_destination' => JourneyService::getTrainLocation(
-                    journey: $journey,
-                ) ?? $journey->requesting_location,
+                'last_destination' => $train_current_location,
             ])) {
                 abort(
                     code: Http::EXPECTATION_FAILED(),
@@ -472,16 +532,28 @@ final class ManagementController
 
             $notification->markAsRead();
 
-            defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
+            $messages =  Message::query()
+                ->where('sender_id', Auth::id())
+                ->orWhere('receiver_id', Auth::id())
+                ->where('is_active', true)
+                ->pluck('id');
+
+            Message::whereIn(column: 'id', values: $messages)->update(attributes: [
+                'is_active' => false,
+            ]);
+
+            AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO10,
                 'resourceble_id' => $journey->id,
                 'resourceble_type' => get_class(object: $journey),
                 'actor_id' => Auth::id(),
                 'receiver_id' => $shift->user_id,
-                'current_location' => JourneyService::getTrainLocation(journey: $journey) ? JourneyService::getTrainLocation(journey: $journey)['name'] : $journey->requesting_location['name'],
+                'current_location' => $train_current_location['name'],
                 'train_id' => $journey->train_id,
                 'locomotive_number_id' => $journey->train->locomotive_number_id,
-            ]));
+            ]);
+
+
 
             return true;
         });

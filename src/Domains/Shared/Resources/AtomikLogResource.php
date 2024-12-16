@@ -46,7 +46,7 @@ final class AtomikLogResource extends JsonResource
             'current_location' => $this->resource->current_location,
             'locomotive' => new LocomotiveNumberResource(
                 resource: $this->whenLoaded(
-                    relationship: 'locomotive',
+                    relationship: 'locomotiveNumber',
                 ),
             ),
             'message' => $this->resource->message,

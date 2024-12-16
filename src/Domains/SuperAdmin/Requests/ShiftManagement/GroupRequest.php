@@ -36,7 +36,7 @@ final class GroupRequest extends FormRequest
             ],
             'lines.*' => [
                 'required',
-                'exists:stations,id',
+                'exists:lines,id',
             ],
         ];
     }

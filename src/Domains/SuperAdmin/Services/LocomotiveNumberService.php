@@ -34,12 +34,9 @@ final class LocomotiveNumberService
      * @param string $number
      * @return LocomotiveNumber
      */
-    public function createLocomotiveNumber(string $number, int $driver_id): LocomotiveNumber
+    public function createLocomotiveNumber(array $attributes): LocomotiveNumber
     {
-        return LocomotiveNumber::query()->create([
-            "number" => $number,
-            'driver_id' => $driver_id,
-        ]);
+        return LocomotiveNumber::query()->create(attributes: $attributes);
     }
 
     /**

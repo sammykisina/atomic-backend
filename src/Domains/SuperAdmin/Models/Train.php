@@ -24,6 +24,7 @@ final class Train extends Model
         'locomotive_number_id',
         'tail_number',
         'number_of_wagons',
+        'length',
         'line_id',
         'origin_station_id',
         'destination_station_id',

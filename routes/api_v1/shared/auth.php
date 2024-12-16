@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Domains\Shared\Auth\LoginController;
 use App\Http\Controllers\Domains\Shared\Auth\RequestPasswordRestCodeController;
 use App\Http\Controllers\Domains\Shared\Auth\RestPasswordController;
+use App\Http\Controllers\Domains\Shared\Auth\UpdatePasswordController;
 use App\Http\Controllers\Domains\Shared\Profile\MeController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +20,5 @@ Route::post('/reset-password', RestPasswordController::class)->name(name: "reset
 
 Route::middleware(['auth:sanctum'])->prefix('/profile')->as('profile:')->group(function (): void {
     Route::get('/me', MeController::class)->name(name: 'me');
+    Route::patch('/update/password', UpdatePasswordController::class)->name(name: 'update-password');
 });

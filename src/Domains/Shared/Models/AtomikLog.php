@@ -70,7 +70,7 @@ final class AtomikLog extends Model
     }
 
     /**  @return BelongsTo<LocomotiveNumber> */
-    public function locomotive(): BelongsTo
+    public function locomotiveNumber(): BelongsTo
     {
         return $this->belongsTo(
             related: LocomotiveNumber::class,

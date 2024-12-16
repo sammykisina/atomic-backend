@@ -12,6 +12,7 @@ use Domains\Driver\Models\Location;
 use Domains\SuperAdmin\Models\Loop;
 use Domains\SuperAdmin\Models\Section;
 use Domains\SuperAdmin\Models\Station;
+use Domains\SuperAdmin\Models\Train;
 use Domains\SuperAdmin\Services\LoopService;
 use Domains\SuperAdmin\Services\SectionService;
 use Domains\SuperAdmin\Services\StationService;
@@ -186,6 +187,19 @@ final class JourneyService
     }
 
     /**
+     * Update train length
+     * @param Train $train
+     * @param int $length
+     * @return bool
+     */
+    public static function updateTrainLength(Train $train, int $length): bool
+    {
+        return $train->update(attributes: [
+            'length' => $length,
+        ]);
+    }
+
+    /**
      * CREATE JOURNEY
      * @param array $journeyData
      * @return Journey
@@ -215,7 +229,11 @@ final class JourneyService
         ]);
     }
 
-
+    /**
+     * Create License
+     * @param Journey $journey
+     * @return License
+     */
     public function createLicense(Journey $journey): License
     {
         return License::query()->create(attributes: [
@@ -273,5 +291,4 @@ final class JourneyService
             });
         }, sleepMilliseconds: $delay);
     }
-
 }

@@ -21,6 +21,10 @@ final class CreateOrEditJourneyRequest extends FormRequest
             'requesting_location' => ['required', 'array'],
             'requesting_location.id' => ['required', 'integer'],
             'requesting_location.type' => ['required', 'in:STATION,LOOP,SECTION'],
+            'length' => [
+                'required',
+                'integer',
+            ],
         ];
     }
 }

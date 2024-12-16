@@ -18,9 +18,15 @@ final class LocomotiveNumberResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'number' => $this->resource->number,
+            'obc_id' => $this->resource->obc_id,
             'driver' => new UserResource(
                 resource: $this->whenLoaded(
                     relationship: 'driver',
+                ),
+            ),
+            'obc' => new ObcResource(
+                resource: $this->whenLoaded(
+                    relationship: 'obc',
                 ),
             ),
         ];

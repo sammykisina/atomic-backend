@@ -34,6 +34,7 @@ final class TrainResource extends JsonResource
             'time' => $this->resource->time,
             'tonnages' => $this->resource->tonnages,
             'number_of_wagons' => $this->resource->number_of_wagons,
+            'length' => $this->resource->length,
             'line' => new LineResource(
                 resource: $this->whenLoaded(
                     relationship: 'line',

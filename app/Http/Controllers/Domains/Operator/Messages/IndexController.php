@@ -36,8 +36,8 @@ final class IndexController
                 $query->where('sender_id', $driver_id)
                     ->where('receiver_id', $auth_user_id);
             })
+            ->where('is_active', true)
             ->with(['receiver', 'sender','locomotive'])
-            // ->orderBy('created_at', 'desc')
             ->get();
 
         return response(
