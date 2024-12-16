@@ -187,6 +187,19 @@ final class JourneyService
     }
 
     /**
+     * Update train length
+     * @param Train $train
+     * @param int $length
+     * @return bool
+     */
+    public static function updateTrainLength(Train $train, int $length): bool
+    {
+        return $train->update(attributes: [
+            'length' => $length,
+        ]);
+    }
+
+    /**
      * CREATE JOURNEY
      * @param array $journeyData
      * @return Journey
@@ -218,8 +231,8 @@ final class JourneyService
 
     /**
      * Create License
-     * @param \Domains\Driver\Models\Journey $journey
-     * @return \Domains\Driver\Models\License
+     * @param Journey $journey
+     * @return License
      */
     public function createLicense(Journey $journey): License
     {
@@ -277,18 +290,5 @@ final class JourneyService
                 }
             });
         }, sleepMilliseconds: $delay);
-    }
-
-    /**
-     * Update train length
-     * @param \Domains\SuperAdmin\Models\Train $train
-     * @param int $length
-     * @return bool
-     */
-    public static function updateTrainLength(Train $train, int $length): bool
-    {
-        return $train->update(attributes: [
-            'length' => $length,
-        ]);
     }
 }

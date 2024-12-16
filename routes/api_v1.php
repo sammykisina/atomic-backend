@@ -91,6 +91,9 @@ Route::prefix('/super-admin')->as('super-admin:')->group(
 
         // ISSUE NAMES
         base_path('routes/api_v1/super_admin/issue_names.php'),
+
+        // OBC
+        base_path('routes/api_v1/super_admin/obc.php'),
     ],
 );
 

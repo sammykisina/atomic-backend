@@ -98,6 +98,12 @@ final class ApplicationModulesController
                 'edit-train-names',
                 'delete-train-names',
             ],
+            'obcs' => [
+                'read-obcs',
+                'create-obcs',
+                'edit-obcs',
+                'delete-obcs',
+            ],
             'trains' => [
                 'read-trains',
                 'create-trains',
