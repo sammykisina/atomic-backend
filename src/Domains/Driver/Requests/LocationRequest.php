@@ -13,6 +13,18 @@ final class LocationRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'type' => [
+                'required',
+                'in:STATION,LOOP,SECTION',
+            ],
+            'area_id' => [
+                'required',
+                'integer',
+            ],
+            'distance_remaining' => [
+                'required',
+                'numeric',
+            ],
             'latitude' => [
                 'required',
             ],

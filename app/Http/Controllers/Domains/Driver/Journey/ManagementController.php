@@ -209,30 +209,76 @@ final class ManagementController
      * @param Journey $journey
      * @return Response|HttpException
      */
-    public function createLocation(LocationRequest $request, Journey $journey): Response | HttpException
+    public function createLocation(LocationRequest $request, Journey $journey, License $license): Response | HttpException
     {
-        $shifts = $journey->shifts;
-        $shift = ShiftService::getShiftById(
-            shift_id: end($shifts),
-        );
+        $updated = DB::transaction(function () use ($request, $journey, $license): bool {
+            $shifts = $journey->shifts;
+            $shift = ShiftService::getShiftById(
+                shift_id: end($shifts),
+            );
 
-        if ( ! $shift) {
+            if ( ! $shift) {
+                abort(
+                    code: Http::EXPECTATION_FAILED(),
+                    message: 'Shift not found',
+                );
+            }
+
+            if ($license->train_at_origin) {
+                $origin = $license->origin;
+                $origin['distance_remaining'] = $request->validated('distance_remaining');
+                $license->origin = $origin;
+            }
+
+            if ($license->train_at_destination) {
+                $destination = $license->destination;
+                $destination['distance_remaining'] = $request->validated('distance_remaining');
+                $license->destination = $destination;
+            }
+
+            $throughs = $license->through;
+            if (is_array($throughs)) {
+                foreach ($throughs as $index => $through) {
+                    if ($through['train_is_here']) {
+                        $through['distance_remaining'] = $request->validated('distance_remaining');
+                        $throughs[$index] = $through;
+                        break;
+                    }
+                }
+
+                $license['through'] = $throughs;
+            }
+
+            $license->save();
+
+
+            $model = LicenseService::getModel(
+                model_type: $request->validated('type'),
+                model_id: $request->validated('area_id'),
+            );
+
+            AtomikLogService::createAtomicLog(atomikLogData: [
+                'type' => AtomikLogsTypes::MACRO6,
+                'resourceble_id' => $journey->id,
+                'resourceble_type' => get_class(object: $journey),
+                'actor_id' => Auth::id(),
+                'receiver_id' => $shift->user_id,
+                'current_location' => JourneyService::getLocation(model: $model),
+                'train_id' => $journey->train_id,
+                'locomotive_number_id' => $journey->train->locomotive_number_id,
+            ]);
+
+
+            return true;
+        });
+
+        if ( ! $updated) {
             abort(
                 code: Http::EXPECTATION_FAILED(),
-                message: 'Shift not found',
+                message: 'Location update failed. Please try again.',
             );
         }
 
-        AtomikLogService::createAtomicLog(atomikLogData: [
-            'type' => AtomikLogsTypes::MACRO6,
-            'resourceble_id' => $journey->id,
-            'resourceble_type' => get_class(object: $journey),
-            'actor_id' => Auth::id(),
-            'receiver_id' => $shift->user_id,
-            'current_location' => $request->validated('latitude') . ', ' . $request->validated('longitude'),
-            'train_id' => $journey->train_id,
-            'locomotive_number_id' => $journey->train->locomotive_number_id,
-        ]);
 
         return response(
             content: [

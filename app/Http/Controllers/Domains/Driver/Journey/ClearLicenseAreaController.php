@@ -45,6 +45,7 @@ final class ClearLicenseAreaController
                 $origin['status'] = StationSectionLoopStatuses::GOOD->value;
                 $origin['end_time'] = now();
                 $origin['in_route'] = LicenseRouteStatuses::COMPLETED->value;
+                $origin['distance_remaining'] = 0;
                 $license->origin = $origin;
 
                 // Occupy destination if there's no through point
@@ -154,7 +155,7 @@ final class ClearLicenseAreaController
         if ($license->train_at_destination) {
             abort(
                 code: Http::FORBIDDEN(),
-                message: 'The train is already at the license destination and cannot proceed further.',
+                message: 'You have arrived at your license destination. Please request your OCC for line exit.',
             );
         }
 
@@ -163,6 +164,7 @@ final class ClearLicenseAreaController
                 // Clear the current point
                 $point['train_is_here'] = false;
                 $point['status'] = StationSectionLoopStatuses::GOOD->value;
+                $origin['distance_remaining'] = 0;
                 $point['end_time'] = now();
                 $point['in_route'] = LicenseRouteStatuses::COMPLETED->value;
 
