@@ -23,6 +23,10 @@ final class CreateOrEditLocomotiveNumberRequest extends FormRequest
                 'required',
                 'exists:users,id',
             ],
+            'obc_id' => [
+                'required',
+                'exists:obcs,id',
+            ],
         ];
     }
 }

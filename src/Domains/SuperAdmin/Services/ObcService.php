@@ -16,7 +16,9 @@ final class ObcService
     public static function getObcById(int $obc_id): ?Obc
     {
         return Obc::query()
-            ->where('id', $obc_id)->first();
+            ->where('id', $obc_id)
+            ->with(relations: ['locomotiveNumber'])
+            ->first();
     }
 
     /**

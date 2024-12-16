@@ -21,6 +21,11 @@ final class ObcResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'serial_number' => $this->resource->serial_number,
+            'locomotive' => new LocomotiveNumberResource(
+                resource: $this->whenLoaded(
+                    relationship: 'locomotiveNumber',
+                ),
+            ),
         ];
     }
 }

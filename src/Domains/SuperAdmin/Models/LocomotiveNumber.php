@@ -19,6 +19,7 @@ final class LocomotiveNumber extends Model
     /** @var array<int, string> */
     protected $fillable = [
         'number',
+        'obc_id',
         'driver_id',
     ];
 
@@ -28,6 +29,15 @@ final class LocomotiveNumber extends Model
         return $this->belongsTo(
             related: User::class,
             foreignKey: 'driver_id',
+        );
+    }
+
+    /** @return BelongsTo<Obc> */
+    public function obc(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: Obc::class,
+            foreignKey: 'obc_id',
         );
     }
 

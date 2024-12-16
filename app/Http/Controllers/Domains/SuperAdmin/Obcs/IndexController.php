@@ -16,6 +16,7 @@ final class IndexController
     public function __invoke(Request $request): Response
     {
         $obcs  = QueryBuilder::for(subject: Obc::class)
+            ->allowedIncludes(includes: ['locomotiveNumber'])
             ->get();
 
         return response(
