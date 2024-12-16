@@ -18,13 +18,13 @@ final class IndexController
     {
         $messages = QueryBuilder::for(subject: Message::class)
             ->where('sender_id', Auth::id())
+            ->where('is_active', true)
             ->orWhere('receiver_id', Auth::id())
             ->with(relations: [
                 'receiver',
                 'sender',
                 'locomotive',
             ])
-            // ->orderBy('created_at', 'desc')
             ->get();
 
 

@@ -18,6 +18,7 @@ final class MessageResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'message' => $this->resource->message,
+            'is_active' => $this->resource->is_active,
             'sender' => new UserResource(
                 resource: $this->whenLoaded(
                     relationship: 'sender',

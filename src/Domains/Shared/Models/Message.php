@@ -23,6 +23,7 @@ final class Message extends Model
         'receiver_id',
         'read_at',
         'locomotive_number_id',
+        'is_active',
     ];
 
     /** @return BelongsTo<User>*/
@@ -57,5 +58,13 @@ final class Message extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logFillable();
+    }
+
+    /** @return array<string, string> */
+    public function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+        ];
     }
 }

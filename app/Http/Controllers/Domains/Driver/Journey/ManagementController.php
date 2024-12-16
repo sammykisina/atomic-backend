@@ -24,6 +24,7 @@ use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
 use Domains\Shared\Enums\NotificationTypes;
 use Domains\Shared\Enums\UserTypes;
+use Domains\Shared\Models\Message;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Domains\SuperAdmin\Models\Group;
@@ -485,6 +486,16 @@ final class ManagementController
 
             $notification->markAsRead();
 
+            $messages =  Message::query()
+                ->where('sender_id', Auth::id())
+                ->orWhere('receiver_id', Auth::id())
+                ->where('is_active', true)
+                ->pluck('id');
+
+            Message::whereIn(column: 'id', values: $messages)->update(attributes: [
+                'is_active' => false,
+            ]);
+
             AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO10,
                 'resourceble_id' => $journey->id,
@@ -495,6 +506,8 @@ final class ManagementController
                 'train_id' => $journey->train_id,
                 'locomotive_number_id' => $journey->train->locomotive_number_id,
             ]);
+
+
 
             return true;
         });

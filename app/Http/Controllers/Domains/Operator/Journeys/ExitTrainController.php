@@ -10,6 +10,7 @@ use Domains\Driver\Services\JourneyService;
 use Domains\Operator\Notifications\OperatorExitLineRequestNotification;
 use Domains\Operator\Services\LicenseService;
 use Domains\Shared\Enums\AtomikLogsTypes;
+use Domains\Shared\Models\Message;
 use Domains\Shared\Models\User;
 use Domains\Shared\Services\AtomikLogService;
 use Domains\SuperAdmin\Services\ShiftManagement\ShiftService;
@@ -145,6 +146,24 @@ final class ExitTrainController
 
             $notification->markAsRead();
 
+            $auth_user_id = Auth::id();
+            $driver_id = $journey->train->driver_id;
+
+            $messages = Message::query()
+                ->where(function ($query) use ($auth_user_id, $driver_id): void {
+                    $query->where('sender_id', $auth_user_id)
+                        ->where('receiver_id', $driver_id);
+                })
+                ->orWhere(function ($query) use ($auth_user_id, $driver_id): void {
+                    $query->where('sender_id', $driver_id)
+                        ->where('receiver_id', $auth_user_id);
+                })
+                ->where('is_active', true)
+                ->pluck('id');
+
+            Message::whereIn(column: 'id', values: $messages)->update(attributes: [
+                'is_active' => false,
+            ]);
 
 
             defer(callback: fn() => AtomikLogService::createAtomicLog(atomikLogData: [
