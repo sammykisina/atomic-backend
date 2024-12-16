@@ -173,6 +173,11 @@ final class ManagementController
                 type: NotificationTypes::JOURNEY_CREATED,
             ));
 
+            JourneyService::updateTrainLength(
+                train: $train,
+                length: (int) $request->validated(key: "length"),
+            );
+
             AtomikLogService::createAtomicLog(atomikLogData: [
                 'type' => AtomikLogsTypes::MACRO1,
                 'resourceble_id' => $journey->id,
