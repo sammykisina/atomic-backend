@@ -675,6 +675,7 @@ final class ManagementController
         $license = $this->licenseService->createJourneyLicense(
             licenseData: [
                 'license_number' => $uniqueLicenseNumber,
+                'distance_to_stop' => $request->validated('distance_to_stop'),
                 'journey_id' => $journey->id,
                 'direction' => $license_direction,
                 'type' => $request->validated('type') ?? LicenseTypes::SIMPLE->value,

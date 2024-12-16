@@ -36,6 +36,9 @@ final class LicenseRequest extends FormRequest
             'reason_for_sos_license' => [
                 'required_if:type,SOS',
             ],
+            'distance_to_stop' => [
+                'required_if:type,SOS',
+            ],
             'journey_to_be_rescued' => [
                 'required_if:type,SOS',
             ],

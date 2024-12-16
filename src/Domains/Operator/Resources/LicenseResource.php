@@ -22,6 +22,7 @@ final class LicenseResource extends JsonResource
             'license_number' => $this->resource->license_number,
             'status' => $this->resource->status,
             'type' => $this->resource->type,
+            'distance_to_stop' => $this->resource->distance_to_stop,
             'direction' => $this->resource->direction,
             'issuer' => new UserResource(
                 resource: $this->whenLoaded(
