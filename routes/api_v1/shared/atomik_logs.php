@@ -10,5 +10,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->group(function (): void {
     Route::get('/', IndexController::class)->name(name: 'atomik_logs');
     Route::get('{atomikLog}/show', ShowAtomikLogController::class)->name(name: 'show');
-    Route::get('{trainName}/generate/logs', GenerateLogsReportController::class)->name(name: 'generate-logs');
+    Route::get('{train}/generate/logs', GenerateLogsReportController::class)->name(name: 'generate-logs');
 });

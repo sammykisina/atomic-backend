@@ -18,7 +18,7 @@ final class AtomikLogsExport implements FromArray, Responsable, ShouldAutoSize, 
 {
     use Exportable;
 
-    public function __construct(public int $train_id, public string $date) {}
+    public function __construct(public int $train_id) {}
 
     /**  @return array<int, string> */
     public function headings(): array
@@ -42,13 +42,11 @@ final class AtomikLogsExport implements FromArray, Responsable, ShouldAutoSize, 
      */
     public function array(): array
     {
-        // Parse the date string into a Carbon instance
-        $filterDate = Carbon::parse($this->date);
+       
 
         $logs = AtomikLog::query()
             ->where('train_id', $this->train_id)
-            ->whereDate('created_at', $filterDate)
-            ->with(['resourceble', 'actor', 'receiver', 'locomotive', 'train'])
+            ->with(['resourceble', 'actor', 'receiver', 'locomotiveNumber', 'train'])
             ->orderBy('created_at', 'DESC')
             ->get();
 
