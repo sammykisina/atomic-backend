@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Domains\Shared\Export;
 
-use Carbon\Carbon;
 use Domains\Shared\Models\AtomikLog;
 use Illuminate\Contracts\Support\Responsable;
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -42,7 +41,7 @@ final class AtomikLogsExport implements FromArray, Responsable, ShouldAutoSize, 
      */
     public function array(): array
     {
-       
+
 
         $logs = AtomikLog::query()
             ->where('train_id', $this->train_id)
