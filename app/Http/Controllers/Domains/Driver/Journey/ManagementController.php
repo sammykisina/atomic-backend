@@ -553,8 +553,6 @@ final class ManagementController
                 'locomotive_number_id' => $journey->train->locomotive_number_id,
             ]);
 
-
-
             return true;
         });
 
