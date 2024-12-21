@@ -89,7 +89,7 @@ final class ExitTrainController
                 );
             }
 
-            if ( ! $journey->update( [
+            if ( ! $journey->update([
                 'is_active' => false,
                 'last_destination' => $train_current_location,
             ])) {
@@ -112,7 +112,7 @@ final class ExitTrainController
                 ],
             ], $journey->logs ?? []);
 
-            $journey->update( [
+            $journey->update([
                 'logs' => $logs,
             ]);
 
@@ -138,7 +138,7 @@ final class ExitTrainController
             ], $prev_latest_license->logs ?? []);
 
             if ($prev_latest_license) {
-                $prev_latest_license->update( [
+                $prev_latest_license->update([
                     'status' => LicenseStatuses::USED->value,
                     'logs' => $logs,
                 ]);
@@ -161,7 +161,7 @@ final class ExitTrainController
                 ->where('is_active', true)
                 ->pluck('id');
 
-            Message::whereIn(column: 'id', values: $messages)->update( [
+            Message::whereIn(column: 'id', values: $messages)->update([
                 'is_active' => false,
             ]);
 
