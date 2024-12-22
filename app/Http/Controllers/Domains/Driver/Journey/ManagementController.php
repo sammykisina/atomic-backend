@@ -77,13 +77,18 @@ final class ManagementController
             );
 
             $group_with_train_origin = Group::query()
-                ->with(relations: ['shifts' => function ($query): void {
+                ->whereJsonContains('stations', $train->origin->id)
+                ->whereHas('shifts', function ($query): void {
+                    $query->where('status', ShiftStatuses::CONFIRMED->value)
+                        ->where('active', true);
+                })
+                ->with(['shifts' => function ($query): void {
                     $query->where('status', ShiftStatuses::CONFIRMED->value)
                         ->where('active', true)
                         ->with('user');
                 }])
-                ->whereJsonContains(column: 'stations', value: $train->origin->id)
                 ->first();
+
 
             if ( ! $group_with_train_origin) {
                 abort(
