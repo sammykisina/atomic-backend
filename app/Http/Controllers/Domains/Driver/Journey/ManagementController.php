@@ -327,7 +327,7 @@ final class ManagementController
             $license_origin['in_route'] = LicenseRouteStatuses::OCCUPIED->value;
             $license_origin['start_time'] = Carbon::now();
 
-            if ( ! $license->update(attributes: [
+            if ( ! $license->update([
                 'status' => LicenseStatuses::CONFIRMED,
                 'confirmed_at' => Carbon::now(),
                 'origin' => $license_origin,
@@ -367,7 +367,7 @@ final class ManagementController
                 ],
             ], $license->logs);
 
-            defer(callback: fn() => $license->update(attributes: [
+            defer(callback: fn() => $license->update([
                 'logs' => $logs,
             ]));
 
@@ -425,7 +425,7 @@ final class ManagementController
                 ],
             ], $journey->logs ?? []);
 
-            $journey->update(attributes: [
+            $journey->update([
                 'logs' => $logs,
             ]);
 
@@ -475,7 +475,7 @@ final class ManagementController
                 $train_current_location = $journey->requesting_location;
             }
 
-            if ( ! $journey->update(attributes: [
+            if ( ! $journey->update([
                 'is_active' => false,
                 'last_destination' => $train_current_location,
             ])) {
@@ -498,7 +498,7 @@ final class ManagementController
                 ],
             ], $journey->logs ?? []);
 
-            $journey->update(attributes: [
+            $journey->update([
                 'logs' => $logs,
             ]);
 
@@ -524,7 +524,7 @@ final class ManagementController
             ], $prev_latest_license->logs ?? []);
 
             if ($prev_latest_license) {
-                $prev_latest_license->update(attributes: [
+                $prev_latest_license->update([
                     'status' => LicenseStatuses::USED->value,
                     'logs' => $logs,
                 ]);
@@ -538,7 +538,7 @@ final class ManagementController
                 ->where('is_active', true)
                 ->pluck('id');
 
-            Message::whereIn(column: 'id', values: $messages)->update(attributes: [
+            Message::whereIn(column: 'id', values: $messages)->update([
                 'is_active' => false,
             ]);
 
@@ -552,8 +552,6 @@ final class ManagementController
                 'train_id' => $journey->train_id,
                 'locomotive_number_id' => $journey->train->locomotive_number_id,
             ]);
-
-
 
             return true;
         });
@@ -600,7 +598,7 @@ final class ManagementController
                 ],
             ], $license->logs ?? []);
 
-            $license->update(attributes: [
+            $license->update([
                 'status' => LicenseStatuses::REJECTED->value,
                 'logs' => $logs,
             ]);
@@ -611,7 +609,7 @@ final class ManagementController
                 ->first();
 
             if ($prev_latest_license) {
-                $prev_latest_license->update(attributes: [
+                $prev_latest_license->update([
                     'status' => LicenseStatuses::CONFIRMED->value,
                 ]);
             }
@@ -749,7 +747,7 @@ final class ManagementController
             ],
         ], $license->logs);
 
-        $license->update(attributes: [
+        $license->update([
             'logs' => $logs,
         ]);
 
@@ -801,7 +799,7 @@ final class ManagementController
             ],
         ], $license->logs);
 
-        $license->update(attributes: [
+        $license->update([
             'logs' => $logs,
         ]);
 

@@ -39,7 +39,7 @@ final class ManagementController
             foreach ($request->validated(key: 'inspection_schedules') as $key => $inspection_schedule) {
                 // check if the employee is an inspector
                 $inspector = EmployeeService::getEmployee(
-                    type: UserTypes::TRACK_ATTENDANT,
+                    types: [UserTypes::TRACK_ATTENDANT],
                     employee_id: $inspection_schedule['inspector_id'],
                 );
 

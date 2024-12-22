@@ -63,7 +63,7 @@ final class InspectionManagementController
     {
         // check if the current user is an inspector
         $inspector = EmployeeService::getEmployee(
-            type: UserTypes::TRACK_ATTENDANT,
+            types: [UserTypes::TRACK_ATTENDANT],
             employee_id: Auth::id(),
         );
 
