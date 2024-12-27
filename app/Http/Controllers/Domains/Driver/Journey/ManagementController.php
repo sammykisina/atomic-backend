@@ -609,8 +609,9 @@ final class ManagementController
             ]);
 
             $prev_latest_license = License::query()
-                ->where('id', $license->id - 1)
+             ->where('journey_id', $license->journey_id)
                 ->where('status', LicenseStatuses::USED->value)
+                ->orderBy('created_at', 'desc')
                 ->first();
 
             if ($prev_latest_license) {
@@ -618,7 +619,6 @@ final class ManagementController
                     'status' => LicenseStatuses::CONFIRMED->value,
                 ]);
             }
-
 
             $shifts = $journey->shifts;
             $shift = ShiftService::getShiftById(
