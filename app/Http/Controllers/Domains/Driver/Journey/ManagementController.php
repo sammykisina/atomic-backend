@@ -609,7 +609,7 @@ final class ManagementController
             ]);
 
             $prev_latest_license = License::query()
-             ->where('journey_id', $license->journey_id)
+                ->where('journey_id', $license->journey_id)
                 ->where('status', LicenseStatuses::USED->value)
                 ->orderBy('created_at', 'desc')
                 ->first();
