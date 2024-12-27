@@ -77,13 +77,18 @@ final class ManagementController
             );
 
             $group_with_train_origin = Group::query()
-                ->with(relations: ['shifts' => function ($query): void {
+                ->whereJsonContains('stations', $train->origin->id)
+                ->whereHas('shifts', function ($query): void {
+                    $query->where('status', ShiftStatuses::CONFIRMED->value)
+                        ->where('active', true);
+                })
+                ->with(['shifts' => function ($query): void {
                     $query->where('status', ShiftStatuses::CONFIRMED->value)
                         ->where('active', true)
                         ->with('user');
                 }])
-                ->whereJsonContains(column: 'stations', value: $train->origin->id)
                 ->first();
+
 
             if ( ! $group_with_train_origin) {
                 abort(
@@ -604,8 +609,9 @@ final class ManagementController
             ]);
 
             $prev_latest_license = License::query()
-                ->where('id', $license->id - 1)
+                ->where('journey_id', $license->journey_id)
                 ->where('status', LicenseStatuses::USED->value)
+                ->orderBy('created_at', 'desc')
                 ->first();
 
             if ($prev_latest_license) {
@@ -613,7 +619,6 @@ final class ManagementController
                     'status' => LicenseStatuses::CONFIRMED->value,
                 ]);
             }
-
 
             $shifts = $journey->shifts;
             $shift = ShiftService::getShiftById(
