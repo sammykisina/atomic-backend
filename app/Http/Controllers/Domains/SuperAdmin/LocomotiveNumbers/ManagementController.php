@@ -74,7 +74,8 @@ final class ManagementController
 
         $edited = $this->locomotiveNumberService->editLocomotiveNumber(
             number: $request->validated(key : 'number'),
-            driver_id: $request->validated('driver_id'),
+            driver_id: $request->validated(key: 'driver_id'),
+            obc_id: $request->validated(key: 'obc_id'),
             locomotiveNumber: $locomotiveNumber,
         );
 
