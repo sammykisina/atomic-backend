@@ -49,22 +49,20 @@ final class AtomikLogsExport implements FromArray, Responsable, ShouldAutoSize, 
             ->orderBy('created_at', 'DESC')
             ->get();
 
-        return $logs->map(function ($log, $index) {
-            return [
-                '#' => $index + 1,
-                'RESOURCE' => AtomikLog::getResourcebleType(
-                    namespaceString: $log->resourceble_type,
-                ),
-                'TYPE' => $log->type->value,
-                'LOCOMOTIVE' => $log->locomotive->number ?? '-',
-                'TRAIN' => $log->train->trainName->name ?? '-',
-                'CURRENT_LOCATION' => $log->current_location ?? '-',
-                'MESSAGE' => $log->message ?? '',
-                'ACTOR' => $log->actor?->fullname . ' - ' . $log->actor->type->value ?? '-',
-                'RECEIVER' => $log->receiver?->fullname . ' - ' . $log->receiver->type->value ?? '-',
-                'CREATED_AT' => $log->created_at->format('Y-m-d H:i:s'), // Format the created_at timestamp
-            ];
-        })->toArray();
+        return $logs->map(fn($log, $index) => [
+            '#' => $index + 1,
+            'RESOURCE' => AtomikLog::getResourcebleType(
+                namespaceString: $log->resourceble_type,
+            ),
+            'TYPE' => $log->type->value,
+            'LOCOMOTIVE' => $log->locomotive->number ?? '-',
+            'TRAIN' => $log->train->trainName->name ?? '-',
+            'CURRENT_LOCATION' => $log->current_location ?? '-',
+            'MESSAGE' => $log->message ?? '',
+            'ACTOR' => $log->actor?->fullname . ' - ' . $log->actor->type->value ?? '-',
+            'RECEIVER' => $log->receiver?->fullname . ' - ' . $log->receiver->type->value ?? '-',
+            'CREATED_AT' => $log->created_at->format('Y-m-d H:i:s'), // Format the created_at timestamp
+        ])->toArray();
     }
 
     /**
