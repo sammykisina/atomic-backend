@@ -36,7 +36,7 @@ final class SectionService
             'line_id' => $sectionData['line_id'],
             'station_id' => $sectionData['station_id'],
             'number_of_kilometers_to_divide_section_to_subsection' => $sectionData['number_of_kilometers_to_divide_section_to_subsection'],
-            'has_trip_line' => $sectionData['has_trip_line']?? false,
+            'has_trip_line' => $sectionData['has_trip_line'] ?? false,
         ]);
     }
 
