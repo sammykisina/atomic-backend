@@ -102,7 +102,7 @@ final class LicenseService
                 'resourceble_id' => $license->id,
                 'resourceble_type' => License::class,
                 'actor_id' => Auth::id(),
-                'current_location' => '',
+                'current_location' => ' ( ' .$license->origin['name'] . ' ) - ( ' . $license->destination['name'] . ' ) ',
                 'train_id' => $journey->train_id,
                 'receiver_id' => $journey->train->driver_id,
                 'locomotive_number_id' => $journey->train->locomotive_number_id,
