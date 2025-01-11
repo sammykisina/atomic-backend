@@ -31,6 +31,7 @@ final class Section extends Model
         'station_id',
         'status',
         'speed',
+        'has_trip_line',
     ];
 
     /** @return BelongsTo<Station>*/
@@ -56,6 +57,7 @@ final class Section extends Model
     {
         return [
             'status' => StationSectionLoopStatuses::class,
+            'has_trip_line' => 'boolean',
         ];
     }
 

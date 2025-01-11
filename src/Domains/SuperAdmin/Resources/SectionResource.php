@@ -46,6 +46,7 @@ final class SectionResource extends JsonResource
                 ),
             ),
             'status' => $this->resource->status,
+            'has_trip_line' => $this->resource->has_trip_line,
             'speed' => $this->resource->speed,
             'type' =>  AreaTypes::SECTION->value,
             'speed_restrictions' => SpeedResource::collection(
