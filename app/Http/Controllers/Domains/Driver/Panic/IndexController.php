@@ -21,6 +21,9 @@ final class IndexController
             ->whereHas('journey.train', function ($query): void {
                 $query->where('driver_id', Auth::id());
             })
+            ->whereHas('journey', function ($query): void {
+                $query->where('is_active', true);
+            })
             ->with(relations: [
                 'journey.train.trainName',
                 'journey.train.line',

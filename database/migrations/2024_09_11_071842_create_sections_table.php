@@ -43,8 +43,6 @@ return new class () extends Migration {
                 value: StationSectionLoopStatuses::GOOD,
             );
 
-
-
             $table->timestamp(column: 'created_at')->useCurrent();
             $table->timestamp(column: 'updated_at')->useCurrent()->useCurrentOnUpdate();
 

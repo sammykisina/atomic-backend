@@ -58,6 +58,9 @@ final class CreateOrEditSectionRequest extends FormRequest
                 'required',
                 'exists:stations,id',
             ],
+            'has_trip_line' => [
+                'boolean',
+            ],
         ];
     }
 }

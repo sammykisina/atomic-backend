@@ -16,10 +16,12 @@ final class ActivePanicController
 {
     public function __invoke(Request $request): Response
     {
-
         $panic = QueryBuilder::for(subject: Panic::class)
             ->whereHas('journey.train', function ($query): void {
                 $query->where('driver_id', Auth::id());
+            })
+            ->whereHas('journey', function ($query): void {
+                $query->where('is_active', true);
             })
             ->where('is_acknowledge', false)
             ->with(relations: [

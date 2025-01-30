@@ -45,12 +45,13 @@ final class LocomotiveNumberService
      * @param LocomotiveNumber $locomotiveNumber
      * @return bool
      */
-    public function editLocomotiveNumber(string $number, int $driver_id, LocomotiveNumber $locomotiveNumber): bool
+    public function editLocomotiveNumber(string $number, int $driver_id, int $obc_id, LocomotiveNumber $locomotiveNumber): bool
     {
         return $locomotiveNumber->update(
             attributes: [
                 'number' => $number,
                 'driver_id' => $driver_id,
+                'obc_id' => $obc_id,
             ],
         );
     }

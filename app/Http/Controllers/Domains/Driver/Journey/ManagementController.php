@@ -98,13 +98,11 @@ final class ManagementController
             }
 
             $currentTime = Carbon::now()->format('H:i');
-            $shift = $group_with_train_origin->shifts->filter(function ($shift) use ($currentTime) {
-                return
+            $shift = $group_with_train_origin->shifts->filter(fn($shift) =>
                     Carbon::now()->isSameDay(Carbon::parse($shift['day']))
                     && $currentTime >= $shift['from']
                     && $currentTime <= $shift['to']
-                    && $shift->user->type->value === UserTypes::OPERATOR_CONTROLLER->value;
-            })->first();
+                    && $shift->user->type->value === UserTypes::OPERATOR_CONTROLLER->value)->first();
 
             if ( ! $shift) {
                 abort(
