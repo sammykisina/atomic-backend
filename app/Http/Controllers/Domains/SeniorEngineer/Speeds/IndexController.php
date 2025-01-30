@@ -20,7 +20,7 @@ final class IndexController
     {
         $current_se_assignment = QueryBuilder::for(subject: UserRegion::class)
             ->where('user_id', Auth::id())
-            ->where('type', RegionAssignmentTypes::SE)
+            ->where('type', RegionAssignmentTypes::SE->value)
             ->first();
 
         $speeds = QueryBuilder::for(subject: Speed::class)
