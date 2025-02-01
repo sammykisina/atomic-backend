@@ -27,18 +27,19 @@ final class IndexController
 
         $auth_user_id = Auth::id();
 
-        $messages = QueryBuilder::for(subject: Message::class)
-            ->where(function ($query) use ($auth_user_id, $driver_id): void {
-                $query->where('sender_id', $auth_user_id)
-                    ->where('receiver_id', $driver_id);
-            })
-            ->orWhere(function ($query) use ($auth_user_id, $driver_id): void {
-                $query->where('sender_id', $driver_id)
-                    ->where('receiver_id', $auth_user_id);
-            })
-            ->where('is_active', true)
-            ->with(['receiver', 'sender','locomotive'])
-            ->get();
+        $messages = QueryBuilder::for(Message::class)
+    ->where('is_active', true)
+    ->where(function ($query) use ($auth_user_id, $driver_id) {
+        $query->where(function ($q) use ($auth_user_id, $driver_id) {
+            $q->where('sender_id', $auth_user_id)
+              ->where('receiver_id', $driver_id);
+        })->orWhere(function ($q) use ($auth_user_id, $driver_id) {
+            $q->where('sender_id', $driver_id)
+              ->where('receiver_id', $auth_user_id);
+        });
+    })
+    ->with(['receiver', 'sender', 'locomotive'])
+    ->get();
 
         return response(
             content: [
