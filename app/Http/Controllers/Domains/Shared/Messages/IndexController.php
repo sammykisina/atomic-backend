@@ -16,11 +16,13 @@ final class IndexController
 {
     public function __invoke(Request $request): Response
     {
-        $messages = QueryBuilder::for(subject: Message::class)
-            ->where('sender_id', Auth::id())
+        $messages = QueryBuilder::for(Message::class)
             ->where('is_active', true)
-            ->orWhere('receiver_id', Auth::id())
-            ->with(relations: [
+            ->where(function ($query): void {
+                $query->where('sender_id', Auth::id())
+                    ->orWhere('receiver_id', Auth::id());
+            })
+            ->with([
                 'receiver',
                 'sender',
                 'locomotive',
