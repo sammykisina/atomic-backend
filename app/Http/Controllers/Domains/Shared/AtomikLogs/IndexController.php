@@ -20,7 +20,7 @@ final class IndexController
             ->allowedFilters(filters: [
                 AllowedFilter::exact(name: 'train_id'),
             ])
-             ->whereHas('train.journey', function ($query) {
+            ->whereHas('train.journey', function ($query): void {
                 $query->where('is_active', true);
             })
             ->with(relations: [
