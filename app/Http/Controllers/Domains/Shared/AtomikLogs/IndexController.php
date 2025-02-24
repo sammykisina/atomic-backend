@@ -20,6 +20,9 @@ final class IndexController
             ->allowedFilters(filters: [
                 AllowedFilter::exact(name: 'train_id'),
             ])
+             ->whereHas('train.journey', function ($query) {
+                $query->where('is_active', true);
+            })
             ->with(relations: [
                 'resourceble',
                 'actor',
