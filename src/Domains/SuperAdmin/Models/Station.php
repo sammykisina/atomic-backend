@@ -17,29 +17,6 @@ final class Station extends Model
 {
     use HasFactory;
 
-    /** @var array<int, string> */
-    protected $fillable = [
-        "name",
-        "start_kilometer",
-        "end_kilometer",
-
-        'start_latitude_top',
-        'start_longitude_top',
-        'start_latitude_bottom',
-        'start_longitude_bottom',
-        'end_latitude_top',
-        'end_longitude_top',
-        'end_latitude_bottom',
-        'end_longitude_bottom',
-
-        "line_id",
-        'is_yard',
-        'position_from_line',
-
-        'status',
-        'speed',
-    ];
-
     /** @return BelongsTo<Line>  */
     public function line(): BelongsTo
     {
@@ -55,6 +32,15 @@ final class Station extends Model
         return $this->hasMany(
             related: Loop::class,
             foreignKey: 'station_id',
+        );
+    }
+
+    /** @return HasMany<Section, $this> */
+    public function triplines(): HasMany
+    {
+        return $this->hasMany(
+            related: Section::class,
+            foreignKey: 'triplinestation_id',
         );
     }
 
@@ -77,13 +63,16 @@ final class Station extends Model
         );
     }
 
-    /** @return array<string, string> */
+    /**
+     * @return array{has_trip_line: string, is_yard: string, position_from_line: string, status: string}
+     */
     protected function casts(): array
     {
         return [
             'position_from_line' => 'integer',
             'is_yard' => 'boolean',
             'status' => StationSectionLoopStatuses::class,
+            'has_trip_line' => 'boolean',
         ];
     }
 }

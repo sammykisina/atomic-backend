@@ -55,7 +55,7 @@ final class CreateOrEditSectionRequest extends FormRequest
                 'exists:lines,id',
             ],
             'station_id' => [
-                'required',
+                'nullable',
                 'exists:stations,id',
             ],
             'has_trip_line' => [

@@ -35,6 +35,12 @@ final class StationResource extends JsonResource
             'end_longitude_bottom' => $this->resource->end_longitude_bottom,
 
             'is_yard' => $this->resource->is_yard,
+            'has_trip_line' => $this->resource->has_trip_line,
+            'triplines' => SectionResource::collection(
+                resource: $this->whenLoaded(
+                    relationship: 'triplines',
+                ),
+            ),
             'line' => new LineResource(
                 resource: $this->whenLoaded(
                     relationship: 'line',
