@@ -20,6 +20,7 @@ final class IndexController
                 'regions.startStation',
                 'counties',
                 'stations.section.speeds',
+                'stations.triplines',
                 'stations.speeds',
                 'stations.loops',
                 'stations.loops',
