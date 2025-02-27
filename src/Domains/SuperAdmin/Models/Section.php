@@ -16,23 +16,6 @@ final class Section extends Model
 {
     use HasFactory;
 
-    /** @var array<int, string> */
-    protected $fillable = [
-        'start_name',
-        'end_name',
-        'start_kilometer',
-        'end_kilometer',
-        'start_latitude',
-        'start_longitude',
-        'end_latitude',
-        'end_longitude',
-        'number_of_kilometers_to_divide_section_to_subsection',
-        'line_id',
-        'station_id',
-        'status',
-        'speed',
-        'has_trip_line',
-    ];
 
     /** @return BelongsTo<Station>*/
     public function station(): BelongsTo
@@ -57,7 +40,6 @@ final class Section extends Model
     {
         return [
             'status' => StationSectionLoopStatuses::class,
-            'has_trip_line' => 'boolean',
         ];
     }
 
