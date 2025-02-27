@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Domains\SuperAdmin\Stations\IndexController;
+use App\Http\Controllers\Domains\SuperAdmin\Stations\MakeSectionPartOfTripLineController;
+use App\Http\Controllers\Domains\SuperAdmin\Stations\MakeStationTripLineAwareController;
 use App\Http\Controllers\Domains\SuperAdmin\Stations\ManagementController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +21,7 @@ Route::middleware(['auth:sanctum', 'ability:read-stations,create-stations,edit-s
         Route::get('/download/stations-spreadsheet', 'exportStations')->name(name: 'download-stations-spreadsheet');
         Route::post('/upload/', 'importStations')->name(name: 'upload-stations');
     });
+
+    Route::post('/{station}/make-tripline-aware', MakeStationTripLineAwareController::class)->name(name: 'make-tripline-aware');
+    Route::post('/{station}/sections/{section}/add-to-trip-line', MakeSectionPartOfTripLineController::class)->name(name: 'add-to-trip-line');
 });
