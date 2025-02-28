@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Models;
 
+use App\Enums\Superadmin\SectionType;
 use Domains\SeniorEngineer\Models\Speed;
 use Domains\SuperAdmin\Enums\StationSectionLoopStatuses;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -40,6 +41,7 @@ final class Section extends Model
     {
         return [
             'status' => StationSectionLoopStatuses::class,
+            'section_type' => SectionType::class,
         ];
     }
 
