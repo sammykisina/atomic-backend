@@ -65,7 +65,7 @@ final class CreateOrEditSectionRequest extends FormRequest
             ],
             'section_type' => [
                 'required',
-                Rule::enum(type: SectionType::class)
+                Rule::enum(type: SectionType::class),
             ],
         ];
     }
