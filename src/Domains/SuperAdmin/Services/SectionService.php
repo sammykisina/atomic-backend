@@ -35,6 +35,7 @@ final class SectionService
             'end_longitude' => $sectionData['end_longitude'],
             'line_id' => $sectionData['line_id'],
             'number_of_kilometers_to_divide_section_to_subsection' => $sectionData['number_of_kilometers_to_divide_section_to_subsection'],
+            'section_type' => $sectionData['section_type']
         ];
 
         if (isset($sectionData['station_id'])) {
@@ -63,6 +64,7 @@ final class SectionService
             'end_longitude' => $updatedSectionData['end_longitude'],
             'line_id' => $updatedSectionData['line_id'],
             'number_of_kilometers_to_divide_section_to_subsection' => $updatedSectionData['number_of_kilometers_to_divide_section_to_subsection'],
+            'section_type' => $updatedSectionData['section_type']
         ];
 
         if (isset($updatedSectionData['station_id'])) {

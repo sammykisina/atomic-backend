@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Domains\SuperAdmin\Requests;
 
+use App\Enums\Superadmin\SectionType;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 final class CreateOrEditSectionRequest extends FormRequest
 {
@@ -60,6 +62,10 @@ final class CreateOrEditSectionRequest extends FormRequest
             ],
             'has_trip_line' => [
                 'boolean',
+            ],
+            'section_type' => [
+                'required',
+                Rule::enum(type: SectionType::class)
             ],
         ];
     }

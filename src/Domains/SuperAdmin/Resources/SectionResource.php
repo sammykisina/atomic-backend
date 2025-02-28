@@ -48,6 +48,7 @@ final class SectionResource extends JsonResource
             'status' => $this->resource->status,
             'speed' => $this->resource->speed,
             'type' =>  AreaTypes::SECTION->value,
+            'section_type' => $this->resource->section_type,
             'speed_restrictions' => SpeedResource::collection(
                 resource: $this->whenLoaded(
                     relationship: 'speeds',
