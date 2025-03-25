@@ -15,10 +15,7 @@ final class StationService
      */
     public static function getStationById(int $station_id): Station
     {
-        return Station::query()->where(
-            'id',
-            $station_id,
-        )->first();
+        return Station::query()->where('id', $station_id)->first();
     }
     /**
      * CREATE STATION

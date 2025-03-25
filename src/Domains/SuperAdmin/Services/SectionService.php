@@ -15,7 +15,7 @@ final class SectionService
      */
     public static function getSectionById(int $section_id): ?Section
     {
-        return Section::query()->where('id', $section_id)->first();
+        return Section::query()->where('id', $section_id)->with(['triplinestation','station'])->first();
     }
     /**
      * CREATE SECTION

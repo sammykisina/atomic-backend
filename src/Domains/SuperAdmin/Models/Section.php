@@ -27,6 +27,15 @@ final class Section extends Model
         );
     }
 
+    /** @return BelongsTo<Station>*/
+    public function triplinestation(): BelongsTo
+    {
+        return $this->belongsTo(
+            related: Station::class,
+            foreignKey: 'triplinestation_id',
+        );
+    }
+
     /** @return MorphMany */
     public function speeds(): MorphMany
     {
