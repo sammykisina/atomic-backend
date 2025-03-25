@@ -730,7 +730,7 @@ final class ManagementController
     {
         return match ($type) {
             'Station' => $model->start_kilometer,
-            'Section' => $model->station->end_kilometer,
+            'Section' => $model->station?->end_kilometer ?? $model->triplinestation?->end_kilometer,
             'Loop' => $model->station->start_kilometer,
         };
     }
