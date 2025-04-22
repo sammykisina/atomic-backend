@@ -144,8 +144,7 @@ final class ManagementController
                 journey: $journey,
             );
 
-            $logs = array_merge([
-                [
+            $logs = array_merge([[
                     'type' => AtomikLogsTypes::LICENSE_USED->value,
                     'marked_as_used_by' => Auth::user()->employee_id,
                     'marked_at' => now(),
@@ -153,39 +152,19 @@ final class ManagementController
             ], $prev_latest_license->logs ?? []);
 
             if ($prev_latest_license) {
-                $prev_latest_license->update(attributes: [
-                    'status' => LicenseStatuses::USED->value,
-                    'logs' => $logs,
-                ]);
+                $prev_latest_license->update(attributes: ['status' => LicenseStatuses::USED->value, 'logs' => $logs]);
             }
 
-            $license = $this->createLicense(
-                request: $request,
-                journey: $journey,
-            );
+            $license = $this->createLicense(request: $request,journey: $journey);
+            $journey->update(attributes: ['shifts' => $currentShiftIds]);
 
-            $journey->update(attributes: [
-                'shifts' => $currentShiftIds,
-            ]);
-
-            defer(callback: fn() => LicenseService::createLicenseAfterMaths(
-                license: $license,
-                journey: $journey,
-            ));
+            defer(callback: fn() => LicenseService::createLicenseAfterMaths(license: $license,journey: $journey));
 
 
             if ($journey->has_obc) {
-                $journey->train->driver->notify(new LicenseNotification(
-                    license: $license,
-                    type: NotificationTypes::REQUEST_ACCEPTED,
-                ));
+                $journey->train->driver->notify(new LicenseNotification(license: $license,type: NotificationTypes::REQUEST_ACCEPTED));
             } else {
-                $shift->user->notify(
-                    new LicenseNotification(
-                        license: $license,
-                        type: NotificationTypes::REQUEST_ACCEPTED,
-                    ),
-                );
+                $shift->user->notify(new LicenseNotification(license: $license,type: NotificationTypes::REQUEST_ACCEPTED));
             }
 
             return $license;
@@ -586,10 +565,7 @@ final class ManagementController
         $origin_type = $request->validated('origin')['type'];
         $origin_coordinates = $request->validated('origin')['coordinates'];
         $origin_status = StationSectionLoopStatuses::LICENSE_ISSUED->value;
-        $origin = LicenseService::getModel(
-            model_type: $origin_type,
-            model_id: $origin_id,
-        );
+        $origin = LicenseService::getModel(model_type: $origin_type,model_id: $origin_id);
 
         /**
          * DESTINATION
@@ -598,10 +574,7 @@ final class ManagementController
         $destination_type = $request->validated('destination')['type'];
         $destination_coordinates = $request->validated('destination')['coordinates'];
         $destination_status = StationSectionLoopStatuses::LICENSE_ISSUED->value;
-        $destination = LicenseService::getModel(
-            model_type: $destination_type,
-            model_id: $destination_id,
-        );
+        $destination = LicenseService::getModel(model_type: $destination_type,model_id: $destination_id);
 
         /**
          * CHECK LICENSE JOURNEY DIRECTION
@@ -609,20 +582,12 @@ final class ManagementController
         $journey_direction = $journey->direction;
 
         $license_direction = JourneyService::getJourneyDirection(
-            origin: $this->getKMs(
-                type: AtomikLog::getResourcebleType(namespaceString: get_class(object: $origin)),
-                model: $origin,
-            ),
-            destination: $this->getKMs(
-                type: AtomikLog::getResourcebleType(namespaceString: get_class(object: $destination)),
-                model: $destination,
-            ),
+            origin: $this->getKMs(type: AtomikLog::getResourcebleType(namespaceString: get_class(object: $origin)),model: $origin),
+            destination: $this->getKMs(type: AtomikLog::getResourcebleType(namespaceString: get_class(object: $destination)),model: $destination),
         )->value;
 
         if ($journey_direction->value !== $license_direction) {
-            $latest_license = License::where('journey_id', $journey->id)
-                ->latest()
-                ->first();
+            $latest_license = License::where('journey_id', $journey->id)->latest()->first();
 
             if ($latest_license) {
                 foreach ($latest_license->through as $throughPoint) {
@@ -687,16 +652,13 @@ final class ManagementController
                     'type' => $origin_type,
                     'coordinates' => $origin_coordinates,
                     'status' => $origin_status,
-                    'name' => LicenseService::getLicenseOrigin(
-                        model: $origin,
-                    ),
+                    'name' => LicenseService::getLicenseOrigin(model: $origin),
                     'start_time' => null,  // Set start time for origin
                     'end_time' => null,
                     'in_route' => LicenseRouteStatuses::PENDING->value,
                 ],
 
                 'train_at_origin' => true,
-
                 'through' => $updated_throughs,
 
                 'destination' => [
@@ -704,9 +666,7 @@ final class ManagementController
                     'type' => $destination_type,
                     'coordinates' => $destination_coordinates,
                     'status' => $destination_status,
-                    'name' => LicenseService::getLicenseOrigin(
-                        model: $destination,
-                    ),
+                    'name' => LicenseService::getLicenseOrigin(model: $destination),
                     'start_time' => null,
                     'end_time' => null,
                     'in_route' => $destination_in_route,
