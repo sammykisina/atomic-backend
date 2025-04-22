@@ -6,6 +6,6 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => [
-    'name' => env('ATOMIC API'),
-    'version' => App::version(),
+    'name' => env('APP_NAME'),
+    'laravel-version' => App::version(),
 ]);
