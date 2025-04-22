@@ -1,0 +1,63 @@
+services:
+    atomic-backend-app:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        image: atomic-backend-image
+        container_name: atomic-backend-container
+        restart: unless-stopped
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+        networks:
+            - atomic-backend-network
+        depends_on:
+            db:
+                condition: service_healthy
+        environment:
+            DB_CONNECTION: ${DB_CONNECTION}
+            DB_HOST: atomic-backend-db-container
+            DB_PORT: ${DB_PORT}
+            DB_DATABASE: ${DB_DATABASE}
+            DB_USERNAME: ${DB_USERNAME}
+            DB_PASSWORD: ${DB_PASSWORD}
+            TZ: ${APP_TIMEZONE}
+
+    db:
+        image: mysql:8.0
+        container_name: atomic-backend-db-container
+        restart: unless-stopped
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: atomic
+            TZ: ${APP_TIMEZONE}
+        volumes:
+            - db-data:/var/lib/mysql
+            - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+        networks:
+            - atomic-backend-network
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    nginx:
+        image: nginx:alpine
+        container_name: atomic-backend-nginx-container
+        restart: unless-stopped
+        ports:
+            - 8080:80
+        volumes:
+            - ./:/var/www
+            - ./docker-compose/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+        networks:
+            - atomic-backend-network
+
+networks:
+    atomic-backend-network:
+        driver: bridge
+
+volumes:
+    db-data:
