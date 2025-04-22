@@ -87,13 +87,11 @@ final class LicenseService
     public static function createLicenseAfterMaths(License $license, Journey $journey): void
     {
         $license->update(attributes: [
-            'logs' => [
-                [
+            'logs' => [[
                     'type' => AtomikLogsTypes::LICENSE_CREATED->value,
                     'created_at' => $license->created_at,
                     'created_by' => Auth::user()->employee_id,
-                ],
-            ],
+                ]],
         ]);
 
         AtomikLogService::createAtomicLog(
