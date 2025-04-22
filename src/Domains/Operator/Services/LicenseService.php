@@ -88,10 +88,10 @@ final class LicenseService
     {
         $license->update(attributes: [
             'logs' => [[
-                    'type' => AtomikLogsTypes::LICENSE_CREATED->value,
-                    'created_at' => $license->created_at,
-                    'created_by' => Auth::user()->employee_id,
-                ]],
+                'type' => AtomikLogsTypes::LICENSE_CREATED->value,
+                'created_at' => $license->created_at,
+                'created_by' => Auth::user()->employee_id,
+            ]],
         ]);
 
         AtomikLogService::createAtomicLog(
