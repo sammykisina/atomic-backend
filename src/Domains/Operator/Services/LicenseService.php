@@ -113,13 +113,21 @@ final class LicenseService
      */
     public function getLicense(): string
     {
-        $variations = [1, 2, 3, 4, 5];
-        $randomElement = $variations[array_rand(array: $variations)];
-        $uniqueLicenseNumber = $this->generateUniqueLicenseNumber(
-            length: $randomElement,
-        );
+        // 1. Query for the maximum existing numeric license_number:
+        $last = License::query()
+                   ->selectRaw('MAX(CAST(license_number AS UNSIGNED)) as max_num')
+                   ->value('max_num');
+        // 2. Random offset 1..10
+        $offset = rand(1, 10);
+        // 3. New candidate
+        $newLicense = (int)$last + $offset;
 
-        return $uniqueLicenseNumber;
+        // 4. Check collision in a tight loop:
+        while (License::where('license_number', (string)$newLicense)->exists()) {
+            $offset = rand(1, 10);
+            $newLicense = (int)$last + $offset;
+        }
+        return (string)$newLicense;
     }
 
     /**
