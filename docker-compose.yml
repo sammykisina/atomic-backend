@@ -1,55 +1,137 @@
+# services:
+#     atomicbackend:
+#         build:
+#             context: ./vendor/laravel/sail/runtimes/8.4
+#             dockerfile: Dockerfile
+#             args:
+#                 WWWGROUP: '${WWWGROUP}'
+#         image: sail-8.4/app
+#         extra_hosts:
+#             - 'host.docker.internal:host-gateway'
+#         ports:
+#             - '${APP_PORT:-80}:80'
+#             - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+#         environment:
+#             WWWUSER: '${WWWUSER}'
+#             LARAVEL_SAIL: 1
+#             XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+#             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+#             IGNITION_LOCAL_SITES_PATH: '${PWD}'
+#         volumes:
+#             - '.:/var/www/html'
+#         networks:
+#             - sail
+#         depends_on:
+#             - mysql
+#             - redis
+#     mysql:
+#         image: 'mysql/mysql-server:8.0'
+#         ports:
+#             - '${FORWARD_DB_PORT:-3306}:3306'
+#         environment:
+#             MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+#             MYSQL_ROOT_HOST: '%'
+#             MYSQL_DATABASE: '${DB_DATABASE}'
+#             MYSQL_USER: '${DB_USERNAME}'
+#             MYSQL_PASSWORD: '${DB_PASSWORD}'
+#             MYSQL_ALLOW_EMPTY_PASSWORD: 1
+#         volumes:
+#             - 'sail-mysql:/var/lib/mysql'
+#             - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+#         networks:
+#             - sail
+#         healthcheck:
+#             test:
+#                 - CMD
+#                 - mysqladmin
+#                 - ping
+#                 - '-p${DB_PASSWORD}'
+#             retries: 3
+#             timeout: 5s
+#     redis:
+#         image: 'redis:alpine'
+#         ports:
+#             - '${FORWARD_REDIS_PORT:-6379}:6379'
+#         volumes:
+#             - 'sail-redis:/data'
+#         networks:
+#             - sail
+#         healthcheck:
+#             test:
+#                 - CMD
+#                 - redis-cli
+#                 - ping
+#             retries: 3
+#             timeout: 5s
+# networks:
+#     sail:
+#         driver: bridge
+# volumes:
+#     sail-mysql:
+#         driver: local
+#     sail-redis:
+#         driver: local
+
 services:
-    atomik:
+    atomic-backend-app:
         build:
-            context: ./vendor/laravel/sail/runtimes/8.4
+            context: ./
             dockerfile: Dockerfile
-            args:
-                WWWGROUP: "${WWWGROUP}"
-        image: sail-8.4/app
-        extra_hosts:
-            - "host.docker.internal:host-gateway"
-        ports:
-            - "${APP_PORT:-80}:80"
-            - "${VITE_PORT:-5173}:${VITE_PORT:-5173}"
-        environment:
-            WWWUSER: "${WWWUSER}"
-            LARAVEL_SAIL: 1
-            XDEBUG_MODE: "${SAIL_XDEBUG_MODE:-off}"
-            XDEBUG_CONFIG: "${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}"
-            IGNITION_LOCAL_SITES_PATH: "${PWD}"
+        image: atomic-backend-image
+        container_name: atomic-backend-container
+        restart: unless-stopped
+        working_dir: /var/www
         volumes:
-            - ".:/var/www/html"
+            - ./:/var/www
         networks:
-            - sail
+            - atomic-backend-network
         depends_on:
-            - mysql
-    mysql:
-        image: "mysql/mysql-server:8.0"
-        ports:
-            - "${FORWARD_DB_PORT:-3306}:3306"
+            db:
+                condition: service_healthy
         environment:
-            MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
-            MYSQL_ROOT_HOST: "%"
-            MYSQL_DATABASE: "${DB_DATABASE}"
-            MYSQL_USER: "${DB_USERNAME}"
-            MYSQL_PASSWORD: "${DB_PASSWORD}"
-            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+            DB_CONNECTION: ${DB_CONNECTION}
+            DB_HOST: atomic-backend-db-container
+            DB_PORT: ${DB_PORT}
+            DB_DATABASE: ${DB_DATABASE}
+            DB_USERNAME: ${DB_USERNAME}
+            DB_PASSWORD: ${DB_PASSWORD}
+            TZ: ${APP_TIMEZONE}
+
+    db:
+        image: mysql:8.0
+        container_name: atomic-backend-db-container
+        restart: unless-stopped
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: atomic
+            TZ: ${APP_TIMEZONE}
         volumes:
-            - "sail-mysql:/var/lib/mysql"
-            - "./vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh"
+            - db-data:/var/lib/mysql
+            - ./docker-compose/mysql:/docker-entrypoint-initdb.d
         networks:
-            - sail
+            - atomic-backend-network
         healthcheck:
-            test:
-                - CMD
-                - mysqladmin
-                - ping
-                - "-p${DB_PASSWORD}"
-            retries: 3
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+            interval: 10s
             timeout: 5s
+            retries: 5
+
+    nginx:
+        image: nginx:alpine
+        container_name: atomic-backend-nginx-container
+        restart: unless-stopped
+        ports:
+            - 8080:80
+        volumes:
+            - ./:/var/www
+            - ./docker-compose/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+        networks:
+            - atomic-backend-network
+
 networks:
-    sail:
+    atomic-backend-network:
         driver: bridge
+
 volumes:
-    sail-mysql:
-        driver: local
+    db-data:
