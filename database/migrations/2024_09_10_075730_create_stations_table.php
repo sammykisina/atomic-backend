@@ -29,9 +29,7 @@ return new class () extends Migration {
             $table->float(column: 'end_latitude_bottom');
             $table->float(column: 'end_longitude_bottom');
 
-            $table->boolean(column: 'is_yard')->default(
-                value: false,
-            );
+            $table->boolean(column: 'is_yard')->default(value: false);
 
             $table->integer(column: 'speed')->default(value: 40);
 
