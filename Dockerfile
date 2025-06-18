@@ -58,18 +58,18 @@
 # CMD ["php-fpm"]
 
 FROM php:8.3-fpm
-# FastCGI Process Manager
 
 # Arguments for user and user ID, with default values
 ARG user=appuser
 ARG uid=1000
 
-# Switch apt sources to HTTPS and install necessary packages
-RUN sed -i -e 's|http://deb.debian.org|https://deb.debian.org|g' \
-           -e 's|http://security.debian.org|https://security.debian.org|g' \
-           /etc/apt/sources.list && \
-    apt update && \
-    apt install -y \
+# Ensure HTTPS apt sources under VPN, install packages, and clean up
+RUN find /etc/apt -maxdepth 2 -type f -name "*.list" \
+        -exec sed -i -e 's|http://deb.debian.org|https://deb.debian.org|g' \
+                   -e 's|http://security.debian.org|https://security.debian.org|g' {} + \
+    || true \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y \
         coreutils \
         libzip-dev \
         libsodium-dev \
@@ -78,17 +78,17 @@ RUN sed -i -e 's|http://deb.debian.org|https://deb.debian.org|g' \
         libpng-dev \
         libonig-dev \
         libxml2-dev \
-    && apt clean \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
     && docker-php-ext-install zip sodium
 
-# Install Composer
+# Install Composer binary
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Create a user and set permissions
+# Create a non-root user and set permissions
 RUN useradd -m -u $uid -g www-data -G www-data $user \
     && mkdir -p /home/$user/.composer \
     && chown -R $user:www-data /home/$user
@@ -99,24 +99,21 @@ WORKDIR /var/www
 # Copy project files
 COPY . /var/www
 
-# Set permissions for storage and bootstrap/cache directories
+# Set permissions for storage and cache directories
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R u+rwX,g+rwX,o+rwX /var/www/storage /var/www/bootstrap/cache
 
-# Set ownership for the entire working directory
+# Set ownership for the working directory to the application user
 RUN chown -R $user:www-data /var/www
 
-# Copy the entrypoint script
+# Copy and make entrypoint executable
 COPY docker-compose/entrypoint.sh /usr/local/bin/entrypoint.sh
-
-# Set executable permissions
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Use the single entrypoint script
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-# Expose port 80
+# Expose port 80 and start PHP-FPM
 EXPOSE 80
-
-# Start PHP-FPM as default command
 CMD ["php-fpm"]
+
