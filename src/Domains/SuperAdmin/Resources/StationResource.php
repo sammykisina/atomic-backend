@@ -65,6 +65,7 @@ final class StationResource extends JsonResource
                     relationship: 'speeds',
                 ),
             ),
+            'geofence_name' => $this->geofence_name,
         ];
     }
 }
