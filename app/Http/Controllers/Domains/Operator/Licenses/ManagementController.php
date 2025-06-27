@@ -563,6 +563,7 @@ final class ManagementController
          */
         $origin_id = $request->validated('origin')['origin_id'];
         $origin_type = $request->validated('origin')['type'];
+        $origin_geofence_name = $request->validated('origin')['geofence_name'];
         $origin_coordinates = $request->validated('origin')['coordinates'];
         $origin_status = StationSectionLoopStatuses::LICENSE_ISSUED->value;
         $origin = LicenseService::getModel(model_type: $origin_type, model_id: $origin_id);
@@ -572,6 +573,7 @@ final class ManagementController
          */
         $destination_id = $request->validated('destination')['destination_id'];
         $destination_type = $request->validated('destination')['type'];
+        $destination_geofence_name = $request->validated('destination')['geofence_name'];
         $destination_coordinates = $request->validated('destination')['coordinates'];
         $destination_status = StationSectionLoopStatuses::LICENSE_ISSUED->value;
         $destination = LicenseService::getModel(model_type: $destination_type, model_id: $destination_id);
@@ -626,6 +628,7 @@ final class ManagementController
                     'end_time' => null,
                     'in_route' => $in_route,
                     'coordinates' => $through['coordinates'],
+                    'geofence_name' => $through['geofence_name'],
                 ];
             },
             array: $throughs,
@@ -651,6 +654,7 @@ final class ManagementController
                     'id' => $origin_id,
                     'type' => $origin_type,
                     'coordinates' => $origin_coordinates,
+                    'geofence_name' => $origin_geofence_name,
                     'status' => $origin_status,
                     'name' => LicenseService::getLicenseOrigin(model: $origin),
                     'start_time' => null,  // Set start time for origin
@@ -670,6 +674,7 @@ final class ManagementController
                     'start_time' => null,
                     'end_time' => null,
                     'in_route' => $destination_in_route,
+                    'geofence_name' => $destination_geofence_name,
                 ],
 
                 'train_at_destination' => false,

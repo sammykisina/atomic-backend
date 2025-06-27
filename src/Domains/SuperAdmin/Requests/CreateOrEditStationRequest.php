@@ -71,6 +71,7 @@ final class CreateOrEditStationRequest extends FormRequest
                 'required',
                 'numeric',
             ],
+            'geofence_name' => ['nullable'],
         ];
     }
 }

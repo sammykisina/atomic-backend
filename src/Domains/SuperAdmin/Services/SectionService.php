@@ -36,6 +36,7 @@ final class SectionService
             'line_id' => $sectionData['line_id'],
             'number_of_kilometers_to_divide_section_to_subsection' => $sectionData['number_of_kilometers_to_divide_section_to_subsection'],
             'section_type' => $sectionData['section_type'],
+            'geofence_name' => $sectionData['geofence_name'] ?? null,
         ];
 
         if (isset($sectionData['station_id'])) {
@@ -65,6 +66,7 @@ final class SectionService
             'line_id' => $updatedSectionData['line_id'],
             'number_of_kilometers_to_divide_section_to_subsection' => $updatedSectionData['number_of_kilometers_to_divide_section_to_subsection'],
             'section_type' => $updatedSectionData['section_type'],
+            'geofence_name' => $updatedSectionData['geofence_name'] ?? null,
         ];
 
         if (isset($updatedSectionData['station_id'])) {

@@ -33,6 +33,7 @@ final class LoopResource extends JsonResource
 
             'status' => $this->resource->status,
             'type' =>  AreaTypes::LOOP->value,
+            'geofence_name' => $this->geofence_name,
         ];
     }
 }
