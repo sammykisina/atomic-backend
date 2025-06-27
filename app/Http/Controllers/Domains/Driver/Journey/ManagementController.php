@@ -216,9 +216,7 @@ final class ManagementController
     {
         $updated = DB::transaction(function () use ($request, $journey, $license): bool {
             $shifts = $journey->shifts;
-            $shift = ShiftService::getShiftById(
-                shift_id: end($shifts),
-            );
+            $shift = ShiftService::getShiftById(shift_id: end($shifts),);
 
             if ( ! $shift) {
                 abort(
@@ -266,7 +264,7 @@ final class ManagementController
                 'resourceble_type' => get_class(object: $journey),
                 'actor_id' => Auth::id(),
                 'receiver_id' => $shift->user_id,
-                'current_location' => JourneyService::getLocation(model: $model),
+                'current_location' => JourneyService::getLocation(model: $model) . ' - '. $request->validated(key: 'location'),
                 'train_id' => $journey->train_id,
                 'locomotive_number_id' => $journey->train->locomotive_number_id,
             ]);
