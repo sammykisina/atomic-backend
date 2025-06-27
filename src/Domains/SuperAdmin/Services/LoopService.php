@@ -42,6 +42,7 @@ final class LoopService
             'end_longitude_bottom' => $loopData['end_longitude_bottom'],
 
             'line_id' => $line->id,
+            'geofence_name' => $loopData['geofence_name'] ?? null,
         ]);
     }
 
@@ -66,6 +67,8 @@ final class LoopService
             'end_longitude_top' => $updatedLoopData['end_longitude_top'],
             'end_latitude_bottom' => $updatedLoopData['end_latitude_bottom'],
             'end_longitude_bottom' => $updatedLoopData['end_longitude_bottom'],
+
+            'geofence_name' => $updatedLoopData['geofence_name'] ?? null,
         ]);
     }
 }
