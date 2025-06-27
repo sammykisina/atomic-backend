@@ -42,6 +42,7 @@ final class StationService
             'line_id' => $stationData['line_id'],
             'is_yard' => $stationData['is_yard'],
             'position_from_line' => $stationData['position_from_line'],
+            'geofence_name' => $stationData['geofence_name'] ?? null,
         ]);
     }
 
@@ -71,6 +72,7 @@ final class StationService
             'line_id' => $updatedStationData['line_id'],
             'is_yard' => $updatedStationData['is_yard'],
             'position_from_line' => $updatedStationData['position_from_line'],
+            'geofence_name' => $updatedStationData['geofence_name'] ?? null,
         ]);
     }
 }
