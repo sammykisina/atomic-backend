@@ -67,7 +67,7 @@ final class CreateOrEditLoopRequest extends FormRequest
                     value: $this->station->id,
                 )->ignore($this->loop ? $this->loop->id : ''),
             ],
-            'geofence_name' => [ 'nullable']
+            'geofence_name' => ['nullable'],
         ];
     }
 

@@ -31,7 +31,7 @@ final class LocationRequest extends FormRequest
             'longitude' => [
                 'required',
             ],
-            'location' => ['required', 'string']
+            'location' => ['required', 'string'],
         ];
     }
 }

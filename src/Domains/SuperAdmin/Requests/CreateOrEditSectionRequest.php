@@ -67,7 +67,7 @@ final class CreateOrEditSectionRequest extends FormRequest
                 'required',
                 Rule::enum(type: SectionType::class),
             ],
-            'geofence_name' => [ 'nullable']
+            'geofence_name' => ['nullable'],
         ];
     }
 }
