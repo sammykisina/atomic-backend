@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 final class InspectionManagementController
 {
     public function __construct(
-        protected InspectionService $inspectionService,
+        private InspectionService $inspectionService,
     ) {}
 
 

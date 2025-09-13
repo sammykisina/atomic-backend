@@ -15,7 +15,7 @@ final class ManagementController
 {
     /** @param ObcService $obcService */
     public function __construct(
-        protected ObcService $obcService,
+        private ObcService $obcService,
     ) {}
 
 

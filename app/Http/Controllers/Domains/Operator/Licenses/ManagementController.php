@@ -38,7 +38,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 final class ManagementController
 {
     public function __construct(
-        protected LicenseService $licenseService,
+        private LicenseService $licenseService,
     ) {}
 
     /**

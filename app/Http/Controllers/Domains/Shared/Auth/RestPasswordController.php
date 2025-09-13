@@ -12,7 +12,7 @@ use JustSteveKing\StatusCode\Http;
 final class RestPasswordController
 {
     public function __construct(
-        protected AuthService $authService,
+        private AuthService $authService,
     ) {}
 
     public function __invoke(ResetPasswordRequest $request): Response

@@ -25,7 +25,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 final class ManagementController
 {
     public function __construct(
-        protected InspectionScheduleService $inspectionScheduleService,
+        private InspectionScheduleService $inspectionScheduleService,
     ) {}
 
     /**

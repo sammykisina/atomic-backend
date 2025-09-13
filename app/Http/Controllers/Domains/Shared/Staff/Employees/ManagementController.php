@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 final class ManagementController
 {
     public function __construct(
-        protected EmployeeService $employeeService,
+        private EmployeeService $employeeService,
     ) {}
 
     /**

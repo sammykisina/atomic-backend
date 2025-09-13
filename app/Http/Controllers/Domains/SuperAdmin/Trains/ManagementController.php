@@ -15,7 +15,7 @@ final class ManagementController
 {
     /** @param TrainService $trainService */
     public function __construct(
-        protected TrainService $trainService,
+        private TrainService $trainService,
     ) {}
 
 

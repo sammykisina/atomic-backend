@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 final class LineRegionManagementController
 {
     public function __construct(
-        protected LineRegionService $lineRegionService,
+        private LineRegionService $lineRegionService,
     ) {}
 
     public function lineRegionsDivisions(LineRegionDivideRequest $request, Line $line): HttpException | Response

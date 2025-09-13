@@ -14,7 +14,7 @@ use JustSteveKing\StatusCode\Http;
 final class LoginController
 {
     public function __construct(
-        protected AuthService $authService,
+        private AuthService $authService,
     ) {}
 
     /**

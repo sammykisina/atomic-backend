@@ -15,7 +15,7 @@ final class ManagementController
 {
     /** @param GroupService $groupService */
     public function __construct(
-        protected GroupService $groupService,
+        private GroupService $groupService,
     ) {}
 
 

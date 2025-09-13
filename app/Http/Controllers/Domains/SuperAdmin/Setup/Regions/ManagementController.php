@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 final class ManagementController
 {
     public function __construct(
-        protected RegionService $regionService,
+        private RegionService $regionService,
     ) {}
 
 

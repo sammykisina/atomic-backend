@@ -13,7 +13,7 @@ use JustSteveKing\StatusCode\Http;
 final class RequestPasswordRestCodeController
 {
     public function __construct(
-        protected AuthService $authService,
+        private AuthService $authService,
     ) {}
 
     public function __invoke(PasswordResetCodeRequest $request): Response
